@@ -1,0 +1,58 @@
+server:
+  port: 8021
+
+spring:
+  application:
+    name: konfig-authentication
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/lite_config?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: "0412"
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+
+mybatis:
+  #  定义实体类位置
+  type-aliases-package: org.zhangxujie.konfig.model
+
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  secret: lite-config-secret #JWT加解密使用的密钥
+  expiration: 604800 #JWT的超期限时间(60*60*24*7)
+  tokenHead: 'Bearer '  #JWT负载中拿到开头
+  token: Authorization
+
+
+eureka:
+  client:
+    #    注册到eureka
+    register-with-eureka: true
+    #    抓取已经注册信息
+    fetch-registry: true
+    service-url:
+      #      如下为单机配置
+      #      defaultZone: http://localhost:7001/eureka
+      #      如下为集群配置
+      defaultZone: http://eureka7001.com:7001/eureka, http://eureka7002.com:7002/eureka
+#eureka:
+#  instance:
+#    instance-id: org.zhangxujie.liteconfig-auth
+#    prefer-ip-address: true
+#    #客户端向Eureka服务器发送心跳的间隔
+#    lease-renewal-interval-in-seconds: 30
+#    #服务器等到最后一次心跳后等待的时间上限，默认90秒
+#    lease-expiration-duration-in-seconds: 90
+#  client:
+#    #    注册到eureka
+#    register-with-eureka: true
+#    #    抓取已经注册信息
+#    fetch-registry: true
+#    service-url:
+#      #      如下为单机配置
+#      #      defaultZone: http://localhost:7001/eureka
+#      #      如下为集群配置
+#      defaultZone: http://eureka7001.com:7001/eureka, http://eureka7002.com:7002/eureka

@@ -1,0 +1,6 @@
+# Project exclude paths
+/konfig-authentication-8021/target/
+/konfig-commons/target/
+/konfig-configservice-8301/target/
+/konfig-eureka-7001/target/
+/konfig-eureka-7002/target/

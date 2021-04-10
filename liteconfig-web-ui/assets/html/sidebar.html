@@ -1,0 +1,68 @@
+<script src="assets/js/metisMenu.min.js"></script>
+<script src="assets/js/common/util.js"></script>
+
+
+<!--<script src="assets/js/scripts.js"></script>-->
+<!--scripts.js与 header.html中的引用冲突-->
+
+<div class="sidebar-menu">
+
+    <div class="sidebar-header">
+        <div class="logo">
+            <a href="index.html"><img src="assets/images/icon/logo.png" alt="logo"></a>
+        </div>
+    </div>
+    <div class="main-menu">
+        <div class="menu-inner">
+            <nav>
+                <ul class="metismenu" id="menu">
+<!--                    <li class="active"><a href="index.html"><i class="ti-home"></i> <span>首页</span></a></li>-->
+                    <li><a href="index.html"><i class="ti-home"></i> <span>首页</span></a></li>
+
+                    <li>
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="ti-settings"></i><span>配置中心</span></a>
+                        <ul class="collapse">
+<!--                            需要添加审核权限内容-->
+                            <li><a href="configcollection.html">全部配置集</a></li>
+                            <li><a href="#">我的配置</a></li>
+                            <li><a href="#">草稿</a></li>
+                            <li><a href="#">收藏</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="ti-user"></i><span>用戶中心</span></a>
+                        <ul class="collapse">
+                            <li><a href="usermanage.html" class="user-admin">用户权限管理</a></li>
+                            <li><a href="#">个人信息</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#"><i class="ti-notepad"></i> <span>操作日志</span></a></li>
+                    <li><a href="#"><i class="ti-announcement"></i> <span>通知</span></a></li>
+
+
+                    <li>
+                        <a href="javascript:void(0)" aria-expanded="true"><i class="ti-pencil"></i><span>审批</span></a>
+                        <ul class="collapse">
+                            <li><a href="#" class="cfg-admin">待审批列表</a></li>
+                            <li><a href="#">我的审批</a></li>
+                            <li><a href="#">审批记录</a></li>
+                        </ul>
+                    </li>
+
+                    <li><a href="#"><i class="ti-dashboard"></i> <span>统计</span></a></li>
+
+                    <li><a href="#" id="sidebar-logout"><i class="ti-shift-right"></i> <span onclick="logout()">退出登录</span></a></li>
+                    <script>
+                        function logout() {
+                            setCookie('token', '', 0);
+                            window.location = "login.html"
+                        }
+                    </script>
+
+
+
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

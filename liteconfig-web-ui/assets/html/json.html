@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>JSON编辑器</title>
+    <link rel="stylesheet" type="text/css" href="plugins/jsoneditor/jsoneditor.css" />
+    <script src="plugins/jsoneditor/jsoneditor.js"></script>
+</head>
+
+<body>
+<!--容器-->
+<div id="jsoneditor" style="width: 400px; height: 400px;"></div>
+
+<script>
+    // 创建对象
+    var container = document.getElementById("jsoneditor");
+    var options = {
+        // modes: ['tree','code'], 可以设置多种模式随意切换
+        mode: 'code', // tree，view，form，code，text
+        onError: function(err) {
+            alert(err.toString());
+        }
+    };
+    // 实例化对象
+    var editor = new JSONEditor(container, options);
+
+    // JSON数据
+    var json = {
+        "Array": [1, 2, 3],
+        "Boolean": true,
+        "Null": null,
+        "Number": 123,
+        "Object": {
+            "a": "b",
+            "c": "d"
+        },
+        "String": "Hello World"
+    };
+
+    // JSONEditor.set(data) 设置数据
+    editor.set(json);
+    // JSONEditor.get() 和 JSONEditor.getText() 获取数据
+    var json = editor.get();
+    console.log(JSON.stringify(json));
+
+    var text = editor.getText();
+    console.log(text);
+
+    // JSONEditor.setMode(mode) 设置模式
+    editor.setMode('tree');
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+<div id="app">
+    <el-button @click="visible = true">Button</el-button>
+    <el-dialog :visible.sync="visible" title="Hello world">
+        <p>Try Element</p>
+    </el-dialog>
+</div>
+
+<div id="app1">
+    <el-button :plain="true" @click="open">消息</el-button>
+</div>
+
+<input type="file" id="file" name="file">
+<input type="button" value="上传文件" id="btn_file">
+<script src="../js/vendor/jquery-3.6.0.min.js"></script>
+<script>
+    $.ajax({
+        url: 'http://localhost:8021/default/upload',//接口地址
+        type: 'post',//请求方式
+        data: $("#file").val(), //传输的数据
+        processData : false,
+        contentType : false,
+        success : function(data){
+            if (data=="error") {
+                alert("文件提交失败!");
+            }else{
+                $("input[name='userUrl']").val(data);
+                alert("文件上传成功!");
+            }}
+    })
+
+
+</script>
+
+
+</body>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: function () {
+            return {visible: false}
+        }
+    });
+    new Vue({
+        el: '#app1',
+        methods: {
+            open() {
+                this.$message('这是一条消息提示');
+            }
+        }
+
+    })
+</script>
+</html>
