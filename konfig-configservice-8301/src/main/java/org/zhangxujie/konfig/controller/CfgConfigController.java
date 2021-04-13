@@ -61,13 +61,14 @@ public class CfgConfigController {
     }
 
     //TODO:再req中获取到config collection的名称，以及实现一个通过token查询用户名的通用功能
-    public CommonResult<GetCfgConfigResp> update(@RequestBody UpdateConfigReq req, @RequestParam("token") String token) {
-
-        //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
-        int collectionId = cfgCollectionService.setToDraft(req.getCollectionId());
-
-        cfgConfigService.update();
-
-
-
-    }
+//    public CommonResult<GetCfgConfigResp> update(@RequestBody UpdateConfigReq req, @RequestParam("token") String token) {
+//
+//        //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
+//        int collectionId = cfgCollectionService.setToDraft(req.getCollectionId());
+//
+//        cfgConfigService.update();
+//
+//
+//
+//    }
+}

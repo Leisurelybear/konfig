@@ -25,9 +25,11 @@ public class CfgConfigServiceImpl implements CfgConfigService {
     public List<CfgConfig> query(List<Integer> collectionIds, String nameLike, String keyLike, Integer sort) {
 
         List<CfgConfig> res;
+        nameLike = "%" + nameLike + "%";
+        keyLike = "%" + keyLike + "%";
 
         //如果不通过collectionId查询
-        if (collectionIds == null || collectionIds.size() == 0){
+        if (collectionIds == null || collectionIds.size() == 0) {
             CfgConfigExample example = new CfgConfigExample();
             example.createCriteria().andIsDelEqualTo(0).andCfgNameLike(nameLike).andCfgKeyLike(keyLike);
             example.setOrderByClause("id");
@@ -44,9 +46,9 @@ public class CfgConfigServiceImpl implements CfgConfigService {
                 .andCfgKeyLike(keyLike);
 
 
-        if (sort >= 0){
+        if (sort >= 0) {
             example2.setOrderByClause("id ASC");
-        }else {
+        } else {
             example2.setOrderByClause("id DESC");
         }
         res = cfgConfigMapper.selectByExampleWithBLOBs(example2);
