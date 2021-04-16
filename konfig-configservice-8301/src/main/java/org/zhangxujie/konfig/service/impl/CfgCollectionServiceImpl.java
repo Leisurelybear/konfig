@@ -11,6 +11,7 @@ import org.zhangxujie.konfig.mapper.CfgCollectionMapper;
 import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgCollectionExample;
 import org.zhangxujie.konfig.service.CfgCollectionService;
+import org.zhangxujie.konfig.util.TimeUtil;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -100,8 +101,10 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
                 //生成草稿版本
                 CfgCollection cfgCollection = cfgCollectionList.get(0);
 
-                cfgCollection.setCollectionId(null);
-                cfgCollection.setIsDraft(null);
+                cfgCollection.setId(null);
+                cfgCollection.setIsDraft(1);
+                cfgCollection.setUpdateUsername(username);
+                cfgCollection.setUpdateTime(TimeUtil.getNowTimestamp());
 
                 cfgCollectionMapper.insert(cfgCollection);
 
@@ -116,8 +119,8 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
         if (cfgCollectionList == null || cfgCollectionList.size() == 0) {
             CfgCollection cfgCollection = new CfgCollection();
             cfgCollection.setcName(cName == null ? "未命名" : cName);
-            cfgCollection.setCreateTime(System.currentTimeMillis());
-            cfgCollection.setUpdateTime(System.currentTimeMillis());
+            cfgCollection.setCreateTime(TimeUtil.getNowTimestamp());
+            cfgCollection.setUpdateTime(TimeUtil.getNowTimestamp());
             cfgCollection.setUpdateUsername(username);
             cfgCollection.setCreateUsername(username);
             cfgCollection.setIsDel(0);

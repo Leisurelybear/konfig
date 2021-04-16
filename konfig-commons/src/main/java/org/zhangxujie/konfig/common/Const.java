@@ -4,7 +4,7 @@
  * Date:     2021/4/5 20:37
  * Description:
  */
-package org.zhangxujie.konfig.api;
+package org.zhangxujie.konfig.common;
 
 public class Const {
 

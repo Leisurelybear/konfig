@@ -1,4 +1,4 @@
-package org.zhangxujie.konfig.api;
+package org.zhangxujie.konfig.common;
 
 public interface LogUtil<T, V> {
 

@@ -10,7 +10,7 @@ import cn.hutool.json.JSONUtil;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import org.zhangxujie.konfig.api.CommonResult;
+import org.zhangxujie.konfig.common.CommonResult;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

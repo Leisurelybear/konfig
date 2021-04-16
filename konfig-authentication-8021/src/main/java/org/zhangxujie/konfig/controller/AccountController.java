@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.zhangxujie.konfig.api.CommonResult;
+import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.UserInfo;

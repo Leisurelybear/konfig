@@ -35,7 +35,7 @@ function loadCollections() {
 
     $.ajax({
 
-        url: 'http://localhost:8301/cfg_coll/list/' + username,//接口地址
+        url: 'http://localhost:8301/cfg_coll/list?token='+$.cookie("token"),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(queryParam), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型

@@ -9,7 +9,7 @@ package org.zhangxujie.konfig.controller;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.zhangxujie.konfig.api.CommonResult;
+import org.zhangxujie.konfig.common.CommonResult;
 
 @RestController
 @RequestMapping("/default")

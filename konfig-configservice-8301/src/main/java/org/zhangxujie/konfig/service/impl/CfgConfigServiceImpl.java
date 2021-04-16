@@ -56,4 +56,59 @@ public class CfgConfigServiceImpl implements CfgConfigService {
 
         return res;
     }
+
+    @Override
+    public boolean update(Integer collectionIdOld, Integer collectionIdNew, Integer configId, String cfgName, String cfgKey, String cfgValue, String username) {
+        //如果当前修改的是线上的，则取线下拷贝一份
+        if (collectionIdNew == collectionIdOld) {
+            //当前修改草稿版本
+            //先选择出原始数据
+            CfgConfigExample example1 = new CfgConfigExample();
+            example1.createCriteria().andIdEqualTo(configId);
+            CfgConfig oldConfig = cfgConfigMapper.selectByExampleWithBLOBs(example1).get(0);
+
+            //设为删除
+            oldConfig.setIsDel(1);
+            oldConfig.setUpdateTime(System.currentTimeMillis());
+
+
+            //更新删除的数据
+            cfgConfigMapper.updateByPrimaryKeyWithBLOBs(oldConfig);
+
+            //创建一个引用，把该更改的地方更改一下再插入表
+            CfgConfig newConfig = oldConfig;
+            newConfig.setId(null);
+            newConfig.setIsDel(0);
+            newConfig.setCfgName(cfgName);
+            newConfig.setCollectionId(collectionIdNew);
+            newConfig.setCfgKey(cfgKey);
+            newConfig.setCfgValue(cfgValue);
+            newConfig.setUpdateUsername(username);
+            newConfig.setUpdateTime(System.currentTimeMillis());
+            cfgConfigMapper.insert(newConfig);
+        } else {
+            //当前修改线上版本，所以要拷贝一份到新的collection
+
+            //先完整拷贝一份
+            CfgConfigExample example = new CfgConfigExample();
+            example.createCriteria().andCollectionIdEqualTo(collectionIdOld).andIsDelEqualTo(0);
+            List<CfgConfig> oldCfgConfigs =  cfgConfigMapper.selectByExampleWithBLOBs(example);
+            oldCfgConfigs.forEach(c -> {
+                if (c.getId() == configId){
+                    //是修改的配置，修改
+                    c.setCfgName(cfgName);
+                    c.setCfgKey(cfgKey);
+                    c.setCfgValue(cfgValue);
+                }
+                c.setId(null);
+                c.setCollectionId(collectionIdNew);
+                c.setIsDraft(1);
+                cfgConfigMapper.insert(c);
+            });
+        }//else
+
+
+
+        return true;
+    }
 }

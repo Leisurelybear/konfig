@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.zhangxujie.konfig.api.CommonResult;
+import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.dto.GetPermResp;
 import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.Permission;

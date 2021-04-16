@@ -45,13 +45,26 @@ function save_config(collectionId, configId) {
     $.ajax({
         url: 'http://localhost:8301/config/update?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
-        data: JSON.stringify(queryParam), //传输的数据
+        data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
             Notiflix.Notify.Failure("获取配置信息错误。")
         },
-        statusCode: {}
+        statusCode: {
+            200: function (data) {
+                if (data["data"]['collectionId'] != data.collectionId){
+                    //说明新建草稿，则跳转到新页面
+                    Notiflix.Notify.Info("正在跳转到新创建的草稿版本...")
+                    window.location.href = "config_list.html?cid=" + data["data"]['collectionId']
+                }else {
+                    //否则直接刷新配置列表即可
+                    list_configs(collectionId)
+                    document.getElementsByClassName("modal-backdrop")[0].remove("modal-backdrop")
+                }
+
+            }
+        }
     })
 }
 
@@ -135,7 +148,7 @@ function list_configs(collectionId) {
                         "                                        </form>" +
                         "                                        <div class='modal-footer'>" +
                         "                                            <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>" +
-                        "                                            <button type='button'  class='btn btn-primary' onclick='save_config(" + collectionId + ", " + val['id'] + ")'>Save changes</button>" +
+                        "                                            <button type='button'  class='btn btn-primary' data-dismiss='modal' onmouseup='save_config(" + collectionId + ", " + val['id'] + ")'>Save changes</button>" +
                         "                                        </div>" +
                         "" +
                         "                                        </div>" +

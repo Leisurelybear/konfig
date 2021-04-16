@@ -4,7 +4,7 @@
  * Date:     2021/1/6 21:53
  * Description:
  */
-package org.zhangxujie.konfig.api;
+package org.zhangxujie.konfig.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
