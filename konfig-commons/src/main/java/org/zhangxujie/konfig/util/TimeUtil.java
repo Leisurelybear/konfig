@@ -8,6 +8,6 @@ package org.zhangxujie.konfig.util;
 
 public class TimeUtil {
     public static long getNowTimestamp(){
-        return System.currentTimeMillis()/100;
+        return System.currentTimeMillis()/1000;
     }
 }

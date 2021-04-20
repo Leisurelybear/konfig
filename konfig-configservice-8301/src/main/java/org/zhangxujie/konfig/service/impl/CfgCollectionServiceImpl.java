@@ -7,6 +7,8 @@
 package org.zhangxujie.konfig.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.zhangxujie.konfig.dto.AddCollectionReq;
+import org.zhangxujie.konfig.dto.AddCollectionResp;
 import org.zhangxujie.konfig.mapper.CfgCollectionMapper;
 import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgCollectionExample;
@@ -136,5 +138,42 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
 
 
         return draft_id;
+    }
+
+    @Override
+    public AddCollectionResp add(AddCollectionReq req, String username) {
+
+        CfgCollectionExample example = new CfgCollectionExample();
+        example.createCriteria().andIsDelEqualTo(0).andCNameEqualTo(req.getCollectionName());
+
+        long cnt = cfgCollectionMapper.countByExample(example);
+
+        if (cnt > 0){
+            return new AddCollectionResp(-1);
+        }
+
+        CfgCollection cfgCollection = new CfgCollection();
+        cfgCollection.setIsDraft(1);
+        cfgCollection.setUpdateTime(TimeUtil.getNowTimestamp());
+        cfgCollection.setUpdateUsername(username);
+        cfgCollection.setIsDel(0);
+        cfgCollection.setCreateUsername(username);
+        cfgCollection.setCreateTime(TimeUtil.getNowTimestamp());
+        cfgCollection.setcName(req.getCollectionName());
+
+        cfgCollectionMapper.insert(cfgCollection);
+        cfgCollection.setCollectionId(cfgCollection.getId());//把原始主键ID更新到当前条目中
+        cfgCollectionMapper.updateByPrimaryKey(cfgCollection);
+
+        return new AddCollectionResp(cfgCollection.getId());
+    }
+
+    @Override
+    public CfgCollection queryById(Integer id) {
+        if (id <= 0){
+            return null;
+        }
+
+        return cfgCollectionMapper.selectByPrimaryKey(id);
     }
 }

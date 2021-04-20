@@ -1,6 +1,8 @@
-function configure_header(url, headername){
+function configure_header(url, headername) {
 
 }
+
+
 $(function () {
 
     var current_page = $("#menu > li > ul > li > a[href='configcollection.html']");
@@ -20,22 +22,39 @@ $(function () {
     //加载配置集合
     loadCollections()
 
+    bind_btn_collection_add()
 
 });
+
+function bind_btn_collection_add() {
+    $("#btn_collection_add").click(function () {
+        layer.open({
+            type: 2,
+            skin: 'layui-layer-lan',
+            title: '添加配置集',
+            fix: false,
+            shadeClose: true,
+            maxmin: true,
+            area: ['400px', '400px'],
+            content: 'assets/html/add_collection_detail.html',
+
+        });
+    })
+}
 
 function loadCollections() {
     $("#cfg_collections_container").empty();
     username = "root";
     queryParam = {
         "nameLike": "",
-        "sort": 1,
+        "sort": -1,
         "pageNum": 0,
         "nums": 10
     };
 
     $.ajax({
 
-        url: 'http://localhost:8301/cfg_coll/list?token='+$.cookie("token"),//接口地址
+        url: 'http://localhost:8301/cfg_coll/list?token=' + $.cookie("token"),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(queryParam), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -47,12 +66,13 @@ function loadCollections() {
             200: function (data) {
                 $(data['data']).each(function (i, val) {
 
-                    str = "<div class=\"col-lg-4 col-md-6 mt-5\">\n" +
-                        "      <div class=\"card card-bordered\">\n" +
-                        "          <div class=\"card-body\">\n" +
-                        "            <h5 class=\"title\">" + val.cName + "</h5>\n" +
-                        "            <p class=\"card-text\">" + (val.isDraft === 1 ? "<b class='badge badge-pill badge-secondary'>草稿版本</b>" : "<b class='badge badge-pill badge-success'>线上版本</b>")+" | <b>修改时间：</b>"+new Date(parseInt(val.updateTime) * 1000).toLocaleString().replace(/:\d{1,2}$/,' ')+"</p>\n" +
-                        "            <a href='config_list.html?cid=" + val.id + "' id=\"btn_c_" + val.id + "\" class=\"btn btn-primary\" >配置</a>\n" +
+                    str = "<div class='col-lg-4 col-md-6 mt-5'>" +
+                        "      <div class='card card-bordered'>" +
+                        "          <div class='card-body'>" +
+                        "            <h4 class='title'>" + val.cName + "</h4>\n" +
+                        "            <p class='card-text'>" + (val.isDraft === 1 ? "<b class='badge badge-pill badge-secondary'>草稿版本</b>" : "<b class='badge badge-pill badge-success'>线上版本</b>") + " | <b>修改时间：</b>" + new Date(parseInt(val.updateTime) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ') + "</p>\n" +
+                        "            <a href='config_list.html?cid=" + val.id + "' id='btn_c_" + val.id + "' class='btn btn-primary' >配置</a>" +
+                        "            <input class='btn btn-danger' onclick='alert(\"后端删除该数据[" + val.id + "]，然后刷新页面\")' type='button' value='删除'>" +
                         "          </div>\n" +
                         "       </div>\n" +
                         "  </div>";
@@ -68,6 +88,36 @@ function loadCollections() {
 
 }
 
+//添加集合
+function add_collection(collectionName) {
+    window.parent.layer.closeAll()
+    data = {
+        "collectionName": collectionName
+    };
+
+    $.ajax({
+
+        url: 'http://localhost:8301/cfg_coll/add/' + collectionName + '?token=' + $.cookie("token"),//接口地址
+        type: 'post',//请求方式
+        data: JSON.stringify(data), //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("获取配置信息错误。")
+        },
+        statusCode: {
+            200: function (data) {
+                Notiflix.Notify.Success("正在跳转创建好的配置集")
+
+                if (data["code"] == 200) {
+                    window.parent.location = "http://localhost:63342/konfig/liteconfig-web-ui/config_list.html?cid=" + data["data"]["id"]
+                }
+            }
+        }
+    })
+
+
+}
 
 $('#btn_c_1').click(function () {
     layer.open({

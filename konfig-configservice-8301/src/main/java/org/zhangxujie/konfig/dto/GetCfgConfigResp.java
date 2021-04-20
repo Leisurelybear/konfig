@@ -21,4 +21,7 @@ public class GetCfgConfigResp {
 
     //配置列表
     private List<CfgConfig> confs;
+
+    //所在配置集的名字
+    private String collectionName;
 }

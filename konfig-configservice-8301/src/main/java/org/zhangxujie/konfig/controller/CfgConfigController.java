@@ -14,6 +14,7 @@ import org.zhangxujie.konfig.dto.GetCfgConfigReq;
 import org.zhangxujie.konfig.dto.GetCfgConfigResp;
 import org.zhangxujie.konfig.dto.UpdateConfigReq;
 import org.zhangxujie.konfig.dto.UpdateConfigResp;
+import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgConfig;
 import org.zhangxujie.konfig.service.CfgCollectionService;
 import org.zhangxujie.konfig.service.CfgConfigService;
@@ -49,6 +50,9 @@ public class CfgConfigController {
         GetCfgConfigResp resp = new GetCfgConfigResp();
         resp.setConfs(confs);
         resp.setNum(confs.size());
+
+        CfgCollection cfgCollection = cfgCollectionService.queryById(req.getCollectionIds().get(0));
+        resp.setCollectionName(cfgCollection.getcName());
 
         return CommonResult.success(resp);
 

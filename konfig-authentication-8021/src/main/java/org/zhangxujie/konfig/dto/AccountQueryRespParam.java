@@ -12,18 +12,24 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 public class AccountQueryRespParam {
 
-    @ApiModelProperty(value = "id",required = true)
-    private Integer id;
+    //当前页数
+    private Integer pageNum;
 
-    @ApiModelProperty(value = "用户名",required = true)
-    private String username;
+    //每页数据数
+    private Integer pageSize;
 
-    @ApiModelProperty(value = "邮箱",required = true)
-    private String email;
+    //总共数据数
+    private Integer count;
+
+    //当前用户列表
+    private List<AccountItem> userList;
 
 }
+

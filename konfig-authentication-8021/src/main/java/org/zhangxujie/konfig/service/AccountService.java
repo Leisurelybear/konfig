@@ -7,6 +7,7 @@
 package org.zhangxujie.konfig.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.zhangxujie.konfig.dto.AccountItem;
 import org.zhangxujie.konfig.dto.AccountQueryRespParam;
 import org.zhangxujie.konfig.dto.AccountRegisterParam;
 import org.zhangxujie.konfig.model.Account;
@@ -23,5 +24,8 @@ public interface AccountService {
 
     public UserDetails loadUserByUsername(String username);
 
-    List<AccountQueryRespParam> queryall(String usernameLike, String emailLike, Integer pageNumber, Integer pageSize, Integer sort);
+    List<AccountItem> queryall(String usernameLike, String emailLike, Integer pageNumber, Integer pageSize, Integer sort);
+
+    //查看总人数
+    Integer countAll();
 }

@@ -15,13 +15,21 @@ $(function () {
     $("#title_name").append("<li><a href='configcollection.html'>全部配置集</a></li>")
     $("#title_name").append("<li><span>详情</span></li>")
 
+    //取url中的集合cid
     var cid = window.location.search.substr(1).match("(^|&)cid=([^&]*)(&|$)");
     console.log(cid);
     if (cid === null || cid.length < 3 || cid[2] === ""
     ) {
         return
     }
-    list_configs(cid[2])
+
+    //展示当前cid的集合配置列表
+    list_configs(cid[2]);
+
+    //添加配置
+    $("#btn_config_add").click(function () {
+        alert("添加配置在集合[" + cid[2] + "]")
+    })
 
 });
 
@@ -53,11 +61,18 @@ function save_config(collectionId, configId) {
         },
         statusCode: {
             200: function (data) {
-                if (data["data"]['collectionId'] != data.collectionId){
+
+                if (data['code'] != 200) {
+                    Notiflix.Notify.Failure("查询配置列表失败： " + data["'message"])
+
+                    return
+                }
+
+                if (data["data"]['collectionId'] != data.collectionId) {
                     //说明新建草稿，则跳转到新页面
                     Notiflix.Notify.Info("正在跳转到新创建的草稿版本...")
                     window.location.href = "config_list.html?cid=" + data["data"]['collectionId']
-                }else {
+                } else {
                     //否则直接刷新配置列表即可
                     list_configs(collectionId)
                     document.getElementsByClassName("modal-backdrop")[0].remove("modal-backdrop")
@@ -88,6 +103,9 @@ function list_configs(collectionId) {
         },
         statusCode: {
             200: function (data) {
+
+                $("#btn_config_collection_name").html(data["data"]["collectionName"])
+
                 $("#config_list").empty();
                 console.log(data["data"]["confs"]);
                 var cfglistitem = "";

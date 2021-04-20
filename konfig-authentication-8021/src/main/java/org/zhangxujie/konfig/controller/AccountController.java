@@ -18,6 +18,7 @@ import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.UserInfo;
 import org.zhangxujie.konfig.service.AccountService;
 import org.zhangxujie.konfig.service.UserInfoService;
+import org.zhangxujie.konfig.util.TokenUtil;
 
 import javax.annotation.Resource;
 import java.security.Principal;
@@ -95,10 +96,24 @@ public class AccountController {
     }
 
     @ApiOperation(value = "获取用户列表")
-    @GetMapping(value = "queryall")
-    @PreAuthorize("hasAnyAuthority('root', 'user:edit', 'user:read')")
-    public CommonResult queryall(@RequestBody AccountQueryReqParam reqParam) {
-        List<AccountQueryRespParam> resp = accountService.queryall(reqParam.getUsernameLike(), reqParam.getEmailLike(), reqParam.getPageNumber(), reqParam.getPageSize(), reqParam.getSort());
+    @PostMapping(value = "queryall")
+    public CommonResult queryall(@RequestBody AccountQueryReqParam reqParam, @RequestParam("token") String token) {
+
+        if (!TokenUtil.validateToken(token)){
+            return CommonResult.unauthorized("Token失效，请重新登录！");
+        }
+        if (reqParam.getPageNumber() <= 0){
+            reqParam.setPageNumber(1);
+        }
+        if (reqParam.getPageSize() <= 0){
+            reqParam.setPageSize(10);
+        }
+
+
+        Integer count = accountService.countAll();
+        List<AccountItem> userList = accountService.queryall(reqParam.getUsernameLike(), reqParam.getEmailLike(), reqParam.getPageNumber(), reqParam.getPageSize(), reqParam.getSort());
+
+        AccountQueryRespParam resp = new AccountQueryRespParam(reqParam.getPageNumber(), reqParam.getPageSize(), count, userList);
 
         return CommonResult.success(resp);
     }

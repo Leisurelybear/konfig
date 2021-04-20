@@ -99,7 +99,7 @@ public interface CfgCollectionMapper {
             "update_time, create_time",
             "from cfg_config_collection",
             "where is_del=0 and c_name like concat('%',#{nameLike,javaType=STRING},'%')",
-            "order by id limit #{pageNum,javaType=INTEGER}, #{nums,javaType=INTEGER}"
+            "order by update_time limit #{pageNum,javaType=INTEGER}, #{nums,javaType=INTEGER}"
     })
     @Results({
             @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
@@ -120,7 +120,7 @@ public interface CfgCollectionMapper {
             "update_time, create_time",
             "from cfg_config_collection",
             "where is_del=0 and c_name like concat('%',#{nameLike,javaType=STRING},'%')",
-            "order by id desc limit #{pageNum,javaType=INTEGER}, #{nums,javaType=INTEGER}",
+            "order by update_time desc limit #{pageNum,javaType=INTEGER}, #{nums,javaType=INTEGER}",
     })
     @Results({
             @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),

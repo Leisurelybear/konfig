@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.zhangxujie.konfig.dto.AccountItem;
 import org.zhangxujie.konfig.dto.AccountQueryRespParam;
 import org.zhangxujie.konfig.dto.AccountRegisterParam;
 import org.zhangxujie.konfig.dto.AdminUserDetails;
@@ -86,19 +87,19 @@ public class AccountServiceImpl implements AccountService {
         //插入用户表完毕
 
         //插入用户信息表
-        Account account2 = accountDao.selectOneByUsername(account.getUsername());
+//        Account account2 = accountDao.selectOneByUsername(account.getUsername());
         UserInfo userInfo = new UserInfo();
-        userInfo.setAccountId(account2.getId());
+        userInfo.setAccountId(account.getId());
         userInfo.setIsDel(0);
         userInfo.setUpdateTime(System.currentTimeMillis());
-        userInfo.setNickname(account2.getUsername());
+        userInfo.setNickname(account.getUsername());
         userInfo.setLastAccessedTime(System.currentTimeMillis());
         userInfoDao.insert(userInfo);
 
         Permission permission = new Permission();
         permission.setIdentityType("USER");
-        permission.setIdentityId(account2.getId());
-        permission.setPermission("cfg:read");
+        permission.setIdentityId(account.getId());
+        permission.setPermission("cfg");
         permission.setIsDel(0);
         permission.setTime(System.currentTimeMillis());
         permissionDao.insert(permission);
@@ -158,26 +159,48 @@ public class AccountServiceImpl implements AccountService {
         throw new UsernameNotFoundException("用户名或密码错误");
     }
 
-    @Override
-    public List<AccountQueryRespParam> queryall(String usernameLike, String emailLike, Integer pageNumber, Integer pageSize, Integer sort) {
+    @Override //通过条件查询出account列表
+    public List<AccountItem> queryall(String usernameLike, String emailLike, Integer pageNumber, Integer pageSize, Integer sort) {
 
 
         List<Account> accountList = null;
-        if (sort >= 0){
-            accountList = accountDao.queryAll(usernameLike, emailLike, pageNumber, pageSize);
-        }else {
-            accountList = accountDao.queryAllDesc(usernameLike, emailLike, pageNumber, pageSize);
+
+        AccountExample example = new AccountExample();
+
+        if (sort >= 0) {//正序
+            example.setOrderByClause(String.format("id limit %d, %d", (pageNumber - 1) * pageSize, pageSize));
+//            accountList = accountDao.queryAll(usernameLike, emailLike, pageNumber, pageSize);
+        } else {//倒叙
+            example.setOrderByClause(String.format("id desc limit %d, %d", (pageNumber - 1) * pageSize, pageSize));
+//            accountList = accountDao.queryAllDesc(usernameLike, emailLike, pageNumber, pageSize);
+        }
+        example.createCriteria()
+                .andIsDelEqualTo(0)
+                .andUsernameLike("%" + usernameLike + "%")
+                .andEmailLike("%" + emailLike + "%");
+
+
+        List<AccountItem> accountItems = new ArrayList<>();
+
+        List<Account> accounts = accountDao.selectByExample(example);
+
+        if (accounts != null){
+            accounts.forEach(c -> {
+                accountItems.add(new AccountItem(c.getId(), c.getUsername(), c.getEmail()));
+            });
         }
 
+        return accountItems;
 
-        List<AccountQueryRespParam> respParamList = new ArrayList<>();
+    }
 
-        accountList.forEach(c -> {
+    @Override
+    public Integer countAll() {
+        AccountExample example = new AccountExample();
+        //未被删除
+        example.createCriteria().andIsDelEqualTo(0);
+        Integer count = (int)accountDao.countByExample(example);
 
-            respParamList.add(new AccountQueryRespParam(c.getId(), c.getUsername(), c.getEmail()));
-        });
-
-        return respParamList;
-
+        return count;
     }
 }
