@@ -10,10 +10,7 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
-import org.zhangxujie.konfig.dto.GetCfgConfigReq;
-import org.zhangxujie.konfig.dto.GetCfgConfigResp;
-import org.zhangxujie.konfig.dto.UpdateConfigReq;
-import org.zhangxujie.konfig.dto.UpdateConfigResp;
+import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgConfig;
 import org.zhangxujie.konfig.service.CfgCollectionService;
@@ -58,7 +55,7 @@ public class CfgConfigController {
 
     }
 
-    //TODO:再req中获取到config collection的名称，以及实现一个通过token查询用户名的通用功能
+    //
     @PostMapping("/update")
     public CommonResult<UpdateConfigResp> update(@RequestBody UpdateConfigReq req, @RequestParam("token") String token) {
         log.info("Token: " + token);
@@ -66,11 +63,42 @@ public class CfgConfigController {
             return CommonResult.failed("Token失效，请重新登录！");
         }
         //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
-        int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), req.getCfgName(), req.getUsername());
-
+        int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
         boolean done = cfgConfigService.update(req.getCollectionId(), collectionId, req.getId(), req.getCfgName(), req.getCfgKey(), req.getCfgValue(), req.getUsername());
 
-
         return CommonResult.success(new UpdateConfigResp(collectionId));
+    }
+
+    @PostMapping("/create")
+    public CommonResult<CfgConfig> add(@RequestBody AddConfigReq req, @RequestParam("token") String token) {
+        log.info("Token: " + token);
+        if (!TokenUtil.validateToken(token)){
+            return CommonResult.failed("Token失效，请重新登录！");
+        }
+        //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
+        int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
+        CfgConfig cfgConfig = cfgConfigService.add(req.getCollectionId(), collectionId, req.getConfigName(), req.getConfigKey(), req.getConfigValue(), TokenUtil.getUsernameFromToken(token));
+
+        return CommonResult.success(cfgConfig);
+    }
+
+    @DeleteMapping("/delete")
+    public CommonResult<CfgConfig> delete(@RequestBody DeleteConfigReq req, @RequestParam("token") String token) {
+        log.info("Token: " + token);
+        if (!TokenUtil.validateToken(token)){
+            return CommonResult.failed("Token失效，请重新登录！");
+        }
+
+        //查看是否为线上，如果线上，则不能删除
+        boolean isOnline = cfgCollectionService.isOnline(req.getCollectionId());
+        if (isOnline){
+            return CommonResult.failed("当前为线上版本，不能删除！");
+        }
+
+        int status = cfgConfigService.delete(req.getConfigId(), TokenUtil.getUsernameFromToken(token));
+        if (status <= 0){
+            return CommonResult.failed("删除失败");
+        }
+        return CommonResult.success(null);
     }
 }

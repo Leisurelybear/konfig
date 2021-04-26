@@ -35,5 +35,4 @@ public class UpdateConfigReq {
     //配置值value
     private String cfgValue;
 
-
 }

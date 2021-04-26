@@ -28,10 +28,78 @@ $(function () {
 
     //添加配置
     $("#btn_config_add").click(function () {
-        alert("添加配置在集合[" + cid[2] + "]")
+        let configName = $("#config_name").val();
+        let configKey = $("#config_key").val();
+        let configValue = $("#config_value").val();
+        add_config(configName, configKey, configValue, cid[2])
     })
 
 });
+
+function add_config(configName, key, value, collectionId) {
+    console.log(configName, key, value)
+
+    data = {
+        'configName': configName,
+        'configKey': key,
+        'configValue': value,
+        'collectionId': collectionId,
+    };
+
+    $.ajax({
+        url: 'http://localhost:8301/config/create?token=' + $.cookie('token'),//接口地址
+        type: 'post',//请求方式
+        data: JSON.stringify(data), //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误：添加配置失败。")
+        },
+        statusCode: {
+            200: function (data) {
+                if (data['code'] != 200) {
+                    Notiflix.Notify.Failure("添加配置失败： " + data["'message"])
+                    return
+                }
+                Notiflix.Notify.Success("添加成功！请下拉至底部 ")
+                list_configs(collectionId)
+            }
+        }
+    })
+
+}
+
+//删除配置
+function delete_cfg(collectionId, configId) {
+    data = {
+        'collectionId': collectionId,
+        'configId': configId,
+    };
+
+    console.log(data)
+
+    $.ajax({
+        url: 'http://localhost:8301/config/delete?token=' + $.cookie('token'),//接口地址
+        type: 'delete',//请求方式
+        data: JSON.stringify(data), //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误。")
+        },
+        statusCode: {
+            200: function (data) {
+                if (data['code'] != 200) {
+                    Notiflix.Notify.Failure("删除失败： " + data["'message"])
+                    return
+                }
+
+                Notiflix.Notify.Info("删除成功！")
+                list_configs(collectionId)
+            }
+        }
+    })
+}
 
 function save_config(collectionId, configId) {
 
@@ -57,7 +125,7 @@ function save_config(collectionId, configId) {
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
-            Notiflix.Notify.Failure("获取配置信息错误。")
+            Notiflix.Notify.Failure("网络错误。")
         },
         statusCode: {
             200: function (data) {
@@ -99,7 +167,7 @@ function list_configs(collectionId) {
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
-            Notiflix.Notify.Failure("获取配置信息错误。")
+            Notiflix.Notify.Failure("网络错误：获取配置信息错误。")
         },
         statusCode: {
             200: function (data) {
@@ -123,6 +191,7 @@ function list_configs(collectionId) {
                         "                            <button type='button' class='btn btn-primary btn-flat btn-lg' data-toggle='modal'" +
                         "                                    data-target='.fm-data-" + val['id'] + "'>修改" +
                         "                            </button>" +
+                        "                            <button type='button' onclick='delete_cfg( " + val["collectionId"] + " , " + val['id'] + ")' class='btn btn-danger btn-flat btn-lg'>删除</button>" +
                         "" +
                         "" +
                         "                            <div class='modal fade fm-data-" + val['id'] + "'>" +

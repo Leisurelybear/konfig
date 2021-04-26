@@ -50,52 +50,41 @@
                 配置集名：<span class="text-primary" id="btn_config_collection_name"></span>
             </div>
             <div class="card-header">
-                <button class="btn btn-info" id="btn_config_add">添加配置</button>
+
+
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#config_add_form">添加配置</button>
+<!--               弹出添加配置 -->
+                <div class="modal fade" id="config_add_form" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Modal title</h5>
+                                <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="config_name">配置名</label>
+                                <input type="text" class="form-control" id="config_name" placeholder="输入配置名">
+
+                                <label for="config_key">Key</label>
+                                <input type="text" class="form-control" id="config_key" placeholder="输入配置Key">
+
+                                <label for="config_value">Value</label>
+                                <textarea class='form-control' cols='20' id="config_value" name='config_value' placeholder='输入配置值' required=''></textarea>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary"  data-dismiss="modal" id="btn_config_add">添加配置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
 
 
             <div class="row" id="config_list">
-
-                <!-- Large modal start -->
-<!--                <div class="col-lg-6 mt-5">-->
-<!--                    <div class="card">-->
-<!--                        <div class="card-body">-->
-<!--                            <h4 class="header-title">Large modal</h4>-->
-<!--                            <p>Modals have two optional sizes, available via modifier classes to be placed on a <code>.modal-dialog</code>-->
-<!--                                These sizes kick in at certain breakpoints to avoid horizontal scrollbars on narrower-->
-<!--                                viewports.</p>-->
-<!--                            &lt;!&ndash; Large modal &ndash;&gt;-->
-<!--                            <button type="button" class="btn btn-primary btn-flat btn-lg" data-toggle="modal"-->
-<!--                                    data-target=".bd-example-modal-lg">Large modal-->
-<!--                            </button>-->
-<!--                            <div class="modal fade bd-example-modal-lg">-->
-<!--                                <div class="modal-dialog modal-lg">-->
-<!--                                    <div class="modal-content">-->
-<!--                                        <div class="modal-header">-->
-<!--                                            <h5 class="modal-title">Modal title</h5>-->
-<!--                                            <button type="button" class="close" data-dismiss="modal">-->
-<!--                                                <span>&times;</span></button>-->
-<!--                                        </div>-->
-<!--                                        <div class="modal-body">-->
-<!--                                            <p> Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius voluptates-->
-<!--                                                explicabo natus nobis, aperiam placeat aliquid nisi ut exercitationem-->
-<!--                                                dolor quisquam nam tempora voluptatem. Unde dignissimos est aliquid-->
-<!--                                                quidem porro dolorum ipsam suscipit animi quas, debitis ea, sunt quo-->
-<!--                                                distinctio doloribus eveniet dolores tempore delectus voluptatum!-->
-<!--                                                Possimus earum asperiores animi.</p>-->
-<!--                                        </div>-->
-<!--                                        <div class="modal-footer">-->
-<!--                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close-->
-<!--                                            </button>-->
-<!--                                            <button type="button" class="btn btn-primary">Save changes</button>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-                <!-- Large modal modal end -->
 
             </div>
         </div>
@@ -303,6 +292,7 @@
 <!-- others plugins -->
 <script src="assets/js/plugins.js"></script>
 <script src="assets/js/scripts.js"></script>
+<script src="assets/js/vendor/layer.js"></script>
 
 <!--侧边栏JS-->
 <script src="assets/js/common/sidebar.js"></script>

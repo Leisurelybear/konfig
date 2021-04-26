@@ -11,6 +11,7 @@ import org.zhangxujie.konfig.mapper.CfgConfigMapper;
 import org.zhangxujie.konfig.model.CfgConfig;
 import org.zhangxujie.konfig.model.CfgConfigExample;
 import org.zhangxujie.konfig.service.CfgConfigService;
+import org.zhangxujie.konfig.util.TimeUtil;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -37,7 +38,6 @@ public class CfgConfigServiceImpl implements CfgConfigService {
             return res;
         }
 
-        //TODO:查不到value值，可能是数据库数据类型原因，还有去过取消下面注释，查不到数据
         CfgConfigExample example2 = new CfgConfigExample();
         example2.createCriteria()
                 .andCollectionIdIn(collectionIds)
@@ -69,8 +69,7 @@ public class CfgConfigServiceImpl implements CfgConfigService {
 
             //设为删除
             oldConfig.setIsDel(1);
-            oldConfig.setUpdateTime(System.currentTimeMillis());
-
+            oldConfig.setUpdateTime(TimeUtil.getNowTimestamp());
 
             //更新删除的数据
             cfgConfigMapper.updateByPrimaryKeyWithBLOBs(oldConfig);
@@ -84,7 +83,7 @@ public class CfgConfigServiceImpl implements CfgConfigService {
             newConfig.setCfgKey(cfgKey);
             newConfig.setCfgValue(cfgValue);
             newConfig.setUpdateUsername(username);
-            newConfig.setUpdateTime(System.currentTimeMillis());
+            newConfig.setUpdateTime(TimeUtil.getNowTimestamp());
             cfgConfigMapper.insert(newConfig);
         } else {
             //当前修改线上版本，所以要拷贝一份到新的collection
@@ -110,5 +109,71 @@ public class CfgConfigServiceImpl implements CfgConfigService {
 
 
         return true;
+    }
+
+    @Override
+    public CfgConfig add(Integer collectionIdOld, Integer collectionIdNew, String cfgName, String cfgKey, String cfgValue, String username) {
+        //如果当前修改的是线上的，则取线下拷贝一份
+        if (collectionIdNew == collectionIdOld) {
+            //当前修改草稿版本
+
+            //创建一个配置，加入数据库
+            CfgConfig newConfig = new CfgConfig();
+            newConfig.setIsDel(0);
+            newConfig.setCollectionId(collectionIdNew);
+            newConfig.setCfgName(cfgName);
+            newConfig.setCfgKey(cfgKey);
+            newConfig.setCfgValue(cfgValue);
+            newConfig.setIsDraft(1);
+            newConfig.setCreateUsername(username);
+            newConfig.setCreateTime(TimeUtil.getNowTimestamp());
+            newConfig.setUpdateUsername(username);
+            newConfig.setUpdateTime(TimeUtil.getNowTimestamp());
+            cfgConfigMapper.insert(newConfig);
+            return newConfig;
+        } else {
+            //当前修改线上版本，所以要拷贝一份到新的collection为草稿版本
+
+            //先完整拷贝一份
+            CfgConfigExample example = new CfgConfigExample();
+            example.createCriteria().andCollectionIdEqualTo(collectionIdOld).andIsDelEqualTo(0);
+            List<CfgConfig> oldCfgConfigs =  cfgConfigMapper.selectByExampleWithBLOBs(example);
+            oldCfgConfigs.forEach(c -> {
+                c.setId(null);
+                c.setCollectionId(collectionIdNew);
+                c.setIsDraft(1);
+                cfgConfigMapper.insert(c);
+            });
+
+            //然后再添加一份
+            CfgConfig newConfig = new CfgConfig();
+            newConfig.setIsDel(0);
+            newConfig.setCollectionId(collectionIdNew);
+            newConfig.setCfgName(cfgName);
+            newConfig.setCfgKey(cfgKey);
+            newConfig.setCfgValue(cfgValue);
+            newConfig.setIsDraft(1);
+            newConfig.setCreateUsername(username);
+            newConfig.setCreateTime(TimeUtil.getNowTimestamp());
+            newConfig.setUpdateUsername(username);
+            newConfig.setUpdateTime(System.currentTimeMillis());
+            cfgConfigMapper.insert(newConfig);
+            return newConfig;
+        }//else
+
+    }
+
+    @Override
+    public int delete(Integer configId, String usernameFromToken) {
+
+        CfgConfig cfgConfig = cfgConfigMapper.selectByPrimaryKey(configId);
+
+        cfgConfig.setIsDel(1);//删除
+        cfgConfig.setUpdateTime(TimeUtil.getNowTimestamp());
+        cfgConfig.setUpdateUsername(usernameFromToken);
+
+        int status = cfgConfigMapper.updateByPrimaryKeyWithBLOBs(cfgConfig);
+
+        return status;
     }
 }

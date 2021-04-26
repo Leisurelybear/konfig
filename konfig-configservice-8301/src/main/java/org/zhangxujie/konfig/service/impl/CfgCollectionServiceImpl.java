@@ -9,6 +9,8 @@ package org.zhangxujie.konfig.service.impl;
 import org.springframework.stereotype.Service;
 import org.zhangxujie.konfig.dto.AddCollectionReq;
 import org.zhangxujie.konfig.dto.AddCollectionResp;
+import org.zhangxujie.konfig.dto.DeleteCollectionReq;
+import org.zhangxujie.konfig.dto.DeleteCollectionResp;
 import org.zhangxujie.konfig.mapper.CfgCollectionMapper;
 import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgCollectionExample;
@@ -56,9 +58,16 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
      * @return: java.lang.Integer
      **/
     @Override
-    public Integer setToDraft(Integer collectionId, String cName, String username) {
+    public Integer setToDraft(Integer collectionId, String username) {
         List<CfgCollection> cfgCollectionList = null;
         int draft_id = collectionId;//草稿版本的自增id
+
+
+        CfgCollectionExample example0 = new CfgCollectionExample();
+        example0.createCriteria()
+                .andIsDelEqualTo(0)
+                .andCollectionIdEqualTo(collectionId);
+        String cName = cfgCollectionMapper.selectByExample(example0).get(0).getcName();
 
         //先通过collection_id找是否有存在的草稿版本
         CfgCollectionExample example = new CfgCollectionExample();
@@ -71,7 +80,6 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
             return cfgCollectionList.get(0).getId();
         }
 
-
         //如果查不到，则通过id查找（此时说明这个一定是草稿版本，因为是刚创建的）
         if (cfgCollectionList == null || cfgCollectionList.size() == 0) {
             CfgCollectionExample example1 = new CfgCollectionExample();
@@ -83,6 +91,8 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
             if (cfgCollectionList != null && cfgCollectionList.size() != 0) {
                 CfgCollection cfgCollection = cfgCollectionList.get(0);
                 cfgCollection.setCollectionId(cfgCollection.getId());
+                cfgCollection.setUpdateTime(TimeUtil.getNowTimestamp());
+                cfgCollection.setUpdateUsername(username);
                 cfgCollectionMapper.updateByPrimaryKey(cfgCollection);
 
                 draft_id = cfgCollection.getId();
@@ -176,4 +186,48 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
 
         return cfgCollectionMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public DeleteCollectionResp delete(DeleteCollectionReq req, String username) {
+
+        Integer collectionId = req.getCollectionId();
+
+        //1、先查询是不是线上，如果是，则不能删除
+        CfgCollectionExample example = new CfgCollectionExample();
+        example.createCriteria()
+                .andIdEqualTo(collectionId)
+                .andIsDraftEqualTo(0)
+                .andIsDelEqualTo(0);
+
+        List<CfgCollection> cfgCollectionList = cfgCollectionMapper.selectByExample(example);
+        if (cfgCollectionList.size() != 0){
+            return new DeleteCollectionResp(false);
+        }
+
+        //2、如果不是，则删除
+        CfgCollectionExample example1 = new CfgCollectionExample();
+        example1.createCriteria()
+                .andIdEqualTo(collectionId)
+                .andIsDraftEqualTo(1)
+                .andIsDelEqualTo(0);
+
+        CfgCollection cfgCollection = cfgCollectionMapper.selectByExample(example1).get(0);
+        cfgCollection.setIsDel(1);
+        int rowsAffact = cfgCollectionMapper.updateByPrimaryKey(cfgCollection);
+
+        if (rowsAffact > 0){
+            return new DeleteCollectionResp(true);
+        }
+        return new DeleteCollectionResp(false);
+    }
+
+    @Override
+    public boolean isOnline(Integer collectionId) {
+        CfgCollection collection = cfgCollectionMapper.selectByPrimaryKey(collectionId);
+        if (collection.getIsDraft() == 1){
+            return false;
+        }
+        return true;
+    }
+
 }

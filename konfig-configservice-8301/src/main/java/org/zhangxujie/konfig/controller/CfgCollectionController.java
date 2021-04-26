@@ -11,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
-import org.zhangxujie.konfig.dto.AddCollectionReq;
-import org.zhangxujie.konfig.dto.AddCollectionResp;
-import org.zhangxujie.konfig.dto.GetCfgCollectionsReq;
+import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.service.CfgCollectionService;
 import org.zhangxujie.konfig.util.TokenUtil;
@@ -39,7 +37,6 @@ public class CfgCollectionController {
 
     @PostMapping("/list")
     public CommonResult getCfgCollections(@RequestParam("token") String token, @RequestBody GetCfgCollectionsReq req) {
-
 
         if (!TokenUtil.validateToken(token)){
             return CommonResult.failed("token失效，请重新登录");
@@ -68,6 +65,28 @@ public class CfgCollectionController {
 
         if (resp.getId() == -1){
             return CommonResult.failed("配置集名重复，请更改后提交");
+        }
+
+        return CommonResult.success(resp);
+
+    }
+
+
+    @DeleteMapping("/del/{collectionId}")
+    public CommonResult delete(@RequestParam("token") String token, @PathVariable Integer collectionId) {
+
+        if (!TokenUtil.validateToken(token)){
+            return CommonResult.failed("token失效，请重新登录");
+        }
+
+        DeleteCollectionReq req = new DeleteCollectionReq(collectionId);
+
+        String username = TokenUtil.getUsernameFromToken(token);
+
+        DeleteCollectionResp resp =  cfgCollectionService.delete(req, username);
+
+        if (resp.getStatus() == false){
+            return CommonResult.failed("该配置为线上配置，不可删除，只能够上线替换！");
         }
 
         return CommonResult.success(resp);

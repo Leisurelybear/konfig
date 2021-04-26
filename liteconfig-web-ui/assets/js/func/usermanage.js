@@ -46,7 +46,8 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
 
                     $(userList).each(function (i, user) {
                         row = "<tr>" +
-                            "     <th scope='row'>" + user.id + "</th>" +
+                            "     <th scope='row'>" + (i+((data['data']['pageNum']-1)*data['data']['pageSize']) + 1) + "</th>" +
+                            "     <td>" + user.id + "</td>" +
                             "     <td>" + user.username + "</td>" +
                             "     <td>" + user.email + "</td>" +
                             "     <td><input class='btn btn-info' type='button' value='修改' onclick='alert(" + user.id + ")'></td>" +
