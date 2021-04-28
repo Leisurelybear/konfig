@@ -1,11 +1,6 @@
-function configure_header(url, headername) {
-
-}
-
-
 $(function () {
 
-    var current_page = $("#menu > li > ul > li > a[href='configcollection.html']");
+    var current_page = $("#menu > li > ul > li > a[href='configcollection_draft.html']");
 
     //用户权限管理 激活
     current_page.parent().addClass("active");
@@ -16,7 +11,7 @@ $(function () {
     //用户中心 激活
     current_page.parent().parent().parent().addClass("active");
 
-    $("#title_name").append("<li><span>全部配置集</span></li>")
+    $("#title_name").append("<li><span>草稿</span></li>")
 
 
     //加载配置集合
@@ -50,21 +45,21 @@ function btn_collection_del(collectionId) {
     })
 }
 
-function bind_btn_collection_add() {
-    $("#btn_collection_add").click(function () {
-        layer.open({
-            type: 2,
-            skin: 'layui-layer-lan',
-            title: '添加配置集',
-            fix: false,
-            shadeClose: true,
-            maxmin: true,
-            area: ['400px', '400px'],
-            content: 'assets/html/add_collection_detail.html',
-
-        });
-    })
-}
+// function bind_btn_collection_add() {
+//     $("#btn_collection_add").click(function () {
+//         layer.open({
+//             type: 2,
+//             skin: 'layui-layer-lan',
+//             title: '添加配置集',
+//             fix: false,
+//             shadeClose: true,
+//             maxmin: true,
+//             area: ['400px', '400px'],
+//             content: 'assets/html/add_collection_detail.html',
+//
+//         });
+//     })
+// }
 
 function loadCollections() {
     $("#cfg_collections_container").empty();
@@ -74,7 +69,7 @@ function loadCollections() {
         "sort": -1,
         "pageNum": 0,
         "nums": 10,
-        "isDraft":false
+        "isDraft":true
     };
 
     $.ajax({

@@ -16,7 +16,7 @@ import java.util.List;
 
 public interface CfgCollectionService {
 
-    List<CfgCollection> query(String collectionNameLike, Integer sort, Integer pageNum, Integer nums);
+    List<CfgCollection> query(String collectionNameLike, Integer sort, Integer pageNum, Integer nums, Boolean isDraft);
 
 
     Integer setToDraft(Integer collectionId, String username);

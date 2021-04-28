@@ -20,5 +20,6 @@ public class GetCfgCollectionsReq {
 
     private Integer pageNum;
 
+    private Boolean isDraft;
 
 }

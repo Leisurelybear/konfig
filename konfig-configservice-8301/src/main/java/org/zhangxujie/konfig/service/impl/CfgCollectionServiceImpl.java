@@ -27,25 +27,42 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
     private CfgCollectionMapper cfgCollectionMapper;
 
     /**
+     * @param collectionNameLike 模糊查询条件：集合名
+     * @param sort               排序 >=0正序，否则倒序
+     * @param pageNum            页码
+     * @param pageSize           每页的数量
+     * @param isDraft
      * @Author: Jason
      * @Description:
      * @Date: 2021/4/11 1:24
-     * @Param collectionNameLike: 模糊查询条件：集合名
-     * @Param sort: 排序 >=0正序，否则倒序
-     * @Param pageNum: 页码
-     * @Param nums: 每页的数量
      * @return: java.util.List<org.zhangxujie.konfig.model.CfgCollection>
      **/
     @Override
-    public List<CfgCollection> query(String collectionNameLike, Integer sort, Integer pageNum, Integer nums) {
+    public List<CfgCollection> query(String collectionNameLike, Integer sort, Integer pageNum, Integer pageSize, Boolean isDraft) {
 
         List<CfgCollection> cfgCollectionList;
 
-        if (sort >= 0) {
-            cfgCollectionList = cfgCollectionMapper.queryAll(collectionNameLike, pageNum, nums);
-        } else {
-            cfgCollectionList = cfgCollectionMapper.queryAllDesc(collectionNameLike, pageNum, nums);
+        pageNum = pageNum < 0 ? 0 : pageNum;
+        pageSize = pageSize <= 0 ? 20 : pageSize;
+
+        CfgCollectionExample example = new CfgCollectionExample();
+        example.setOrderByClause(String.format("update_time desc limit %d, %d", pageNum * pageSize, pageSize));
+        CfgCollectionExample.Criteria c = example.createCriteria().andIsDelEqualTo(0);
+        if (collectionNameLike != null && !collectionNameLike.equals("")) {
+            c.andCNameLike("%" + collectionNameLike + "%");
         }
+
+        if (isDraft){
+            c.andIsDraftEqualTo(1);
+        }
+
+//        if (sort >= 0) {
+//            cfgCollectionList = cfgCollectionMapper.queryAll(collectionNameLike, pageNum, pageSize);
+//        } else {
+//            cfgCollectionList = cfgCollectionMapper.queryAllDesc(collectionNameLike, pageNum, pageSize);
+//        }
+
+        cfgCollectionList = cfgCollectionMapper.selectByExample(example);
 
         return cfgCollectionList;
     }
@@ -158,7 +175,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
 
         long cnt = cfgCollectionMapper.countByExample(example);
 
-        if (cnt > 0){
+        if (cnt > 0) {
             return new AddCollectionResp(-1);
         }
 
@@ -180,7 +197,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
 
     @Override
     public CfgCollection queryById(Integer id) {
-        if (id <= 0){
+        if (id <= 0) {
             return null;
         }
 
@@ -200,7 +217,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
                 .andIsDelEqualTo(0);
 
         List<CfgCollection> cfgCollectionList = cfgCollectionMapper.selectByExample(example);
-        if (cfgCollectionList.size() != 0){
+        if (cfgCollectionList.size() != 0) {
             return new DeleteCollectionResp(false);
         }
 
@@ -215,7 +232,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
         cfgCollection.setIsDel(1);
         int rowsAffact = cfgCollectionMapper.updateByPrimaryKey(cfgCollection);
 
-        if (rowsAffact > 0){
+        if (rowsAffact > 0) {
             return new DeleteCollectionResp(true);
         }
         return new DeleteCollectionResp(false);
@@ -224,7 +241,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
     @Override
     public boolean isOnline(Integer collectionId) {
         CfgCollection collection = cfgCollectionMapper.selectByPrimaryKey(collectionId);
-        if (collection.getIsDraft() == 1){
+        if (collection.getIsDraft() == 1) {
             return false;
         }
         return true;

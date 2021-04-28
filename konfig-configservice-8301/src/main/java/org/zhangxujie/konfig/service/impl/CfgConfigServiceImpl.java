@@ -106,8 +106,6 @@ public class CfgConfigServiceImpl implements CfgConfigService {
             });
         }//else
 
-
-
         return true;
     }
 

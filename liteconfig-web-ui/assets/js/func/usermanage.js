@@ -46,11 +46,43 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
 
                     $(userList).each(function (i, user) {
                         row = "<tr>" +
-                            "     <th scope='row'>" + (i+((data['data']['pageNum']-1)*data['data']['pageSize']) + 1) + "</th>" +
+                            "     <th scope='row'>" + (i + ((data['data']['pageNum'] - 1) * data['data']['pageSize']) + 1) + "</th>" +
                             "     <td>" + user.id + "</td>" +
                             "     <td>" + user.username + "</td>" +
                             "     <td>" + user.email + "</td>" +
-                            "     <td><input class='btn btn-info' type='button' value='修改' onclick='alert(" + user.id + ")'></td>" +
+                            "     <td>" +
+                            "           <input class='btn btn-info' type='button' value='修改' data-toggle='modal' data-target='#config_add_form'>" +
+                            "                <div class='modal fade' id='config_add_form' style='display: none;' aria-hidden='true'>" +
+                            "                    <div class='modal-dialog modal-dialog-centered' role='document'>" +
+                            "                        <div class='modal-content'>" +
+                            "                            <div class='modal-header'>" +
+                            "                                <h5 class='modal-title'>新建配置</h5>" +
+                            "                                <button type='button' class='close' data-dismiss='modal'><span>×</span></button>" +
+                            "                            </div>" +
+                            "                            <div class='modal-body'>" +
+                            "                               <form id='user-info-" + user.id + "'>" +
+                            "                                <label for='nickname'>用户名</label>" +
+                            "                                <input type='text' class='form-control' name='nickname' placeholder='用户名'>" +
+                            "" +
+                            "                                <label for='phone'>手机号</label>" +
+                            "                                <input type='text' class='form-control' name='phone' placeholder='手机号'>" +
+                            "" +
+                            "                                <label for=''>头像</label>" +
+                            "                                <input type='text' class='form-control' name='phone' placeholder='手机号'>" +
+                            "" +
+                            "                                <label for='extra'>备注</label>" +
+                            "                                <textarea class='form-control' cols='20' name='extra' name='extra' placeholder='备注' required=''></textarea>" +
+                            "                               </form>" +
+                            "" +
+                            "                            </div>" +
+                            "                            <div class='modal-footer'>" +
+                            "                                <button type='button' class='btn btn-secondary' data-dismiss='modal'>取消</button>" +
+                            "                                <button type='button' class='btn btn-primary'  data-dismiss='modal' id='btn_config_add'>添加配置</button>" +
+                            "                            </div>" +
+                            "                        </div>" +
+                            "                    </div>" +
+                            "                </div>" +
+                            "     </td>" +
                             "</tr>";
                         $("#tb_usermanager_list").append(row)
                     });
@@ -98,7 +130,7 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
                             "       tabindex='0'" +
                             "       class='page-link'>Next</button>" +
                             "</li>"
-                    }else {
+                    } else {
                         pgs += "<li class='paginate_button page-item next' id='dataTable_next'>" +
                             "    <button onclick='list_users(" + (pageNum + 1) + ", " + pageSize + ", \"\", \"\")'" +
                             "       aria-controls='dataTable'" +
