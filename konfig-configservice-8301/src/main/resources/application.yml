@@ -15,17 +15,20 @@ spring:
       enabled: true
       max-file-size: 10MB
 
-eureka:
-  client:
-    #    注册到eureka
-    register-with-eureka: true
-    #    抓取已经注册信息
-    fetch-registry: true
-    service-url:
-      #      如下为单机配置
-      #      defaultZone: http://localhost:7001/eureka
-      #      如下为集群配置
-      defaultZone: http://eureka7001.com:7001/eureka, http://eureka7002.com:7002/eureka
+#eureka:
+#  client:
+#    #    注册到eureka
+#    register-with-eureka: true
+#    #    抓取已经注册信息
+#    fetch-registry: true
+#    service-url:
+#      #      如下为单机配置
+#      #      defaultZone: http://localhost:7001/eureka
+#      #      如下为集群配置
+#      defaultZone: http://eureka7001.com:7001/eureka, http://eureka7002.com:7002/eureka
+
+
+
 #mybatis:
 #  #  定义实体类位置
 #  type-aliases-package: com.zhangxujie.springcloud.model

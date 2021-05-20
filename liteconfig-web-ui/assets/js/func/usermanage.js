@@ -18,6 +18,35 @@ $(function () {
 });
 
 
+//查询用户信息
+function userDetail(user_id) {
+    alert(user_id)
+}
+
+function updateUserInfo(formId) {
+
+    data = $("#"+formId)[0];
+
+    console.log(data);
+
+    $.ajax({
+        url: 'http://localhost:8021/admin/queryall?token=' + $.cookie('token'),//接口地址
+        type: 'post',//请求方式
+        data: new FormData(data), //传输的数据
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("获取用户信息错误")
+        },
+        statusCode: {
+            200: function (data) {
+
+            }
+        }
+    })
+
+}
+
+
 //展示用户列表
 function list_users(pageNum, pageSize, nameLike, emailLike) {
     console.log("list_users: ", pageNum, pageSize, nameLike, emailLike)
@@ -51,12 +80,12 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
                             "     <td>" + user.username + "</td>" +
                             "     <td>" + user.email + "</td>" +
                             "     <td>" +
-                            "           <input class='btn btn-info' type='button' value='修改' data-toggle='modal' data-target='#config_add_form'>" +
+                            "           <input class='btn btn-info' type='button' value='编辑' data-toggle='modal' data-target='#config_add_form'>" +
                             "                <div class='modal fade' id='config_add_form' style='display: none;' aria-hidden='true'>" +
                             "                    <div class='modal-dialog modal-dialog-centered' role='document'>" +
                             "                        <div class='modal-content'>" +
                             "                            <div class='modal-header'>" +
-                            "                                <h5 class='modal-title'>新建配置</h5>" +
+                            "                                <h5 class='modal-title'>编辑</h5>" +
                             "                                <button type='button' class='close' data-dismiss='modal'><span>×</span></button>" +
                             "                            </div>" +
                             "                            <div class='modal-body'>" +
@@ -68,7 +97,7 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
                             "                                <input type='text' class='form-control' name='phone' placeholder='手机号'>" +
                             "" +
                             "                                <label for=''>头像</label>" +
-                            "                                <input type='text' class='form-control' name='phone' placeholder='手机号'>" +
+                            "                                <input type='file' class='form-control' name='phone' placeholder='手机号'>" +
                             "" +
                             "                                <label for='extra'>备注</label>" +
                             "                                <textarea class='form-control' cols='20' name='extra' name='extra' placeholder='备注' required=''></textarea>" +
@@ -77,7 +106,8 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
                             "                            </div>" +
                             "                            <div class='modal-footer'>" +
                             "                                <button type='button' class='btn btn-secondary' data-dismiss='modal'>取消</button>" +
-                            "                                <button type='button' class='btn btn-primary'  data-dismiss='modal' id='btn_config_add'>添加配置</button>" +
+                            "                                <button type='button' class='btn btn-warning' onclick='userDetail("+user.id+")' >点击查询</button>" +
+                            "                                <button type='button' class='btn btn-primary'  data-dismiss='modal' onclick='updateUserInfo(\"user-info-" + user.id + "\")' id='btn_config_add'>保存</button>" +
                             "                            </div>" +
                             "                        </div>" +
                             "                    </div>" +
