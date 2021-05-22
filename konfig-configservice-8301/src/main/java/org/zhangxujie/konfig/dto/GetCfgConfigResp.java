@@ -24,4 +24,9 @@ public class GetCfgConfigResp {
 
     //所在配置集的名字
     private String collectionName;
+
+    //是否糟糕版本
+    private Integer isDraft;
+
+    private Integer collectionId;
 }

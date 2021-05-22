@@ -2,7 +2,7 @@ package org.zhangxujie.konfig.model;
 
 import java.io.Serializable;
 
-public class Account  implements Serializable {
+public class Account implements Serializable {
     private Integer id;
 
     private String username;
@@ -61,5 +61,17 @@ public class Account  implements Serializable {
 
     public void setIsDel(Integer isDel) {
         this.isDel = isDel;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", salt='" + salt + '\'' +
+                ", email='" + email + '\'' +
+                ", isDel=" + isDel +
+                '}';
     }
 }

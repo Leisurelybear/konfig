@@ -8,12 +8,15 @@ package org.zhangxujie.konfig.controller;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.cert.ocsp.Req;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.dto.*;
+import org.zhangxujie.konfig.dto.account.InfoRemote;
 import org.zhangxujie.konfig.model.CfgCollection;
+import org.zhangxujie.konfig.dao.AccountRemoteDAO;
+import org.zhangxujie.konfig.service.CfgAuditService;
 import org.zhangxujie.konfig.service.CfgCollectionService;
+import org.zhangxujie.konfig.service.CfgPermissionService;
 import org.zhangxujie.konfig.util.TokenUtil;
 
 import javax.annotation.Resource;
@@ -28,21 +31,27 @@ public class CfgCollectionController {
 
     public static final String USER_INVOKE_URL = "http://KONFIG-AUTHENTICATION";
 
-//    @Resource
-//    private RestTemplate restTemplate;
-
     @Resource
     private CfgCollectionService cfgCollectionService;
 
+    @Resource
+    private AccountRemoteDAO accountRemoteDAO;
+
+    @Resource
+    private CfgPermissionService cfgPermissionService;
+
+    @Resource
+    private CfgAuditService cfgAuditService;
 
     @PostMapping("/list")
     public CommonResult getCfgCollections(@RequestParam("token") String token, @RequestBody GetCfgCollectionsReq req) {
 
-        if (!TokenUtil.validateToken(token)){
+
+        if (!accountRemoteDAO.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
 
-        List<CfgCollection> resp =  cfgCollectionService.query(req.getNameLike(), req.getSort(), req.getPageNum(), req.getNums(), req.getIsDraft());
+        List<CfgCollection> resp = cfgCollectionService.query(req.getNameLike(), req.getSort(), req.getPageNum(), req.getNums(), req.getIsDraft());
 
         return CommonResult.success(resp);
 
@@ -53,17 +62,22 @@ public class CfgCollectionController {
     public CommonResult add(@RequestParam("token") String token, @PathVariable String collectionName) {
 
 
-        if (!TokenUtil.validateToken(token)){
+        if (!accountRemoteDAO.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
+
+        InfoRemote info = accountRemoteDAO.infoFromToken(token);
 
         AddCollectionReq req = new AddCollectionReq(collectionName);
 
         String username = TokenUtil.getUsernameFromToken(token);
 
-        AddCollectionResp resp =  cfgCollectionService.add(req, username);
+        AddCollectionResp resp = cfgCollectionService.add(req, username);
 
-        if (resp.getId() == -1){
+        //添加权限表，把自己加到权限表里
+        cfgPermissionService.addUserPermission(info.getAccountId(), resp.getId(), info.getUsername(), info.getAccountId());
+
+        if (resp.getId() == -1) {
             return CommonResult.failed("配置集名重复，请更改后提交");
         }
 
@@ -75,21 +89,57 @@ public class CfgCollectionController {
     @DeleteMapping("/del/{collectionId}")
     public CommonResult delete(@RequestParam("token") String token, @PathVariable Integer collectionId) {
 
-        if (!TokenUtil.validateToken(token)){
+        if (!TokenUtil.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
+        }
+
+        if (!cfgPermissionService.hasPermission(token, collectionId)) {
+            return CommonResult.failed("您没有该记录的操作权限");
         }
 
         DeleteCollectionReq req = new DeleteCollectionReq(collectionId);
 
         String username = TokenUtil.getUsernameFromToken(token);
 
-        DeleteCollectionResp resp =  cfgCollectionService.delete(req, username);
+        DeleteCollectionResp resp = cfgCollectionService.delete(req, username);
 
-        if (resp.getStatus() == false){
+        if (resp.getStatus() == false) {
             return CommonResult.failed("该配置为线上配置，不可删除，只能够上线替换！");
         }
 
         return CommonResult.success(resp);
 
     }
+
+    @PostMapping("/change_status/{collectionId}")
+    public CommonResult changeDraftStatus(@RequestParam("token") String token, @PathVariable Integer collectionId) {
+
+        if (!TokenUtil.validateToken(token)) {
+            return CommonResult.failed("token失效，请重新登录");
+        }
+
+        if (!cfgPermissionService.hasPermission(token, collectionId)) {
+            return CommonResult.failed("您没有该记录的操作权限");
+        }
+        //获取用户信息
+        InfoRemote info = accountRemoteDAO.infoFromToken(token);
+
+
+        if (!cfgCollectionService.isOnwer(info.getUsername(), collectionId)){
+            log.info("当前用户无权限主动上线/下线，提交审核");
+            int auditId = cfgAuditService.submit(collectionId, info.getAccountId());
+            if (auditId < 0) {
+                return CommonResult.failed("有未处理申请[ID:" + (-auditId) + "]在流程中，不能继续提交！");
+            }
+            return CommonResult.success(null, "已经提交（上线/下线）申请[ID:" + auditId + "]");
+        }
+
+        //有权限，直接改状态
+        log.info("该用户为配置所有者，可以直接上线");
+        cfgCollectionService.switchDraftStatus(collectionId, info.getUsername());
+
+        return CommonResult.success("操作成功!");
+
+    }
+
 }

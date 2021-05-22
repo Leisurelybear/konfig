@@ -11,8 +11,6 @@
     <modules>
         <module>konfig-commons</module>
         <module>konfig-authentication-8021</module>
-        <module>konfig-eureka-7001</module>
-        <module>konfig-eureka-7002</module>
         <module>konfig-configservice-8301</module>
     </modules>
 

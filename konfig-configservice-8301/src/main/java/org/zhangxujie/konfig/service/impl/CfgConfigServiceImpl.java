@@ -57,7 +57,7 @@ public class CfgConfigServiceImpl implements CfgConfigService {
         return res;
     }
 
-    @Override
+    @Override //TODO:修改为如果线上版本则不支持修改！！！！！
     public boolean update(Integer collectionIdOld, Integer collectionIdNew, Integer configId, String cfgName, String cfgKey, String cfgValue, String username) {
         //如果当前修改的是线上的，则取线下拷贝一份
         if (collectionIdNew == collectionIdOld) {
@@ -109,7 +109,7 @@ public class CfgConfigServiceImpl implements CfgConfigService {
         return true;
     }
 
-    @Override
+    @Override //TODO:修改为如果线上版本则不支持修改！！！！！
     public CfgConfig add(Integer collectionIdOld, Integer collectionIdNew, String cfgName, String cfgKey, String cfgValue, String username) {
         //如果当前修改的是线上的，则取线下拷贝一份
         if (collectionIdNew == collectionIdOld) {

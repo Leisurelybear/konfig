@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.zhangxujie.konfig.db.RedisClient;
 import org.zhangxujie.konfig.dto.AccountItem;
 import org.zhangxujie.konfig.dto.AccountQueryRespParam;
 import org.zhangxujie.konfig.dto.AccountRegisterParam;
@@ -44,6 +45,9 @@ public class AccountServiceImpl implements AccountService {
     private UserInfoMapper userInfoDao;
 
     @Resource
+    private RedisClient redisClient;
+
+    @Resource
     private PasswordEncoder passwordEncoder;
 
     @Resource
@@ -51,6 +55,12 @@ public class AccountServiceImpl implements AccountService {
 
 
     public Account getAdminByUsername(String username) {
+        String redisKeyPrefix = "account:name:";
+        Object redisAccount = redisClient.getObject(redisKeyPrefix + username);
+        if (redisAccount != null) { //如果redis有，则直接返回
+            log.info("getAdminByUsername via redis");
+            return ((Account) redisAccount);
+        }
 
         AccountExample example = new AccountExample();
         example.createCriteria().andUsernameEqualTo(username);
@@ -59,7 +69,9 @@ public class AccountServiceImpl implements AccountService {
         if (accountList.size() < 1) {
             return null;
         }
+        log.info("getAdminByUsername via mysql");
 
+        redisClient.setObject(redisKeyPrefix + username, accountList.get(0));
         return accountList.get(0);
     }
 
@@ -104,15 +116,6 @@ public class AccountServiceImpl implements AccountService {
         permission.setTime(System.currentTimeMillis());
         permissionDao.insert(permission);
 
-//        UserInfo accountInfo = new UserInfo();
-//        accountInfo.setAccountId(account.getId());
-//        accountInfo.setNickname(formAccount.getNickname());
-//        accountInfo.setExtra(formAccount.getExtra());
-//        accountInfo.setIsDel(0);
-//        accountInfo.setPhone(formAccount.getPhone());
-//        accountInfo.setUpdateTime(System.currentTimeMillis());
-//        userInfoDao.insert(accountInfo);
-//        //插入用户详细信息表完毕
 
         return account;
     }
@@ -146,13 +149,22 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
+        String redisKeyPrefix = "permission:account:id:";
+
         //获取用户信息
         Account admin = getAdminByUsername(username);
         if (admin != null) {
-//            List<Permission> resourceList = permissionDao.getResourceList(admin.getId());
-            PermissionExample example = new PermissionExample();
-            example.createCriteria().andIdentityTypeEqualTo("USER").andIdentityIdEqualTo(admin.getId());
-            List<Permission> permissionList = permissionDao.selectByExample(example);
+            List<Permission> permissionList = null;
+
+            Object permissionsRedis = redisClient.getObject(redisKeyPrefix + admin.getId());
+            if (permissionsRedis != null){
+                permissionList = (List<Permission>)permissionsRedis;
+            }else {
+                PermissionExample example = new PermissionExample();
+                example.createCriteria().andIdentityTypeEqualTo("USER").andIdentityIdEqualTo(admin.getId());
+                permissionList = permissionDao.selectByExample(example);
+                redisClient.setObject(redisKeyPrefix + admin.getId(), permissionList);
+            }
 
             return new AdminUserDetails(admin, permissionList);
         }
@@ -184,7 +196,7 @@ public class AccountServiceImpl implements AccountService {
 
         List<Account> accounts = accountDao.selectByExample(example);
 
-        if (accounts != null){
+        if (accounts != null) {
             accounts.forEach(c -> {
                 accountItems.add(new AccountItem(c.getId(), c.getUsername(), c.getEmail()));
             });
@@ -199,7 +211,7 @@ public class AccountServiceImpl implements AccountService {
         AccountExample example = new AccountExample();
         //未被删除
         example.createCriteria().andIsDelEqualTo(0);
-        Integer count = (int)accountDao.countByExample(example);
+        Integer count = (int) accountDao.countByExample(example);
 
         return count;
     }

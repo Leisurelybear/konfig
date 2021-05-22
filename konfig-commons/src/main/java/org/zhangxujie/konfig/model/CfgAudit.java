@@ -1,8 +1,6 @@
 package org.zhangxujie.konfig.model;
 
-import java.io.Serializable;
-
-public class CfgAudit implements Serializable {
+public class CfgAudit {
     private Integer id;
 
     private Integer cfgCollectionId;

@@ -92,6 +92,7 @@ public class AccountController {
             info.setLastAccessedTime(userInfo.getLastAccessedTime());
         }
 
+
         return CommonResult.success(info);
     }
 

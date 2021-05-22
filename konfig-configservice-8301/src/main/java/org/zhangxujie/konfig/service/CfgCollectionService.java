@@ -29,4 +29,11 @@ public interface CfgCollectionService {
 
     //查看上线状态
     boolean isOnline(Integer collectionId);
+
+    void switchDraftStatus(Integer collectionId, String updateUsername);
+
+    boolean isOnwer(String username, Integer collectionId);
+
+    List<CfgCollection> getOwnCollectionList(String username);
+
 }

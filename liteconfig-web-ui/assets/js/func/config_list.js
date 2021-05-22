@@ -32,8 +32,32 @@ $(function () {
         let configKey = $("#config_key").val();
         let configValue = $("#config_value").val();
         add_config(configName, configKey, configValue, cid[2])
-    })
+    });
 
+    $("#btn_change_status").click(function () {
+
+        $.ajax({
+            url: 'http://localhost:8301/cfg_coll/change_status/' + cid[2] + '/?token=' + $.cookie('token'),//接口地址
+            type: 'post',//请求方式
+            data: "", //传输的数据
+            contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+            dataType: 'text json', //相反
+            error: function (response) {
+                Notiflix.Notify.Failure("网络错误：添加配置失败。")
+            },
+            statusCode: {
+                200: function (data) {
+                    if (data['code'] != 200) {
+                        Notiflix.Notify.Failure("操作失败： " + data["message"])
+                        return
+                    }
+                    Notiflix.Notify.Success("操作成功：" + data["message"])
+                    list_configs(cid[2])
+                }
+            }
+        })
+
+    })
 });
 
 function add_config(configName, key, value, collectionId) {
@@ -58,7 +82,7 @@ function add_config(configName, key, value, collectionId) {
         statusCode: {
             200: function (data) {
                 if (data['code'] != 200) {
-                    Notiflix.Notify.Failure("添加配置失败： " + data["'message"])
+                    Notiflix.Notify.Failure("添加配置失败： " + data["message"])
                     return
                 }
                 Notiflix.Notify.Success("添加成功！请下拉至底部 ")
@@ -90,7 +114,7 @@ function delete_cfg(collectionId, configId) {
         statusCode: {
             200: function (data) {
                 if (data['code'] != 200) {
-                    Notiflix.Notify.Failure("删除失败： " + data["'message"])
+                    Notiflix.Notify.Failure("删除失败： " + data["message"])
                     return
                 }
 
@@ -130,15 +154,15 @@ function save_config(collectionId, configId) {
         statusCode: {
             200: function (data) {
 
-                if (data['code'] != 200) {
-                    Notiflix.Notify.Failure("查询配置列表失败： " + data["'message"])
+                if (data['code'] !== 200) {
+                    Notiflix.Notify.Failure("查询配置列表失败： " + data["message"]);
 
                     return
                 }
 
-                if (data["data"]['collectionId'] != data.collectionId) {
+                if (data["data"]['collectionId'] !== data.collectionId) {
                     //说明新建草稿，则跳转到新页面
-                    Notiflix.Notify.Info("正在跳转到新创建的草稿版本...")
+                    Notiflix.Notify.Info("正在跳转到新创建的草稿版本...");
                     window.location.href = "config_list.html?cid=" + data["data"]['collectionId']
                 } else {
                     //否则直接刷新配置列表即可
@@ -152,7 +176,6 @@ function save_config(collectionId, configId) {
 }
 
 function list_configs(collectionId) {
-
     queryParam = {
         "collectionIds": [collectionId],
         "nameLike": "",
@@ -172,7 +195,17 @@ function list_configs(collectionId) {
         statusCode: {
             200: function (data) {
 
-                $("#btn_config_collection_name").html(data["data"]["collectionName"])
+                if (data['code'] !== 200) {
+                    Notiflix.Notify.Failure("查询配置列表失败： " + data["message"]);
+                    $.delay(3000);
+                    window.history.go(-1);
+                    return
+                }
+
+                $("#btn_config_collection_name").html(data["data"]["collectionName"]);
+                $("#btn_config_collection_status").html((data["data"]["isDraft"] === 1) ? "草稿版本" : "线上版本")
+
+                $("#btn_change_status").html((data["data"]["isDraft"] === 1) ? "上线" : "下线");
 
                 $("#config_list").empty();
                 console.log(data["data"]["confs"]);

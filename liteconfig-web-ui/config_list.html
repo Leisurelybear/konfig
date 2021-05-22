@@ -48,11 +48,13 @@
         <div class="main-content-inner">
             <div class="card-header">
                 配置集名：<span class="text-primary" id="btn_config_collection_name"></span>
+                状态：<span class="text-primary" id="btn_config_collection_status"></span>
             </div>
             <div class="card-header">
 
 
                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#config_add_form">添加配置</button>
+                <button type="button" id="btn_change_status" class="btn btn-primary">上线</button>
 <!--               弹出添加配置 -->
                 <div class="modal fade" id="config_add_form" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">

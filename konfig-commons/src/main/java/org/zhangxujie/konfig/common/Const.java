@@ -15,6 +15,10 @@ public class Const {
     public final static String AUTH_USER_READ = "user:read";
     public final static String AUTH_USER_EDIT = "user:edit";
 
+    public final static int CFG_AUDIT_UNDO = 0;
+    public final static int CFG_AUDIT_APPROVE = 1;
+    public final static int CFG_AUDIT_REJECT = 2;
+
 
 
 }

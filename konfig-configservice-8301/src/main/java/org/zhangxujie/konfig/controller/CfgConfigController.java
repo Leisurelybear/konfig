@@ -15,6 +15,7 @@ import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgConfig;
 import org.zhangxujie.konfig.service.CfgCollectionService;
 import org.zhangxujie.konfig.service.CfgConfigService;
+import org.zhangxujie.konfig.service.CfgPermissionService;
 import org.zhangxujie.konfig.util.TokenUtil;
 
 import javax.annotation.Resource;
@@ -33,6 +34,9 @@ public class CfgConfigController {
     @Resource
     private CfgCollectionService cfgCollectionService;
 
+    @Resource
+    private CfgPermissionService cfgPermissionService;
+
     //查询对应collection中的配置信息
     @PostMapping("/list")
     public CommonResult<GetCfgConfigResp> getConfigs(@RequestBody GetCfgConfigReq req, @RequestParam("token") String token) {
@@ -40,6 +44,10 @@ public class CfgConfigController {
         log.info("Token: " + token);
         if (!TokenUtil.validateToken(token)){
             return CommonResult.failed("Token失效，请重新登录！");
+        }
+
+        if (!cfgPermissionService.hasPermission(token, req.getCollectionIds().get(0))){
+            return CommonResult.failed("您没有该记录的操作权限");
         }
 
         List<CfgConfig> confs = cfgConfigService.query(req.getCollectionIds(), req.getNameLike(), req.getKeyLike(), req.getSort());
@@ -50,6 +58,8 @@ public class CfgConfigController {
 
         CfgCollection cfgCollection = cfgCollectionService.queryById(req.getCollectionIds().get(0));
         resp.setCollectionName(cfgCollection.getcName());
+        resp.setCollectionId(cfgCollection.getId());
+        resp.setIsDraft(cfgCollection.getIsDraft());
 
         return CommonResult.success(resp);
 
@@ -62,6 +72,11 @@ public class CfgConfigController {
         if (!TokenUtil.validateToken(token)){
             return CommonResult.failed("Token失效，请重新登录！");
         }
+
+        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())){
+            return CommonResult.failed("您没有该记录的操作权限");
+        }
+
         //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
         int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
         boolean done = cfgConfigService.update(req.getCollectionId(), collectionId, req.getId(), req.getCfgName(), req.getCfgKey(), req.getCfgValue(), req.getUsername());
@@ -75,6 +90,11 @@ public class CfgConfigController {
         if (!TokenUtil.validateToken(token)){
             return CommonResult.failed("Token失效，请重新登录！");
         }
+
+        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())){
+            return CommonResult.failed("您没有该记录的操作权限");
+        }
+
         //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
         int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
         CfgConfig cfgConfig = cfgConfigService.add(req.getCollectionId(), collectionId, req.getConfigName(), req.getConfigKey(), req.getConfigValue(), TokenUtil.getUsernameFromToken(token));
@@ -87,6 +107,10 @@ public class CfgConfigController {
         log.info("Token: " + token);
         if (!TokenUtil.validateToken(token)){
             return CommonResult.failed("Token失效，请重新登录！");
+        }
+
+        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())){
+            return CommonResult.failed("您没有该记录的操作权限");
         }
 
         //查看是否为线上，如果线上，则不能删除

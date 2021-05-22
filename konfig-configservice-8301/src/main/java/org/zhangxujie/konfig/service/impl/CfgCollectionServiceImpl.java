@@ -12,12 +12,16 @@ import org.zhangxujie.konfig.dto.AddCollectionResp;
 import org.zhangxujie.konfig.dto.DeleteCollectionReq;
 import org.zhangxujie.konfig.dto.DeleteCollectionResp;
 import org.zhangxujie.konfig.mapper.CfgCollectionMapper;
+import org.zhangxujie.konfig.mapper.CfgPermissionMapper;
 import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgCollectionExample;
+import org.zhangxujie.konfig.dao.AccountRemoteDAO;
 import org.zhangxujie.konfig.service.CfgCollectionService;
+import org.zhangxujie.konfig.service.CfgPermissionService;
 import org.zhangxujie.konfig.util.TimeUtil;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,6 +29,15 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
 
     @Resource
     private CfgCollectionMapper cfgCollectionMapper;
+
+    @Resource
+    private CfgPermissionMapper cfgPermissionMapper;
+
+    @Resource
+    private AccountRemoteDAO accountRemoteDAO;
+
+    @Resource
+    private CfgPermissionService cfgPermissionService;
 
     /**
      * @param collectionNameLike 模糊查询条件：集合名
@@ -56,11 +69,6 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
             c.andIsDraftEqualTo(1);
         }
 
-//        if (sort >= 0) {
-//            cfgCollectionList = cfgCollectionMapper.queryAll(collectionNameLike, pageNum, pageSize);
-//        } else {
-//            cfgCollectionList = cfgCollectionMapper.queryAllDesc(collectionNameLike, pageNum, pageSize);
-//        }
 
         cfgCollectionList = cfgCollectionMapper.selectByExample(example);
 
@@ -245,6 +253,41 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void switchDraftStatus(Integer collectionId, String updateUsername) {
+
+        CfgCollection cfgCollection = cfgCollectionMapper.selectByPrimaryKey(collectionId);
+
+        // |1 - 1| = 0
+        // |0 - 1| = 1
+        cfgCollection.setIsDraft(Math.abs(cfgCollection.getIsDraft() - 1));
+        cfgCollectionMapper.updateByPrimaryKey(cfgCollection);
+
+    }
+
+    @Override
+    public boolean isOnwer(String username, Integer collectionId) {
+
+        CfgCollection cfgCollection = cfgCollectionMapper.selectByPrimaryKey(collectionId);
+
+        return cfgCollection.getCreateUsername().equals(username);
+    }
+
+    @Override
+    public List<CfgCollection> getOwnCollectionList(String username) {
+
+        CfgCollectionExample example = new CfgCollectionExample();
+        example.createCriteria()
+                .andIsDelEqualTo(0)
+                .andCreateUsernameEqualTo(username);
+
+        List<CfgCollection> list = cfgCollectionMapper.selectByExample(example);
+        if (list == null){
+            list = new ArrayList<>();
+        }
+        return list;
     }
 
 }
