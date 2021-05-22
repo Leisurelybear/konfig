@@ -97,7 +97,9 @@ function loadCollections() {
                         "      <div class='card card-bordered'>" +
                         "          <div class='card-body'>" +
                         "            <h4 class='title'>" + val.cName + "</h4>\n" +
-                        "            <p class='card-text'>" + (val.isDraft === 1 ? "<b class='badge badge-pill badge-secondary'>草稿版本</b>" : "<b class='badge badge-pill badge-success'>线上版本</b>") + " | <b>修改时间：</b>" + new Date(parseInt(val.updateTime) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ') + "</p>\n" +
+                        "            <p class='card-text'>" + (val.isDraft === 1 ? "<b class='badge badge-pill badge-secondary'>草稿版本</b>" : "<b class='badge badge-pill badge-success'>线上版本</b>") +
+                        " | <b>修改时间：</b>" + new Date(parseInt(val.updateTime) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ') +
+                        " | <b>创建者：</b>"+val.createUsername+"</p>" +
                         "            <a href='config_list.html?cid=" + val.id + "' id='btn_c_" + val.id + "' class='btn btn-primary' >配置</a>" +
                         "            <input class='btn btn-danger' onclick='btn_collection_del(" + val.id + ")' type='button' value='删除'>" +
                         "          </div>\n" +

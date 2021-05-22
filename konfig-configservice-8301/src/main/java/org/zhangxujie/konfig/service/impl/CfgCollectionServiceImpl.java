@@ -290,4 +290,18 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
         return list;
     }
 
+    @Override
+    public List<CfgCollection> queryByIds(List<Integer> collectionIds) {
+
+        CfgCollectionExample example = new CfgCollectionExample();
+        example.or()
+                .andIdIn(collectionIds)
+                .andIsDelEqualTo(0);
+        example.or()
+                .andCollectionIdIn(collectionIds)
+                .andIsDelEqualTo(0);
+
+        return cfgCollectionMapper.selectByExample(example);
+    }
+
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.common.Const;
 import org.zhangxujie.konfig.dao.AccountRemoteDAO;
+import org.zhangxujie.konfig.dto.GetUndoAuditListResp;
 import org.zhangxujie.konfig.dto.HandleAuditReq;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
 import org.zhangxujie.konfig.model.CfgAudit;
@@ -23,6 +24,8 @@ import org.zhangxujie.konfig.service.CfgPermissionService;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @Slf4j
@@ -65,7 +68,23 @@ public class CfgAuditController {
         condition.add(Const.CFG_AUDIT_UNDO);
         List<CfgAudit> cfgAuditList = cfgAuditService.selectByCollectionIds(collectionIds, condition);
 
-        return CommonResult.success(cfgAuditList);
+        //3、查找配置集ID列表每条记录的状态，（让审批这知道对方是要申请上线还是下线）
+        List<CfgCollection> cfgCollectionList = cfgCollectionService.queryByIds(collectionIds);
+        Map<Integer, Integer> map = new ConcurrentHashMap<>();
+        cfgCollectionList.forEach(c -> map.put(c.getId(), c.getIsDraft()));
+
+        List<GetUndoAuditListResp> resp = new ArrayList<>();
+        cfgAuditList.forEach(c -> {
+            GetUndoAuditListResp a = new GetUndoAuditListResp();
+            a.setId(c.getId());
+            a.setApplicantAid(c.getApplicantAid());
+            a.setCfgCollectionId(c.getCfgCollectionId());
+            a.setSubmitTime(c.getSubmitTime());
+            a.setContent(map.get(c.getCfgCollectionId()) == 1 ? "申请上线" : "申请下线");
+            resp.add(a);
+        });
+
+        return CommonResult.success(resp);
 
     }
 
@@ -126,9 +145,11 @@ public class CfgAuditController {
         if (req.getIsApproved()) {
             //同意
             cfgAuditService.approve(req.getAuditId(), info.getAccountId());
+            cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
         } else {
             //驳回
             cfgAuditService.reject(req.getAuditId(), info.getAccountId());
+            cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
         }
 
 

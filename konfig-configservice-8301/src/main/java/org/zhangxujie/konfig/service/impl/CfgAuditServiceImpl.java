@@ -51,11 +51,9 @@ public class CfgAuditServiceImpl implements CfgAuditService {
     @Override
     public void approve(Integer auditId, Integer reviewerAccountId) {
         CfgAudit item = cfgAuditMapper.selectByPrimaryKey(auditId);
-
         item.setStatus(1);
         item.setHandleTime(TimeUtil.getNowTimestamp());
         item.setReviewerAid(reviewerAccountId);
-
         cfgAuditMapper.updateByPrimaryKey(item);
 
     }
