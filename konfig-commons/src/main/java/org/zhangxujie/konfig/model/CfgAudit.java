@@ -5,6 +5,8 @@ public class CfgAudit {
 
     private Integer cfgCollectionId;
 
+    private String content;
+
     private Integer status;
 
     private Integer applicantAid;
@@ -29,6 +31,14 @@ public class CfgAudit {
 
     public void setCfgCollectionId(Integer cfgCollectionId) {
         this.cfgCollectionId = cfgCollectionId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
     }
 
     public Integer getStatus() {

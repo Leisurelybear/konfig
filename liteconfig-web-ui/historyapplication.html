@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>我的申请</title>
+    <title>审批记录</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -53,7 +53,7 @@
                 <div class="col-lg-6 mt-5">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="header-title">我的申请</h4>
+                            <h4 class="header-title">审批记录</h4>
                             <div class="single-table">
                                 <div class="col-sm-12 col-md-7">
                                     <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
@@ -68,20 +68,23 @@
                                         <tr class="text-white">
                                             <th scope="col">编号</th>
                                             <th scope="col">配置集ID</th>
-                                            <th scope="col">状态</th>
-                                            <th scope="col">处理人</th>
-                                            <th scope="col">内容</th>
+                                            <th scope="col">操作内容</th>
+                                            <th scope="col">申请人</th>
+                                            <th scope="col">操作时间</th>
+                                            <th scope="col">结果</th>
                                         </tr>
                                         </thead>
-                                        <tbody id="tb_myapplication_list">
+                                        <tbody id="tb_undoapplication_list">
 
 
                                         <tr>
                                             <th scope="row">1</th>
                                             <td>1</td>
-                                            <td>通过</td>
+                                            <td>申请上线</td>
                                             <td>root</td>
-                                            <td><input type="button" value="撤销" class="btn btn-dark"></td>
+                                            <td>2021-3-12</td>
+                                            <td>同意</td>
+
                                         </tr>
 
                                         </tbody>
@@ -306,7 +309,7 @@
 <script src="assets/js/common/sidebar.js"></script>
 <script src="assets/js/common/header.js"></script>
 
-<script src="assets/js/func/myapplication.js"></script>
+<script src="assets/js/func/historyapplication.js"></script>
 
 </body>
 

@@ -69,22 +69,22 @@ public class CfgAuditController {
         List<CfgAudit> cfgAuditList = cfgAuditService.selectByCollectionIds(collectionIds, condition);
 
         //3、查找配置集ID列表每条记录的状态，（让审批这知道对方是要申请上线还是下线）
-        List<CfgCollection> cfgCollectionList = cfgCollectionService.queryByIds(collectionIds);
-        Map<Integer, Integer> map = new ConcurrentHashMap<>();
-        cfgCollectionList.forEach(c -> map.put(c.getId(), c.getIsDraft()));
+//        List<CfgCollection> cfgCollectionList = cfgCollectionService.queryByIds(collectionIds);
+//        Map<Integer, Integer> map = new ConcurrentHashMap<>();
+//        cfgCollectionList.forEach(c -> map.put(c.getId(), c.getIsDraft()));
 
-        List<GetUndoAuditListResp> resp = new ArrayList<>();
-        cfgAuditList.forEach(c -> {
-            GetUndoAuditListResp a = new GetUndoAuditListResp();
-            a.setId(c.getId());
-            a.setApplicantAid(c.getApplicantAid());
-            a.setCfgCollectionId(c.getCfgCollectionId());
-            a.setSubmitTime(c.getSubmitTime());
-            a.setContent(map.get(c.getCfgCollectionId()) == 1 ? "申请上线" : "申请下线");
-            resp.add(a);
-        });
+//        List<GetUndoAuditListResp> resp = new ArrayList<>();
+//        cfgAuditList.forEach(c -> {
+//            GetUndoAuditListResp a = new GetUndoAuditListResp();
+//            a.setId(c.getId());
+//            a.setApplicantAid(c.getApplicantAid());
+//            a.setCfgCollectionId(c.getCfgCollectionId());
+//            a.setSubmitTime(c.getSubmitTime());
+//            a.setContent(map.get(c.getCfgCollectionId()) == 1 ? "申请上线" : "申请下线");
+//            resp.add(a);
+//        });
 
-        return CommonResult.success(resp);
+        return CommonResult.success(cfgAuditList);
 
     }
 
@@ -112,7 +112,6 @@ public class CfgAuditController {
     @PostMapping("/history_list") //历史自己处理的审批
     public CommonResult getHistoryAuditList(@RequestParam("token") String token) {
 
-
         if (!accountRemoteDAO.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
@@ -126,7 +125,6 @@ public class CfgAuditController {
         List<CfgAudit> cfgAuditList = cfgAuditService.selectByReviewerId(info.getAccountId(), condition);
 
         return CommonResult.success(cfgAuditList);
-
     }
 
     @PostMapping("/handle") //历史自己处理的审批
@@ -149,7 +147,6 @@ public class CfgAuditController {
         } else {
             //驳回
             cfgAuditService.reject(req.getAuditId(), info.getAccountId());
-            cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
         }
 
 

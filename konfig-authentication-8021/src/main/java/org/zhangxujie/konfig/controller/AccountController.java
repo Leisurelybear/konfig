@@ -22,6 +22,7 @@ import org.zhangxujie.konfig.util.TokenUtil;
 
 import javax.annotation.Resource;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,6 +126,23 @@ public class AccountController {
     public CommonResult detail(Principal principal) {
 
         return CommonResult.success(null);
+    }
+
+
+    @PostMapping("/user/list_by_aids")
+    public CommonResult getUsersByAid(@RequestBody List<Integer> accountIds, @RequestParam("token") String token) {
+        if (!TokenUtil.validateToken(token)){
+            return CommonResult.unauthorized("Token失效，请重新登录！");
+        }
+
+        List<Account> accountList = accountService.listByAids(accountIds);
+
+        for (int i = 0; i < accountList.size(); i++) {
+            accountList.get(i).setPassword("");
+            accountList.get(i).setEmail("");
+        }
+
+        return CommonResult.success(accountList);
     }
 
 

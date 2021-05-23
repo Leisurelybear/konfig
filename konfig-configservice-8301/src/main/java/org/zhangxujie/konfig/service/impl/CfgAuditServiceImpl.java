@@ -8,8 +8,10 @@ package org.zhangxujie.konfig.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.zhangxujie.konfig.mapper.CfgAuditMapper;
+import org.zhangxujie.konfig.mapper.CfgCollectionMapper;
 import org.zhangxujie.konfig.model.CfgAudit;
 import org.zhangxujie.konfig.model.CfgAuditExample;
+import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.service.CfgAuditService;
 import org.zhangxujie.konfig.util.TimeUtil;
 
@@ -21,6 +23,9 @@ public class CfgAuditServiceImpl implements CfgAuditService {
 
     @Resource
     private CfgAuditMapper cfgAuditMapper;
+
+    @Resource
+    private CfgCollectionMapper cfgCollectionMapper;
 
     @Override
     public int submit(Integer collectionId, Integer applicantAccountId) {
@@ -37,10 +42,14 @@ public class CfgAuditServiceImpl implements CfgAuditService {
             return -audits.get(0).getId();
         }
 
+        //提交到审核
+        CfgCollection cfgCollection = cfgCollectionMapper.selectByPrimaryKey(collectionId);
+
         CfgAudit item = new CfgAudit();
         item.setCfgCollectionId(collectionId);
         item.setApplicantAid(applicantAccountId);
         item.setStatus(0);
+        item.setContent(cfgCollection.getIsDraft() == 1 ? "上线申请 | 配置集ID：" + collectionId : "下线申请 | 配置集ID：" + collectionId);
         item.setSubmitTime(TimeUtil.getNowTimestamp());
 
         cfgAuditMapper.insert(item);
@@ -73,6 +82,7 @@ public class CfgAuditServiceImpl implements CfgAuditService {
     public List<CfgAudit> selectByCollectionIds(List<Integer> collectionIds, List<Integer> statusCondition) {
 
         CfgAuditExample example = new CfgAuditExample();
+        example.setOrderByClause("submit_time desc");
         example.createCriteria()
                 .andStatusIn(statusCondition)
                 .andCfgCollectionIdIn(collectionIds);
@@ -84,6 +94,8 @@ public class CfgAuditServiceImpl implements CfgAuditService {
     public List<CfgAudit> selectByApplicantId(Integer applicantAccountId, List<Integer> statusCondition) {
 
         CfgAuditExample example = new CfgAuditExample();
+        example.setOrderByClause("submit_time desc");
+
         example.createCriteria()
                 .andStatusIn(statusCondition)
                 .andApplicantAidEqualTo(applicantAccountId);
@@ -94,6 +106,7 @@ public class CfgAuditServiceImpl implements CfgAuditService {
     @Override
     public List<CfgAudit> selectByReviewerId(Integer reviewerAccountId, List<Integer> statusCondition) {
         CfgAuditExample example = new CfgAuditExample();
+        example.setOrderByClause("handle_time desc");
         example.createCriteria()
                 .andStatusIn(statusCondition)
                 .andReviewerAidEqualTo(reviewerAccountId);

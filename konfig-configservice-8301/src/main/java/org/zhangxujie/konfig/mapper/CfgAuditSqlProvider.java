@@ -36,6 +36,10 @@ public class CfgAuditSqlProvider {
             sql.VALUES("cfg_collection_id", "#{cfgCollectionId,jdbcType=INTEGER}");
         }
         
+        if (record.getContent() != null) {
+            sql.VALUES("content", "#{content,jdbcType=VARCHAR}");
+        }
+        
         if (record.getStatus() != null) {
             sql.VALUES("status", "#{status,jdbcType=INTEGER}");
         }
@@ -67,6 +71,7 @@ public class CfgAuditSqlProvider {
             sql.SELECT("id");
         }
         sql.SELECT("cfg_collection_id");
+        sql.SELECT("content");
         sql.SELECT("status");
         sql.SELECT("applicant_aid");
         sql.SELECT("reviewer_aid");
@@ -95,6 +100,10 @@ public class CfgAuditSqlProvider {
         
         if (record.getCfgCollectionId() != null) {
             sql.SET("cfg_collection_id = #{record.cfgCollectionId,jdbcType=INTEGER}");
+        }
+        
+        if (record.getContent() != null) {
+            sql.SET("content = #{record.content,jdbcType=VARCHAR}");
         }
         
         if (record.getStatus() != null) {
@@ -127,6 +136,7 @@ public class CfgAuditSqlProvider {
         
         sql.SET("id = #{record.id,jdbcType=INTEGER}");
         sql.SET("cfg_collection_id = #{record.cfgCollectionId,jdbcType=INTEGER}");
+        sql.SET("content = #{record.content,jdbcType=VARCHAR}");
         sql.SET("status = #{record.status,jdbcType=INTEGER}");
         sql.SET("applicant_aid = #{record.applicantAid,jdbcType=INTEGER}");
         sql.SET("reviewer_aid = #{record.reviewerAid,jdbcType=INTEGER}");
@@ -144,6 +154,10 @@ public class CfgAuditSqlProvider {
         
         if (record.getCfgCollectionId() != null) {
             sql.SET("cfg_collection_id = #{cfgCollectionId,jdbcType=INTEGER}");
+        }
+        
+        if (record.getContent() != null) {
+            sql.SET("content = #{content,jdbcType=VARCHAR}");
         }
         
         if (record.getStatus() != null) {

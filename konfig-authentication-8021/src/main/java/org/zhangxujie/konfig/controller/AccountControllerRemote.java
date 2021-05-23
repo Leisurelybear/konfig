@@ -103,5 +103,19 @@ public class AccountControllerRemote {
         return groupIdList;
     }
 
+    @GetMapping("/user/list_by_aids/{accountIds}")
+    public List<Account> getUsersByAid(@PathVariable("accountIds") String accountIds) {
+
+        String[] aidsString = accountIds.trim().split("_");
+        List<Integer> aids = new ArrayList<>();
+        for (String aid : aidsString) {
+            aids.add(Integer.parseInt(aid));
+        }
+
+        List<Account> accountList = accountService.listByAids(aids);
+
+        return accountList;
+    }
+
 
 }

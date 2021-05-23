@@ -29,7 +29,9 @@ import org.zhangxujie.konfig.utils.JwtTokenUtil;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -214,5 +216,44 @@ public class AccountServiceImpl implements AccountService {
         Integer count = (int) accountDao.countByExample(example);
 
         return count;
+    }
+
+    @Override
+    public List<Account> listByAids(List<Integer> accountIds) {
+        //redis前缀
+        String RedisKeyPrefix = "account:id:";
+
+        //去重
+        Set<Integer> set = new HashSet<>(accountIds);
+        accountIds.clear();
+        accountIds.addAll(set);
+
+        //存查询出的用户list
+        List<Account> accountList = new ArrayList<>();
+        //存redis中没有的用户id
+        List<Integer> misAccountIds = new ArrayList<>();
+        for (Integer accountId : accountIds) {
+            Object obj = redisClient.getObject(RedisKeyPrefix + accountId);
+            if (obj == null){
+                misAccountIds.add(accountId);
+                continue;
+            }
+            accountList.add((Account)obj);
+        }
+
+        if (misAccountIds.size() != 0){
+            AccountExample example = new AccountExample();
+            example.createCriteria()
+                    .andIsDelEqualTo(0)
+                    .andIdIn(misAccountIds);
+            List<Account> misAccountList = accountDao.selectByExample(example);
+            //存redis、存到返回列表
+            misAccountList.forEach(c -> {
+                accountList.add(c);
+                redisClient.setObject(RedisKeyPrefix + c.getId(), c);
+            });
+        }
+
+        return accountList;
     }
 }
