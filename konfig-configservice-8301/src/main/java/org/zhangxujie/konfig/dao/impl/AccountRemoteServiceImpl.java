@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
-import org.zhangxujie.konfig.dao.AccountRemoteDAO;
+import org.zhangxujie.konfig.dao.AccountRemoteService;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
 
 import javax.annotation.Resource;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Repository
 @Slf4j
-public class AccountRemoteDAOImpl implements AccountRemoteDAO {
+public class AccountRemoteServiceImpl implements AccountRemoteService {
 
 
     @Value("${rpc.url.auth}")

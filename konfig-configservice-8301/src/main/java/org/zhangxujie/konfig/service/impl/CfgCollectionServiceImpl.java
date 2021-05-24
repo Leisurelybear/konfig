@@ -15,7 +15,7 @@ import org.zhangxujie.konfig.mapper.CfgCollectionMapper;
 import org.zhangxujie.konfig.mapper.CfgPermissionMapper;
 import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgCollectionExample;
-import org.zhangxujie.konfig.dao.AccountRemoteDAO;
+import org.zhangxujie.konfig.dao.AccountRemoteService;
 import org.zhangxujie.konfig.service.CfgCollectionService;
 import org.zhangxujie.konfig.service.CfgPermissionService;
 import org.zhangxujie.konfig.util.TimeUtil;
@@ -34,7 +34,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
     private CfgPermissionMapper cfgPermissionMapper;
 
     @Resource
-    private AccountRemoteDAO accountRemoteDAO;
+    private AccountRemoteService accountRemoteService;
 
     @Resource
     private CfgPermissionService cfgPermissionService;

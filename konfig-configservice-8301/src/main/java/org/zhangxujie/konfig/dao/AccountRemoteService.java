@@ -4,7 +4,7 @@ import org.zhangxujie.konfig.dto.account.InfoRemote;
 
 import java.util.List;
 
-public interface AccountRemoteDAO {
+public interface AccountRemoteService {
 
     boolean validateToken(String token);
 

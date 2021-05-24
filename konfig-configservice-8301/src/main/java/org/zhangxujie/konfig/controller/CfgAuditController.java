@@ -11,8 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.common.Const;
-import org.zhangxujie.konfig.dao.AccountRemoteDAO;
-import org.zhangxujie.konfig.dto.GetUndoAuditListResp;
+import org.zhangxujie.konfig.dao.AccountRemoteService;
 import org.zhangxujie.konfig.dto.HandleAuditReq;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
 import org.zhangxujie.konfig.model.CfgAudit;
@@ -24,8 +23,6 @@ import org.zhangxujie.konfig.service.CfgPermissionService;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @Slf4j
@@ -38,7 +35,7 @@ public class CfgAuditController {
     private CfgAuditService cfgAuditService;
 
     @Resource
-    private AccountRemoteDAO accountRemoteDAO;
+    private AccountRemoteService accountRemoteService;
 
     @Resource
     private CfgPermissionService cfgPermissionService;
@@ -50,11 +47,11 @@ public class CfgAuditController {
     public CommonResult getUndoAuditList(@RequestParam("token") String token) {
 
 
-        if (!accountRemoteDAO.validateToken(token)) {
+        if (!accountRemoteService.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
 
-        InfoRemote info = accountRemoteDAO.infoFromToken(token);
+        InfoRemote info = accountRemoteService.infoFromToken(token);
 
         //1、先找自己拥有的配置集ID列表
         List<CfgCollection> collectionList = cfgCollectionService.getOwnCollectionList(info.getUsername());
@@ -92,11 +89,11 @@ public class CfgAuditController {
     public CommonResult getMyAuditList(@RequestParam("token") String token) {
 
 
-        if (!accountRemoteDAO.validateToken(token)) {
+        if (!accountRemoteService.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
 
-        InfoRemote info = accountRemoteDAO.infoFromToken(token);
+        InfoRemote info = accountRemoteService.infoFromToken(token);
 
         List<Integer> condition = new ArrayList<>();
         condition.add(Const.CFG_AUDIT_UNDO);
@@ -112,11 +109,11 @@ public class CfgAuditController {
     @PostMapping("/history_list") //历史自己处理的审批
     public CommonResult getHistoryAuditList(@RequestParam("token") String token) {
 
-        if (!accountRemoteDAO.validateToken(token)) {
+        if (!accountRemoteService.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
 
-        InfoRemote info = accountRemoteDAO.infoFromToken(token);
+        InfoRemote info = accountRemoteService.infoFromToken(token);
 
         List<Integer> condition = new ArrayList<>();
         condition.add(Const.CFG_AUDIT_APPROVE);
@@ -130,11 +127,11 @@ public class CfgAuditController {
     @PostMapping("/handle") //历史自己处理的审批
     public CommonResult handleAudit(@RequestParam("token") String token, @RequestBody HandleAuditReq req) {
 
-        if (!accountRemoteDAO.validateToken(token)) {
+        if (!accountRemoteService.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
 
-        InfoRemote info = accountRemoteDAO.infoFromToken(token);
+        InfoRemote info = accountRemoteService.infoFromToken(token);
         if (!cfgCollectionService.isOnwer(info.getUsername(), req.getCollectionId())) {
             log.info("该用户没有权限");
             return CommonResult.failed("该用户没有权限");

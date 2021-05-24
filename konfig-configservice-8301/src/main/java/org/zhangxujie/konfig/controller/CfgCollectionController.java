@@ -13,7 +13,7 @@ import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
 import org.zhangxujie.konfig.model.CfgCollection;
-import org.zhangxujie.konfig.dao.AccountRemoteDAO;
+import org.zhangxujie.konfig.dao.AccountRemoteService;
 import org.zhangxujie.konfig.service.CfgAuditService;
 import org.zhangxujie.konfig.service.CfgCollectionService;
 import org.zhangxujie.konfig.service.CfgPermissionService;
@@ -35,7 +35,7 @@ public class CfgCollectionController {
     private CfgCollectionService cfgCollectionService;
 
     @Resource
-    private AccountRemoteDAO accountRemoteDAO;
+    private AccountRemoteService accountRemoteService;
 
     @Resource
     private CfgPermissionService cfgPermissionService;
@@ -47,7 +47,7 @@ public class CfgCollectionController {
     public CommonResult getCfgCollections(@RequestParam("token") String token, @RequestBody GetCfgCollectionsReq req) {
 
 
-        if (!accountRemoteDAO.validateToken(token)) {
+        if (!accountRemoteService.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
 
@@ -62,11 +62,11 @@ public class CfgCollectionController {
     public CommonResult add(@RequestParam("token") String token, @PathVariable String collectionName) {
 
 
-        if (!accountRemoteDAO.validateToken(token)) {
+        if (!accountRemoteService.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
         }
 
-        InfoRemote info = accountRemoteDAO.infoFromToken(token);
+        InfoRemote info = accountRemoteService.infoFromToken(token);
 
         AddCollectionReq req = new AddCollectionReq(collectionName);
 
@@ -122,7 +122,7 @@ public class CfgCollectionController {
             return CommonResult.failed("您没有该记录的操作权限");
         }
         //获取用户信息
-        InfoRemote info = accountRemoteDAO.infoFromToken(token);
+        InfoRemote info = accountRemoteService.infoFromToken(token);
 
 
         if (!cfgCollectionService.isOnwer(info.getUsername(), collectionId)){

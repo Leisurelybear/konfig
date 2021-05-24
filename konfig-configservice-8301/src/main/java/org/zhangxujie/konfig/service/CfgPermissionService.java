@@ -6,6 +6,8 @@
  */
 package org.zhangxujie.konfig.service;
 
+import org.zhangxujie.konfig.dto.ListPermissionResp;
+
 import java.util.List;
 
 public interface CfgPermissionService {
@@ -67,4 +69,15 @@ public interface CfgPermissionService {
     Integer addGroupPermission(Integer groupId, Integer collectionId, String createUsername, String createAccountId);
 
 
+    /**
+     * @Author: Jason
+     * @Description: 通过用户ID、集合ID、用户组ID查询权限列表（分页）
+     * @Param accountIds: 用户ID
+     * @Param collectionIds: 配置集ID
+     * @Param groupsIds: 用户组ID
+     * @Param pageNumber: 页码
+     * @Param pageSize: 每页数量
+     * @return: org.zhangxujie.konfig.dto.ListPermissionResp
+     **/
+    ListPermissionResp list(List<Integer> accountIds, List<Integer> collectionIds, List<Integer> groupsIds, Integer pageNumber, Integer pageSize);
 }
