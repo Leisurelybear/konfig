@@ -39,4 +39,13 @@ public interface CfgAuditService {
      * @Description: 通过处理人ID查询List
      **/
     List<CfgAudit> selectByReviewerId(Integer reviewerAccountId, List<Integer> statusCondition);
+
+    /**
+     * @Author: Jason
+     * @Description: 通过AuditId查询
+     * @Date: 2021/5/24 14:01
+     * @Param auditId: 审核ID
+     * @return: org.zhangxujie.konfig.model.CfgAudit
+     **/
+    CfgAudit selectByAuditId(Integer auditId);
 }

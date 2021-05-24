@@ -77,6 +77,10 @@ public class CfgConfigController {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
+        if (cfgCollectionService.isOnline(req.getCollectionId())){
+            return CommonResult.failed("当前为线上版本，不能修改！");
+        }
+
         //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
         int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
         boolean done = cfgConfigService.update(req.getCollectionId(), collectionId, req.getId(), req.getCfgName(), req.getCfgKey(), req.getCfgValue(), req.getUsername());
@@ -93,6 +97,10 @@ public class CfgConfigController {
 
         if (!cfgPermissionService.hasPermission(token, req.getCollectionId())){
             return CommonResult.failed("您没有该记录的操作权限");
+        }
+
+        if (cfgCollectionService.isOnline(req.getCollectionId())){
+            return CommonResult.failed("当前为线上版本，不能修改！");
         }
 
         //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变

@@ -113,4 +113,10 @@ public class CfgAuditServiceImpl implements CfgAuditService {
 
         return cfgAuditMapper.selectByExample(example);
     }
+
+    @Override
+    public CfgAudit selectByAuditId(Integer auditId) {
+
+        return cfgAuditMapper.selectByPrimaryKey(auditId);
+    }
 }

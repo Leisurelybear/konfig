@@ -143,12 +143,21 @@ public class CfgAuditController {
         if (req.getIsApproved()) {
             //同意
             cfgAuditService.approve(req.getAuditId(), info.getAccountId());
-            cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
+            CfgAudit audit = cfgAuditService.selectByAuditId(req.getAuditId());
+            boolean isOnline = cfgCollectionService.isOnline(audit.getCfgCollectionId());
+
+            if (!isOnline && audit.getContent().contains("上线")){
+                cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
+            }else if (isOnline && audit.getContent().contains("下线")){
+                cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
+            }else {
+                //说明申请之后，配置状态已经被切换了，已经晚了，什么都不做
+                return CommonResult.success("该配置状态已经改变了！");
+            }
         } else {
             //驳回
             cfgAuditService.reject(req.getAuditId(), info.getAccountId());
         }
-
 
         return CommonResult.success(null);
 
