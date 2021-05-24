@@ -75,7 +75,7 @@ public class CfgCollectionController {
         AddCollectionResp resp = cfgCollectionService.add(req, username);
 
         //添加权限表，把自己加到权限表里
-        cfgPermissionService.addUserPermission(info.getAccountId(), resp.getId(), info.getUsername(), info.getAccountId());
+        cfgPermissionService.initCreateUserPermission(info.getAccountId(), resp.getId(), info.getUsername(), info.getAccountId());
 
         if (resp.getId() == -1) {
             return CommonResult.failed("配置集名重复，请更改后提交");

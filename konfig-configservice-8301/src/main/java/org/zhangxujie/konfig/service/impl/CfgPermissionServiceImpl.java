@@ -17,7 +17,7 @@ import org.zhangxujie.konfig.service.CfgPermissionService;
 import org.zhangxujie.konfig.util.TimeUtil;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class CfgPermissionServiceImpl implements CfgPermissionService {
@@ -81,7 +81,7 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
     }
 
     @Override
-    public Integer addUserPermission(Integer accountId, Integer collectionId, String createUsername, Integer createAccountId) {
+    public Integer initCreateUserPermission(Integer accountId, Integer collectionId, String createUsername, Integer createAccountId) {
 
         CfgPermission cfgPermission = new CfgPermission();
         cfgPermission.setAccountId(accountId);
@@ -97,10 +97,6 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
         return res;
     }
 
-    @Override
-    public Integer addGroupPermission(Integer groupId, Integer collectionId, String createUsername, String createAccountId) {
-        return null;
-    }
 
     @Override
     public ListPermissionResp list(List<Integer> accountIds, List<Integer> collectionIds, List<Integer> groupsIds, Integer pageNumber, Integer pageSize) {
@@ -137,5 +133,71 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
 
 
         return resp;
+    }
+
+    @Override
+    public boolean createUserPermission(String createUsername, Integer createAccountId, Integer collectionId, List<Integer> accountIds) {
+
+        //先去检查是否已经有有权限的，如果有则跳过
+        CfgPermissionExample example = new CfgPermissionExample();
+        example.createCriteria().andIsDelEqualTo(0)
+                .andAccountIdIn(accountIds);
+        List<CfgPermission> permissionList = cfgPermissionMapper.selectByExample(example);
+        Set<Integer> set = new HashSet<>();
+        permissionList.forEach(c -> {
+            set.add(c.getAccountId());
+        });
+
+        for (Integer accountId : accountIds) {
+            if (set.contains(accountId)){
+                continue;
+            }
+            CfgPermission cfgPermission = new CfgPermission();
+            cfgPermission.setType(0); //用户权限
+            cfgPermission.setGroupId(0);
+            cfgPermission.setAccountId(accountId);
+            cfgPermission.setCollectionId(collectionId);
+            cfgPermission.setCreateTime(TimeUtil.getNowTimestamp());
+            cfgPermission.setCreateAccountId(createAccountId);
+            cfgPermission.setCreateUsername(createUsername);
+            cfgPermission.setIsDel(0);
+
+            cfgPermissionMapper.insert(cfgPermission);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean createGroupPermission(String createUsername, Integer createAccountId, Integer collectionId, List<Integer> groupIds) {
+
+        //先去检查是否已经有有权限的，如果有则跳过
+        CfgPermissionExample example = new CfgPermissionExample();
+        example.createCriteria().andIsDelEqualTo(0)
+                .andGroupIdIn(groupIds);
+        List<CfgPermission> permissionList = cfgPermissionMapper.selectByExample(example);
+        Set<Integer> set = new HashSet<>();
+        permissionList.forEach(c -> {
+            set.add(c.getGroupId());
+        });
+
+        for (Integer groupId : groupIds) {
+            if (set.contains(groupId)){
+                continue;
+            }
+            CfgPermission cfgPermission = new CfgPermission();
+            cfgPermission.setType(0); //用户权限
+            cfgPermission.setGroupId(groupId);
+            cfgPermission.setAccountId(0);
+            cfgPermission.setCollectionId(collectionId);
+            cfgPermission.setCreateTime(TimeUtil.getNowTimestamp());
+            cfgPermission.setCreateAccountId(createAccountId);
+            cfgPermission.setCreateUsername(createUsername);
+            cfgPermission.setIsDel(0);
+
+            cfgPermissionMapper.insert(cfgPermission);
+        }
+
+        return true;
     }
 }

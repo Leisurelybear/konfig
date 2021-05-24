@@ -53,20 +53,7 @@ public interface CfgPermissionService {
      * @Param createAccountId:
      * @return: java.lang.Integer
      **/
-    Integer addUserPermission(Integer accountId, Integer collectionId, String createUsername, Integer createAccountId);
-
-
-    /**
-     * @Author: Jason
-     * @Description: 对用户组授权
-     * @Date: 2021/5/20 23:07
-     * @Param groupId:
-     * @Param collectionId:
-     * @Param createUsername:
-     * @Param createAccountId:
-     * @return: java.lang.Integer
-     **/
-    Integer addGroupPermission(Integer groupId, Integer collectionId, String createUsername, String createAccountId);
+    Integer initCreateUserPermission(Integer accountId, Integer collectionId, String createUsername, Integer createAccountId);
 
 
     /**
@@ -80,4 +67,9 @@ public interface CfgPermissionService {
      * @return: org.zhangxujie.konfig.dto.ListPermissionResp
      **/
     ListPermissionResp list(List<Integer> accountIds, List<Integer> collectionIds, List<Integer> groupsIds, Integer pageNumber, Integer pageSize);
+
+    //創建用戶-配置權限
+    boolean createUserPermission(String createUsername, Integer createAccountId, Integer collectionId, List<Integer> accountIds);
+    //創建用戶組-配置權限
+    boolean createGroupPermission(String createUsername, Integer createAccountId, Integer collectionId, List<Integer> groupIds);
 }
