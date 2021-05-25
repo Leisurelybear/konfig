@@ -43,7 +43,7 @@ $(function () {
             contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
             dataType: 'text json', //相反
             error: function (response) {
-                Notiflix.Notify.Failure("网络错误：添加配置失败。")
+                Notiflix.Notify.Failure("网络错误")
             },
             statusCode: {
                 200: function (data) {
@@ -66,6 +66,18 @@ $(function () {
         listCfgPermission(cfgCollectionId, 1, 10);
     });
 
+    $("#userlist_search").click(function () {
+        $("#usersearch_text")
+
+        //tbody
+        $("#user_list")
+        // <tr>
+        // <td>用户</td>
+        // <td>newuser[9]</td>
+        // <td><i class="ti-plus"></i></td>
+        // </tr>
+    })
+    //TODO:用户名模糊查询用户列表
 });
 
 function removeRow(id, collectionId) {
@@ -76,7 +88,7 @@ function removeRow(id, collectionId) {
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
-            Notiflix.Notify.Failure("网络错误：添加配置失败。")
+            Notiflix.Notify.Failure("网络错误")
         },
         statusCode: {
             200: function (data) {
@@ -109,7 +121,7 @@ function listCfgPermission(cfgCollectionId, pageNumber, pageSize) {
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
-            Notiflix.Notify.Failure("网络错误：添加配置失败。")
+            Notiflix.Notify.Failure("网络错误")
         },
         statusCode: {
             200: function (data) {
@@ -147,6 +159,8 @@ function listCfgPermission(cfgCollectionId, pageNumber, pageSize) {
                         "    <a href=\"#\" onclick='listCfgPermission(" + cfgCollectionId + ", " + (pageNumber + 1) + ", " + pageSize + ")' class=\"page-link\">Next</a>" +
                         "</li>"
                     $("#cfg_permission_page").append(cfgPermissionPage)
+                }else {
+                    $('#user_search_div').empty()
                 }
             }
         }
@@ -171,7 +185,7 @@ function add_config(configName, key, value, collectionId) {
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
-            Notiflix.Notify.Failure("网络错误：添加配置失败。")
+            Notiflix.Notify.Failure("网络错误")
         },
         statusCode: {
             200: function (data) {
@@ -284,7 +298,7 @@ function list_configs(collectionId) {
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
-            Notiflix.Notify.Failure("网络错误：获取配置信息错误。")
+            Notiflix.Notify.Failure("网络错误")
         },
         statusCode: {
             200: function (data) {

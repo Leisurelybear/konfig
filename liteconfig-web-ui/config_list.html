@@ -101,8 +101,8 @@
                             </div>
                             <div class="modal-body">
                                 <div id="user_search_div" class="input-group">
-                                    <input type="text" id="usersearch" class="form-control" placeholder="输入用户名/用户组名，查询并添加权限">
-                                    <input type="button" value="查询" id="userlist_search" onclick="alert($('#usersearch').val())"
+                                    <input type="text" id="usersearch_text" class="form-control" placeholder="输入用户名/用户组名，查询并添加权限">
+                                    <input type="button" value="查询" id="userlist_search"
                                            class="btn btn-primary">
                                     <input type="button" value="清空" onclick="$('#user_list').empty()"
                                            class="btn btn-secondary">
@@ -110,12 +110,12 @@
                                         <tbody id="user_list">
                                         <tr>
                                             <td>用户</td>
-                                            <td>newuser[9]</td>
+                                            <td style="text-align: left">[9] newuser</td>
                                             <td><i class="ti-plus"></i></td>
                                         </tr>
                                         <tr>
                                             <td>用户组</td>
-                                            <td>wheel[1]</td>
+                                            <td style="text-align: left">[1] wheel</td>
                                             <td><i class="ti-plus"></i></td>
                                         </tr>
                                         </tbody>
@@ -135,19 +135,9 @@
                                     </thead>
                                     <tbody id="cfg_premission_list">
                                     <tr>
-                                        <th scope="row">1</th>
-                                        <td>用户权限</td>
-                                        <td>root[9]</td>
-                                        <td>测试配置[1]</td>
-                                        <td><i class="ti-trash"></i></td>
+                                        <td colspan="5" style="color: #c82333">您没有查看权限</td>
                                     </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>用户组权限</td>
-                                        <td>wheel[1]</td>
-                                        <td>测试配置[1]</td>
-                                        <td><i class="ti-trash"></i></td>
-                                    </tr>
+
                                     </tbody>
                                 </table>
                                 <div>

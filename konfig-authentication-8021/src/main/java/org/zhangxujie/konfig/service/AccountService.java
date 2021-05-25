@@ -11,6 +11,7 @@ import org.zhangxujie.konfig.dto.AccountItem;
 import org.zhangxujie.konfig.dto.AccountQueryRespParam;
 import org.zhangxujie.konfig.dto.AccountRegisterParam;
 import org.zhangxujie.konfig.model.Account;
+import org.zhangxujie.konfig.model.Group;
 
 import java.util.List;
 
@@ -77,4 +78,7 @@ public interface AccountService {
      * @return: java.util.List<org.zhangxujie.konfig.model.Account>
      **/
     List<Account> listByAids(List<Integer> accountIds);
+
+
+    List<Account> listByName(String name);
 }

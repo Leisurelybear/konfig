@@ -159,9 +159,9 @@ public class AccountServiceImpl implements AccountService {
             List<Permission> permissionList = null;
 
             Object permissionsRedis = redisClient.getObject(redisKeyPrefix + admin.getId());
-            if (permissionsRedis != null){
-                permissionList = (List<Permission>)permissionsRedis;
-            }else {
+            if (permissionsRedis != null) {
+                permissionList = (List<Permission>) permissionsRedis;
+            } else {
                 PermissionExample example = new PermissionExample();
                 example.createCriteria().andIdentityTypeEqualTo("USER").andIdentityIdEqualTo(admin.getId());
                 permissionList = permissionDao.selectByExample(example);
@@ -234,14 +234,14 @@ public class AccountServiceImpl implements AccountService {
         List<Integer> misAccountIds = new ArrayList<>();
         for (Integer accountId : accountIds) {
             Object obj = redisClient.getObject(RedisKeyPrefix + accountId);
-            if (obj == null){
+            if (obj == null) {
                 misAccountIds.add(accountId);
                 continue;
             }
-            accountList.add((Account)obj);
+            accountList.add((Account) obj);
         }
 
-        if (misAccountIds.size() != 0){
+        if (misAccountIds.size() != 0) {
             AccountExample example = new AccountExample();
             example.createCriteria()
                     .andIsDelEqualTo(0)
@@ -255,5 +255,24 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return accountList;
+    }
+
+    @Override
+    public List<Account> listByName(String name) {
+
+        AccountExample example = new AccountExample();
+
+        example.createCriteria().andIsDelEqualTo(0)
+                .andUsernameLike("%" + name + "%");
+
+        List<Account> accounts = accountDao.selectByExample(example);
+        if (accounts == null){
+            return new ArrayList<>();
+        }
+        for (Account account : accounts) {
+            account.setPassword("");
+        }
+
+        return accounts;
     }
 }

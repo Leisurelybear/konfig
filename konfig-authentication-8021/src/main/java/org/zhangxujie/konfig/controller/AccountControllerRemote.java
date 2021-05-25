@@ -8,10 +8,7 @@ package org.zhangxujie.konfig.controller;
 
 
 import io.swagger.annotations.Api;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.dto.InfoRespParam;
 import org.zhangxujie.konfig.dto.account.InfoRemote;

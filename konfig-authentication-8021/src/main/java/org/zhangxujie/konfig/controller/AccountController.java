@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.model.Account;
+import org.zhangxujie.konfig.model.Group;
 import org.zhangxujie.konfig.model.UserInfo;
 import org.zhangxujie.konfig.service.AccountService;
 import org.zhangxujie.konfig.service.UserInfoService;
@@ -143,6 +144,17 @@ public class AccountController {
         }
 
         return CommonResult.success(accountList);
+    }
+
+    @PostMapping("/list_by_name")
+    public CommonResult listByName(@RequestBody String name, @RequestParam("token") String token){
+        if (!TokenUtil.validateToken(token)) {
+            return CommonResult.failed("token失效，请重新登录");
+        }
+
+        List<Account> accounts = accountService.listByName(name);
+
+        return CommonResult.success(accounts);
     }
 
 

@@ -10,4 +10,5 @@ public interface GroupService {
 
     List<Group> getGroupsByIds(List<Integer> accountId);
 
+    List<Group> listByName(String name);
 }
