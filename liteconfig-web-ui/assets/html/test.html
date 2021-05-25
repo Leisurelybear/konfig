@@ -23,18 +23,19 @@
 <script src="../js/vendor/jquery-3.6.0.min.js"></script>
 <script>
     $.ajax({
-        url: 'http://localhost:8021/default/upload',//接口地址
+        url: 'http://' + document.domain + ':8021/default/upload',//接口地址
         type: 'post',//请求方式
         data: $("#file").val(), //传输的数据
-        processData : false,
-        contentType : false,
-        success : function(data){
-            if (data=="error") {
+        processData: false,
+        contentType: false,
+        success: function (data) {
+            if (data == "error") {
                 alert("文件提交失败!");
-            }else{
+            } else {
                 $("input[name='userUrl']").val(data);
                 alert("文件上传成功!");
-            }}
+            }
+        }
     })
 
 

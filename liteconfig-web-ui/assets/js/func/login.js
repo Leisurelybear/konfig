@@ -14,7 +14,7 @@ $(function () {
         };
 
         $.ajax({
-            url: 'http://localhost:8021/admin/login',//接口地址
+            url: 'http://' + document.domain + ':8021/admin/login',//接口地址
             type: 'post',//请求方式
             data: JSON.stringify(login_form), //传输的数据
             contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -57,7 +57,7 @@ $(function () {
 
 function checkToken() {
     $.ajax({
-        url: 'http://localhost:8021/admin/info',
+        url: 'http://' + document.domain + ':8021/admin/info',
         type: 'get',
         dataType: 'text json',
         beforeSend: function (request) {

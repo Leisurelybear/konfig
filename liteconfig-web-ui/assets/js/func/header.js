@@ -12,7 +12,7 @@ $(function () {
 //根据token得到用户信息
 function getInfo() {
     $.ajax({
-        url: 'http://localhost:8021/admin/info',
+        url: 'http://' + document.domain + ':8021/admin/info',
         // url: 'http://KONFIG-AUTHENTICATION/admin/info',
         type: 'get',
         dataType: 'text json',

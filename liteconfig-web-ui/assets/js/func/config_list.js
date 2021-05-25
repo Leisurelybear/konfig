@@ -37,7 +37,7 @@ $(function () {
     $("#btn_change_status").click(function () {
 
         $.ajax({
-            url: 'http://localhost:8301/cfg_coll/change_status/' + cid[2] + '/?token=' + $.cookie('token'),//接口地址
+            url: 'http://' + document.domain + ':8301/cfg_coll/change_status/' + cid[2] + '/?token=' + $.cookie('token'),//接口地址
             type: 'post',//请求方式
             data: "", //传输的数据
             contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -86,7 +86,7 @@ function fillPermissionUserSearch(cfgCollectionId) {
 
     //查用户
     $.ajax({
-        url: 'http://localhost:8021/admin/list_by_name?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8021/admin/list_by_name?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: queryName, //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -116,7 +116,7 @@ function fillPermissionUserSearch(cfgCollectionId) {
 
     //查用户组
     $.ajax({
-        url: 'http://localhost:8021/group/list_by_name?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8021/group/list_by_name?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: queryName, //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -162,7 +162,7 @@ function addPermission(cfgCollectionId, type, id) {
     }
 
     $.ajax({
-        url: 'http://localhost:8301/cfg_permission/create?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/cfg_permission/create?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -192,7 +192,7 @@ function addPermission(cfgCollectionId, type, id) {
 
 function removeRow(id, collectionId) {
     $.ajax({
-        url: 'http://localhost:8301/cfg_permission/remove/' + id + '?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/cfg_permission/remove/' + id + '?token=' + $.cookie('token'),//接口地址
         type: 'delete',//请求方式
         data: null, //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -229,7 +229,7 @@ function listCfgPermission(cfgCollectionId, pageNumber, pageSize) {
     accountMap = {};
 
     $.ajax({
-        url: 'http://localhost:8301/cfg_permission/list?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/cfg_permission/list?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -302,7 +302,7 @@ function add_config(configName, key, value, collectionId) {
     };
 
     $.ajax({
-        url: 'http://localhost:8301/config/create?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/config/create?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -334,7 +334,7 @@ function delete_cfg(collectionId, configId) {
     console.log(data)
 
     $.ajax({
-        url: 'http://localhost:8301/config/delete?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/config/delete?token=' + $.cookie('token'),//接口地址
         type: 'delete',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -374,7 +374,7 @@ function save_config(collectionId, configId) {
     console.log(data)
 
     $.ajax({
-        url: 'http://localhost:8301/config/update?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/config/update?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -415,7 +415,7 @@ function list_configs(collectionId) {
     };
     var token = "";
     $.ajax({
-        url: 'http://localhost:8301/config/list?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/config/list?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(queryParam), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型

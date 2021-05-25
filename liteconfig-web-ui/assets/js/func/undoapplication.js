@@ -23,7 +23,7 @@ function list() {
 
 
     $.ajax({
-        url: 'http://localhost:8301/audit/undo_list?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/audit/undo_list?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: null, //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -73,7 +73,7 @@ function handle(collectionId, auditId, isApproved) {
         "isApproved": isApproved
     };
     $.ajax({
-        url: 'http://localhost:8301/audit/handle?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8301/audit/handle?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型

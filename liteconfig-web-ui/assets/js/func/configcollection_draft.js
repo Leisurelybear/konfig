@@ -25,7 +25,7 @@ function btn_collection_del(collectionId) {
 
     $.ajax({
 
-        url: 'http://localhost:8301/cfg_coll/del/'+ collectionId +'?token=' + $.cookie("token"),//接口地址
+        url: 'http://' + document.domain + ':8301/cfg_coll/del/'+ collectionId +'?token=' + $.cookie("token"),//接口地址
         type: 'delete',//请求方式
         // data: JSON.stringify(queryParam), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -74,7 +74,7 @@ function loadCollections() {
 
     $.ajax({
 
-        url: 'http://localhost:8301/cfg_coll/list?token=' + $.cookie("token"),//接口地址
+        url: 'http://' + document.domain + ':8301/cfg_coll/list?token=' + $.cookie("token"),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(queryParam), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -119,7 +119,7 @@ function add_collection(collectionName) {
 
     $.ajax({
 
-        url: 'http://localhost:8301/cfg_coll/add/' + collectionName + '?token=' + $.cookie("token"),//接口地址
+        url: 'http://' + document.domain + ':8301/cfg_coll/add/' + collectionName + '?token=' + $.cookie("token"),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -132,7 +132,7 @@ function add_collection(collectionName) {
                 Notiflix.Notify.Success("正在跳转创建好的配置集")
 
                 if (data["code"] == 200) {
-                    window.parent.location = "http://localhost:63342/konfig/liteconfig-web-ui/config_list.html?cid=" + data["data"]["id"]
+                    window.parent.location = "http://" + document.domain + "/konfig/liteconfig-web-ui/config_list.html?cid=" + data["data"]["id"]
                 }
             }
         }

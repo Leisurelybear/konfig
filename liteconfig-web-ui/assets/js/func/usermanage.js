@@ -30,7 +30,7 @@ function updateUserInfo(formId) {
     console.log(data);
 
     $.ajax({
-        url: 'http://localhost:8021/admin/queryall?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8021/admin/queryall?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: new FormData(data), //传输的数据
         dataType: 'text json', //相反
@@ -59,7 +59,7 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
     };
 
     $.ajax({
-        url: 'http://localhost:8021/admin/queryall?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8021/admin/queryall?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
