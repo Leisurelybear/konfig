@@ -149,7 +149,7 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
         });
 
         for (Integer accountId : accountIds) {
-            if (set.contains(accountId)){
+            if (set.contains(accountId)) {
                 continue;
             }
             CfgPermission cfgPermission = new CfgPermission();
@@ -182,7 +182,7 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
         });
 
         for (Integer groupId : groupIds) {
-            if (set.contains(groupId)){
+            if (set.contains(groupId)) {
                 continue;
             }
             CfgPermission cfgPermission = new CfgPermission();
@@ -206,7 +206,7 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
 
         CfgPermission cfgPermission = cfgPermissionMapper.selectByPrimaryKey(cfgPermissionId);
 
-        if (cfgPermission.getAccountId().equals(accountId)){
+        if (cfgPermission.getAccountId().equals(accountId)) {
             //不能删除自己的这个配置权限，否则会有问题
             return false;
         }
@@ -214,5 +214,14 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
         cfgPermission.setIsDel(1);
         cfgPermissionMapper.updateByPrimaryKeySelective(cfgPermission);
         return true;
+    }
+
+    @Override
+    public CfgPermission getById(Integer cfgPermissionId) {
+        CfgPermission cfgPermission = cfgPermissionMapper.selectByPrimaryKey(cfgPermissionId);
+        if (cfgPermission.getIsDel().equals(0)){
+            return cfgPermission;
+        }
+        return null;
     }
 }

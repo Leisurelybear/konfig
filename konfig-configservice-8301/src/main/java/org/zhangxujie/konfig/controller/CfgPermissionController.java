@@ -16,6 +16,8 @@ import org.zhangxujie.konfig.dto.CreatePermissionReq;
 import org.zhangxujie.konfig.dto.ListPermissionReq;
 import org.zhangxujie.konfig.dto.ListPermissionResp;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
+import org.zhangxujie.konfig.model.CfgPermission;
+import org.zhangxujie.konfig.service.CfgCollectionService;
 import org.zhangxujie.konfig.service.CfgPermissionService;
 
 import javax.annotation.Resource;
@@ -35,10 +37,19 @@ public class CfgPermissionController {
     @Resource
     private AccountRemoteService accountRemoteService;
 
+    @Resource
+    private CfgCollectionService cfgCollectionService;
+
+
     @PostMapping("/list")
     public CommonResult list(@RequestBody ListPermissionReq req, @RequestParam("token") String token) {
         if (!accountRemoteService.validateToken(token)) {
             return CommonResult.failed("token失效，请重新登录");
+        }
+        InfoRemote info = accountRemoteService.infoFromToken(token);
+
+        if (!cfgCollectionService.isOnwer(info.getUsername(), req.getCollectionIds().get(0))){
+            return CommonResult.failed("您没有该记录的操作权限");
         }
 
         ListPermissionResp resp = cfgPermissionService.list(req.getAccountIds(), req.getCollectionIds(), req.getGroupsIds(), req.getPageNumber(), req.getPageSize());
@@ -52,6 +63,11 @@ public class CfgPermissionController {
             return CommonResult.failed("token失效，请重新登录");
         }
         InfoRemote info = accountRemoteService.infoFromToken(token);
+
+        if (!cfgCollectionService.isOnwer(info.getUsername(), req.getCollectionId())){
+            return CommonResult.failed("您没有该记录的操作权限");
+        }
+
         boolean ok = false;
         if (req.getAccountIds() != null && req.getAccountIds().size() != 0) {
             //说明添加用户配置权限
@@ -72,6 +88,11 @@ public class CfgPermissionController {
             return CommonResult.failed("token失效，请重新登录");
         }
         InfoRemote info = accountRemoteService.infoFromToken(token);
+
+        CfgPermission cfgPermission = cfgPermissionService.getById(cfgPermissionId);
+        if (!cfgCollectionService.isOnwer(info.getUsername(), cfgPermission.getCollectionId())){
+            return CommonResult.failed("您没有该记录的操作权限");
+        }
 
         //不能删除自己的权限
         boolean ok = cfgPermissionService.remove(cfgPermissionId, info.getAccountId());

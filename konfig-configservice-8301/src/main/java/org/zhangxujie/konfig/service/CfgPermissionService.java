@@ -7,6 +7,7 @@
 package org.zhangxujie.konfig.service;
 
 import org.zhangxujie.konfig.dto.ListPermissionResp;
+import org.zhangxujie.konfig.model.CfgPermission;
 
 import java.util.List;
 
@@ -75,4 +76,6 @@ public interface CfgPermissionService {
 
     //删除权限
     boolean remove(Integer cfgPermissionId, Integer accountId);
+
+    CfgPermission getById(Integer cfgPermissionId);
 }
