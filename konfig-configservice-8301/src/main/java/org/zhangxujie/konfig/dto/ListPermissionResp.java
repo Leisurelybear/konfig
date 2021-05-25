@@ -9,7 +9,9 @@ package org.zhangxujie.konfig.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.CfgPermission;
+import org.zhangxujie.konfig.model.Group;
 
 import java.util.List;
 
@@ -19,6 +21,10 @@ import java.util.List;
 public class ListPermissionResp {
 
     private List<CfgPermission> permissionList;
+
+    private List<Account> accountList;
+
+    private List<Group> groupList;
 
     private Integer pageNumber;
 

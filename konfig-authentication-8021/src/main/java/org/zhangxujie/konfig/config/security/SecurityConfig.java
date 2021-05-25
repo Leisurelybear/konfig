@@ -108,7 +108,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //2、对于用户个人权限的确定：查出当前用户单独分配的权限
                 permissionList = permissionService.getPermissionList(account.getId(), groupIds);
-                return new AdminUserDetails(account,permissionList);
+                return new AdminUserDetails(account, permissionList);
             }
             throw new UsernameNotFoundException("用户名或密码错误");
         };
@@ -124,7 +124,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
 
 
     @Override

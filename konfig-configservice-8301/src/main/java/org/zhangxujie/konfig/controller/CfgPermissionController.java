@@ -11,16 +11,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
+import org.zhangxujie.konfig.common.Const;
 import org.zhangxujie.konfig.dao.AccountRemoteService;
 import org.zhangxujie.konfig.dto.CreatePermissionReq;
 import org.zhangxujie.konfig.dto.ListPermissionReq;
 import org.zhangxujie.konfig.dto.ListPermissionResp;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
+import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.CfgPermission;
+import org.zhangxujie.konfig.model.Group;
+import org.zhangxujie.konfig.model.Permission;
 import org.zhangxujie.konfig.service.CfgCollectionService;
 import org.zhangxujie.konfig.service.CfgPermissionService;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -53,6 +59,25 @@ public class CfgPermissionController {
         }
 
         ListPermissionResp resp = cfgPermissionService.list(req.getAccountIds(), req.getCollectionIds(), req.getGroupsIds(), req.getPageNumber(), req.getPageSize());
+
+        List<CfgPermission> permissionList = resp.getPermissionList();
+
+        List<Integer> groupIds = new ArrayList<>();
+        List<Integer> accountIds = new ArrayList<>();
+
+        permissionList.forEach(c -> {
+            if (c.getType() == Const.CFG_PERMISSION_ACCOUNT){
+                accountIds.add(c.getAccountId());
+            }else if (c.getType() == Const.CFG_PERMISSION_GROUP){
+                groupIds.add(c.getGroupId());
+            }
+        });
+
+        List<Group> groupList= accountRemoteService.getGroupsByAid(groupIds);
+        List<Account> accountList = accountRemoteService.getUsersByAid(accountIds);
+
+        resp.setGroupList(groupList);
+        resp.setAccountList(accountList);
 
         return CommonResult.success(resp);
     }

@@ -25,7 +25,14 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<Group> getGroupsByIds(List<Integer> groupIds) {
 
-        return null;
+        if (groupIds != null && groupIds.size() != 0){
+            GroupExample example = new GroupExample();
+            example.createCriteria().andIsDelEqualTo(0)
+                    .andIdIn(groupIds);
+            return groupMapper.selectByExample(example);
+        }
+
+        return new ArrayList<>();
     }
 
     @Override

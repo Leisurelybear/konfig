@@ -15,10 +15,14 @@ public class Const {
     public final static String AUTH_USER_READ = "user:read";
     public final static String AUTH_USER_EDIT = "user:edit";
 
+    //配置上线审核
     public final static int CFG_AUDIT_UNDO = 0;
     public final static int CFG_AUDIT_APPROVE = 1;
     public final static int CFG_AUDIT_REJECT = 2;
 
+    //配置权限
+    public final static int CFG_PERMISSION_ACCOUNT = 0;
+    public final static int CFG_PERMISSION_GROUP = 1;
 
 
 }

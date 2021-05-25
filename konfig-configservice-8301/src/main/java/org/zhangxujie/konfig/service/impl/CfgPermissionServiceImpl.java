@@ -51,7 +51,9 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
 
         //2、如果单用户没权限，再判断用户组权限
         List<Integer> groupIds = accountRemoteService.getGroupIdListByAccountId(user.getAccountId());
-
+        if (groupIds == null || groupIds.size() == 0){
+            return false;
+        }
         CfgPermissionExample example1 = new CfgPermissionExample();
         example1.createCriteria()
                 .andIsDelEqualTo(0)
@@ -141,12 +143,18 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
         //先去检查是否已经有有权限的，如果有则跳过
         CfgPermissionExample example = new CfgPermissionExample();
         example.createCriteria().andIsDelEqualTo(0)
+                .andCollectionIdEqualTo(collectionId)
                 .andAccountIdIn(accountIds);
         List<CfgPermission> permissionList = cfgPermissionMapper.selectByExample(example);
         Set<Integer> set = new HashSet<>();
         permissionList.forEach(c -> {
             set.add(c.getAccountId());
         });
+
+        if (set.size() == accountIds.size()) {
+            //说明已经有该权限了
+            return false;
+        }
 
         for (Integer accountId : accountIds) {
             if (set.contains(accountId)) {
@@ -174,6 +182,7 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
         //先去检查是否已经有有权限的，如果有则跳过
         CfgPermissionExample example = new CfgPermissionExample();
         example.createCriteria().andIsDelEqualTo(0)
+                .andCollectionIdEqualTo(collectionId)
                 .andGroupIdIn(groupIds);
         List<CfgPermission> permissionList = cfgPermissionMapper.selectByExample(example);
         Set<Integer> set = new HashSet<>();
@@ -181,12 +190,17 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
             set.add(c.getGroupId());
         });
 
+        if (set.size() == groupIds.size()) {
+            //说明已经有该权限了
+            return false;
+        }
+
         for (Integer groupId : groupIds) {
             if (set.contains(groupId)) {
                 continue;
             }
             CfgPermission cfgPermission = new CfgPermission();
-            cfgPermission.setType(0); //用户权限
+            cfgPermission.setType(1); //用户组权限
             cfgPermission.setGroupId(groupId);
             cfgPermission.setAccountId(0);
             cfgPermission.setCollectionId(collectionId);
@@ -219,7 +233,7 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
     @Override
     public CfgPermission getById(Integer cfgPermissionId) {
         CfgPermission cfgPermission = cfgPermissionMapper.selectByPrimaryKey(cfgPermissionId);
-        if (cfgPermission.getIsDel().equals(0)){
+        if (cfgPermission.getIsDel().equals(0)) {
             return cfgPermission;
         }
         return null;

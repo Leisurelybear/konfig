@@ -39,6 +39,9 @@ public class AccountControllerRemote {
     @Resource
     private GroupUserService groupUserService;
 
+    @Resource
+    private GroupService groupService;
+
     @GetMapping("/info/{token}")
     public InfoRemote infoByToken(@PathVariable("token") String token) {
         String username = TokenUtil.getUsernameFromToken(token);
@@ -112,6 +115,20 @@ public class AccountControllerRemote {
         List<Account> accountList = accountService.listByAids(aids);
 
         return accountList;
+    }
+
+    @GetMapping("/group/list_by_gids/{groupIds}")
+    public List<Group> getGroupsByAid(@PathVariable("groupIds") String groupIds) {
+
+        String[] gidsString = groupIds.trim().split("_");
+        List<Integer> groupIdsInt = new ArrayList<>();
+        for (String groupId : gidsString) {
+            groupIdsInt.add(Integer.parseInt(groupId));
+        }
+
+        List<Group> groupList = groupService.getGroupsByIds(groupIdsInt);
+
+        return groupList;
     }
 
 

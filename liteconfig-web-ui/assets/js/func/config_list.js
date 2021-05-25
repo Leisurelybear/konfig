@@ -59,26 +59,136 @@ $(function () {
 
     })
 
-
     //权限管理
     $("#btn_cfg_permission").click(function () {
         let cfgCollectionId = cid[2];
-        listCfgPermission(cfgCollectionId, 1, 10);
+        listCfgPermission(cfgCollectionId, 1, 5);
     });
 
     $("#userlist_search").click(function () {
-        $("#usersearch_text")
+        let cfgCollectionId = cid[2];
+        fillPermissionUserSearch(cfgCollectionId);
 
-        //tbody
-        $("#user_list")
-        // <tr>
-        // <td>用户</td>
-        // <td>newuser[9]</td>
-        // <td><i class="ti-plus"></i></td>
-        // </tr>
     })
-    //TODO:用户名模糊查询用户列表
 });
+
+function fillPermissionUserSearch(cfgCollectionId) {
+    queryName = $("#usersearch_text").val();
+    if (queryName === "") {
+        return
+    }
+    $("#user_list").empty()
+
+    data = {
+        "name": queryName
+    };
+
+
+    //查用户
+    $.ajax({
+        url: 'http://localhost:8021/admin/list_by_name?token=' + $.cookie('token'),//接口地址
+        type: 'post',//请求方式
+        data: queryName, //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误")
+        },
+        statusCode: {
+            200: function (data) {
+                if (data['code'] !== 200) {
+                    Notiflix.Notify.Failure("操作失败：" + data['message']);
+                } else {
+                    console.log(data['data'])
+
+                    $(data['data']).each(function (i, val) {
+                        str = "<tr>\n" +
+                            " <td>用户</td>\n" +
+                            " <td>[" + val.id + "]\t" + val.username + "</td>\n" +
+                            " <td><i class=\"ti-plus\" onclick='addPermission(" + cfgCollectionId + ", 0, " + val.id + ")'></i></td>\n" +
+                            " </tr>"
+                        $("#user_list").append(str)
+                    })
+                }
+            }
+        }
+    })
+
+    //查用户组
+    $.ajax({
+        url: 'http://localhost:8021/group/list_by_name?token=' + $.cookie('token'),//接口地址
+        type: 'post',//请求方式
+        data: queryName, //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误")
+        },
+        statusCode: {
+            200: function (data) {
+                if (data['code'] !== 200) {
+                    Notiflix.Notify.Failure("操作失败：" + data['message']);
+                } else {
+                    console.log(data['data'])
+                    $(data['data']).each(function (i, val) {
+
+                        str = "<tr>\n" +
+                            " <td>用户组</td>\n" +
+                            " <td>[" + val.id + "]\t" + val.groupName + "</td>\n" +
+                            " <td><i class=\"ti-plus\" onclick='addPermission(" + cfgCollectionId + ", 1, " + val.id + ")'></i></td>\n" +
+                            " </tr>"
+                        $("#user_list").append(str)
+                    })
+                }
+            }
+        }
+    })
+}
+
+function addPermission(cfgCollectionId, type, id) {
+    //type = 0: id为用户id，添加用户权限
+    //type = 1；id为用户组ID，添加用户组权限
+    console.log(cfgCollectionId, type, id)
+
+    data = {
+        "collectionId": cfgCollectionId,
+        "accountIds": [],
+        "groupIds": [],
+    };
+    if (type === 0) {
+        data.accountIds = [id]
+    } else if (type === 1) {
+        data.groupIds = [id]
+    }
+
+    $.ajax({
+        url: 'http://localhost:8301/cfg_permission/create?token=' + $.cookie('token'),//接口地址
+        type: 'post',//请求方式
+        data: JSON.stringify(data), //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误")
+        },
+        statusCode: {
+            200: function (data) {
+                if (data['code'] !== 200) {
+                    Notiflix.Notify.Failure("操作失败：" + data['message']);
+                } else {
+                    if (data['data'] === false) {
+                        Notiflix.Notify.Failure("操作失败！配置中已有该权限");
+                    } else {
+                        Notiflix.Notify.Success("操作成功！");
+                        listCfgPermission(cfgCollectionId, 1, 5)
+
+                    }
+
+                }
+            }
+        }
+    })
+
+}
 
 function removeRow(id, collectionId) {
     $.ajax({
@@ -97,7 +207,7 @@ function removeRow(id, collectionId) {
 
                 } else {
                     Notiflix.Notify.Success("操作成功！");
-                    listCfgPermission(collectionId, 1, 10)
+                    listCfgPermission(collectionId, 1, 5)
                 }
 
             }
@@ -113,6 +223,10 @@ function listCfgPermission(cfgCollectionId, pageNumber, pageSize) {
         "pageNumber": pageNumber,
         "pageSize": pageSize
     };
+
+
+    groupMap = {};
+    accountMap = {};
 
     $.ajax({
         url: 'http://localhost:8301/cfg_permission/list?token=' + $.cookie('token'),//接口地址
@@ -130,20 +244,29 @@ function listCfgPermission(cfgCollectionId, pageNumber, pageSize) {
                     $("#cfg_premission_list").empty()
                     $("#cfg_permission_page").empty()
 
+                    $(data['data']['accountList']).each(function (i, val) {
+                        accountMap[val.id] = val.username;
+
+                    })
+                    $(data['data']['groupList']).each(function (i, val) {
+                        groupMap[val.id] = val.groupName;
+
+                    })
 
                     $(data['data']['permissionList']).each(function (i, val) {
                         tr = "<tr>\n" +
-                            "    <th scope=\"row\">" + (i + 1) + "</th>\n" +
+                            "    <th scope=\"row\">" + ((pageNumber * pageSize) + i - pageSize + 1) + "</th>\n" +
                             "    <td>" + (val.type === 0 ? "用户权限" : "用户组权限") + "</td>\n" +
-                            "    <td>" + (val.type === 0 ? val.accountId : val.groupId) + "</td>\n" +
-                            "    <td>" + val.collectionId + "</td>\n" +
-                            "    <td><i class=\"ti-trash\" onclick='removeRow(" + val.id + ", " + val.collectionId + ")'></i></td>\n" +
+                            "    <td>" + (val.type === 0 ? ("[" + val.accountId + "] " + accountMap[val.accountId]) : ("[" + val.groupId + "] " + groupMap[val.groupId])) + "</td>\n" +
+                            // "    <td>" + val.collectionId + "</td>\n" +
+                            "    <td><i class=\"ti-trash\" onclick='removeRow(" + val.id + ", " + val.collectionId + ")'>删除</i></td>\n" +
                             "</tr>"
                         $("#cfg_premission_list").append(tr)
 
                     });
 
 
+                    //分页
                     pageNums = Math.floor(data['data']['count'] / data['data']['pageSize']) + 1;
                     cfgPermissionPage = "<li class=\"paginate_button page-item previous " + (pageNumber === 1 ? "disabled" : "") + "\" >" +
                         "    <a href=\"#\"  onclick='listCfgPermission(" + cfgCollectionId + ", " + (pageNumber - 1) + ", " + pageSize + ")'  class=\"page-link\">Previous</a>" +
@@ -159,7 +282,7 @@ function listCfgPermission(cfgCollectionId, pageNumber, pageSize) {
                         "    <a href=\"#\" onclick='listCfgPermission(" + cfgCollectionId + ", " + (pageNumber + 1) + ", " + pageSize + ")' class=\"page-link\">Next</a>" +
                         "</li>"
                     $("#cfg_permission_page").append(cfgPermissionPage)
-                }else {
+                } else {
                     $('#user_search_div').empty()
                 }
             }
