@@ -73,8 +73,12 @@ public class CfgPermissionController {
         }
         InfoRemote info = accountRemoteService.infoFromToken(token);
 
-
-        return CommonResult.success(null);
+        //不能删除自己的权限
+        boolean ok = cfgPermissionService.remove(cfgPermissionId, info.getAccountId());
+        if (!ok) {
+            return CommonResult.failed("操作失败！不能删除自身权限");
+        }
+        return CommonResult.success(ok);
     }
 
 

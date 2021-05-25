@@ -72,4 +72,7 @@ public interface CfgPermissionService {
     boolean createUserPermission(String createUsername, Integer createAccountId, Integer collectionId, List<Integer> accountIds);
     //創建用戶組-配置權限
     boolean createGroupPermission(String createUsername, Integer createAccountId, Integer collectionId, List<Integer> groupIds);
+
+    //删除权限
+    boolean remove(Integer cfgPermissionId, Integer accountId);
 }

@@ -58,7 +58,101 @@ $(function () {
         })
 
     })
+
+
+    //权限管理
+    $("#btn_cfg_permission").click(function () {
+        let cfgCollectionId = cid[2];
+        listCfgPermission(cfgCollectionId, 1, 10);
+    });
+
 });
+
+function removeRow(id, collectionId) {
+    $.ajax({
+        url: 'http://localhost:8301/cfg_permission/remove/' + id + '?token=' + $.cookie('token'),//接口地址
+        type: 'delete',//请求方式
+        data: null, //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误：添加配置失败。")
+        },
+        statusCode: {
+            200: function (data) {
+                if (data['code'] !== 200) {
+                    Notiflix.Notify.Failure("操作失败：" + data['message']);
+
+                } else {
+                    Notiflix.Notify.Success("操作成功！");
+                    listCfgPermission(collectionId, 1, 10)
+                }
+
+            }
+        }
+    })
+}
+
+function listCfgPermission(cfgCollectionId, pageNumber, pageSize) {
+    data = {
+        "collectionIds": [cfgCollectionId],
+        "accountIds": [],
+        "groupsIds": [],
+        "pageNumber": pageNumber,
+        "pageSize": pageSize
+    };
+
+    $.ajax({
+        url: 'http://localhost:8301/cfg_permission/list?token=' + $.cookie('token'),//接口地址
+        type: 'post',//请求方式
+        data: JSON.stringify(data), //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误：添加配置失败。")
+        },
+        statusCode: {
+            200: function (data) {
+                if (data['code'] === 200) {
+                    console.log(data);
+                    $("#cfg_premission_list").empty()
+                    $("#cfg_permission_page").empty()
+
+
+                    $(data['data']['permissionList']).each(function (i, val) {
+                        tr = "<tr>\n" +
+                            "    <th scope=\"row\">" + (i + 1) + "</th>\n" +
+                            "    <td>" + (val.type === 0 ? "用户权限" : "用户组权限") + "</td>\n" +
+                            "    <td>" + (val.type === 0 ? val.accountId : val.groupId) + "</td>\n" +
+                            "    <td>" + val.collectionId + "</td>\n" +
+                            "    <td><i class=\"ti-trash\" onclick='removeRow(" + val.id + ", " + val.collectionId + ")'></i></td>\n" +
+                            "</tr>"
+                        $("#cfg_premission_list").append(tr)
+
+                    });
+
+
+                    pageNums = Math.floor(data['data']['count'] / data['data']['pageSize']) + 1;
+                    cfgPermissionPage = "<li class=\"paginate_button page-item previous " + (pageNumber === 1 ? "disabled" : "") + "\" >" +
+                        "    <a href=\"#\"  onclick='listCfgPermission(" + cfgCollectionId + ", " + (pageNumber - 1) + ", " + pageSize + ")'  class=\"page-link\">Previous</a>" +
+                        "</li>";
+
+                    for (let i = 0; i < pageNums; i++) {
+                        cfgPermissionPage += "<li class=\"paginate_button page-item " + ((i + 1) === pageNumber ? "active" : "") + " \">" +
+                            "    <a href=\"#\" onclick='listCfgPermission(" + cfgCollectionId + ", " + (i + 1) + ", " + pageSize + ")' class=\"page-link\">" + (i + 1) + "</a>" +
+                            "</li>"
+                    }
+                    console.log(pageNumber, pageNums)
+                    cfgPermissionPage += "<li class=\"paginate_button page-item next " + (pageNumber >= pageNums ? "disabled" : "") + "\" \">" +
+                        "    <a href=\"#\" onclick='listCfgPermission(" + cfgCollectionId + ", " + (pageNumber + 1) + ", " + pageSize + ")' class=\"page-link\">Next</a>" +
+                        "</li>"
+                    $("#cfg_permission_page").append(cfgPermissionPage)
+                }
+            }
+        }
+    })
+
+}
 
 function add_config(configName, key, value, collectionId) {
     console.log(configName, key, value)

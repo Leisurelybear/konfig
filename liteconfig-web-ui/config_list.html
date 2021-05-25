@@ -53,9 +53,14 @@
             <div class="card-header">
 
 
-                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#config_add_form">添加配置</button>
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#config_add_form">添加配置
+                </button>
                 <button type="button" id="btn_change_status" class="btn btn-primary">上线</button>
-<!--               弹出添加配置 -->
+                <button type="button" id="btn_cfg_permission" data-toggle="modal" data-target="#cfg_permission"
+                        class="btn btn-primary">权限管理
+                </button>
+
+                <!--               弹出添加配置 -->
                 <div class="modal fade" id="config_add_form" style="display: none;" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
                         <div class="modal-content">
@@ -71,12 +76,102 @@
                                 <input type="text" class="form-control" id="config_key" placeholder="输入配置Key">
 
                                 <label for="config_value">Value</label>
-                                <textarea class='form-control' cols='20' id="config_value" name='config_value' placeholder='输入配置值' required=''></textarea>
+                                <textarea class='form-control' cols='20' id="config_value" name='config_value'
+                                          placeholder='输入配置值' required=''></textarea>
 
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-primary"  data-dismiss="modal" id="btn_config_add">添加配置</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btn_config_add">
+                                    添加配置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--               弹出权限管理 -->
+                <div class="modal fade" id="cfg_permission" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">权限管理</h5>
+                                <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="user_search_div" class="input-group">
+                                    <input type="text" id="usersearch" class="form-control" placeholder="输入用户名/用户组名，查询并添加权限">
+                                    <input type="button" value="查询" id="userlist_search" onclick="alert($('#usersearch').val())"
+                                           class="btn btn-primary">
+                                    <input type="button" value="清空" onclick="$('#user_list').empty()"
+                                           class="btn btn-secondary">
+                                    <table class="table text-center">
+                                        <tbody id="user_list">
+                                        <tr>
+                                            <td>用户</td>
+                                            <td>newuser[9]</td>
+                                            <td><i class="ti-plus"></i></td>
+                                        </tr>
+                                        <tr>
+                                            <td>用户组</td>
+                                            <td>wheel[1]</td>
+                                            <td><i class="ti-plus"></i></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+
+                                <table class="table text-center" id="tb_cfg_permission_list">
+                                    <thead class="text-uppercase bg-secondary">
+                                    <tr class="text-white">
+                                        <th scope="col">编号</th>
+                                        <th scope="col">类型</th>
+                                        <th scope="col">用户(组)</th>
+                                        <th scope="col">配置集</th>
+                                        <th scope="col">编辑</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="cfg_premission_list">
+                                    <tr>
+                                        <th scope="row">1</th>
+                                        <td>用户权限</td>
+                                        <td>root[9]</td>
+                                        <td>测试配置[1]</td>
+                                        <td><i class="ti-trash"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">2</th>
+                                        <td>用户组权限</td>
+                                        <td>wheel[1]</td>
+                                        <td>测试配置[1]</td>
+                                        <td><i class="ti-trash"></i></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div>
+                                    <ul class="pagination" id="cfg_permission_page">
+                                        <!--                                        <li class="paginate_button page-item previous disabled" id="dataTable3_previous">-->
+                                        <!--                                            <a href="#" aria-controls="tb_cfg_permission_list" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>-->
+                                        <!--                                        </li>-->
+                                        <!--                                        <li class="paginate_button page-item active">-->
+                                        <!--                                            <a href="#" aria-controls="tb_cfg_permission_list" data-dt-idx="1" tabindex="0"-->
+                                        <!--                                               class="page-link">1</a>-->
+                                        <!--                                        </li>-->
+                                        <!--                                        <li class="paginate_button page-item ">-->
+                                        <!--                                            <a href="#" aria-controls="tb_cfg_permission_list" data-dt-idx="2" tabindex="0"-->
+                                        <!--                                               class="page-link">2</a>-->
+                                        <!--                                        </li>-->
+                                        <!--                                        <li class="paginate_button page-item next" id="dataTable3_next">-->
+                                        <!--                                            <a href="#" aria-controls="tb_cfg_permission_list" data-dt-idx="3" tabindex="0"-->
+                                        <!--                                               class="page-link">Next</a>-->
+                                        <!--                                        </li>-->
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
                             </div>
                         </div>
                     </div>
@@ -93,13 +188,13 @@
     </div>
     <!-- main content area end -->
     <!-- footer area start-->
-<!--    <footer>-->
-<!--        <div class="footer-area">-->
-<!--            <p>Copyright &copy; 2020.Company name All rights reserved.<a target="_blank"-->
-<!--                                                                         href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a>-->
-<!--            </p>-->
-<!--        </div>-->
-<!--    </footer>-->
+    <!--    <footer>-->
+    <!--        <div class="footer-area">-->
+    <!--            <p>Copyright &copy; 2020.Company name All rights reserved.<a target="_blank"-->
+    <!--                                                                         href="http://sc.chinaz.com/moban/">&#x7F51;&#x9875;&#x6A21;&#x677F;</a>-->
+    <!--            </p>-->
+    <!--        </div>-->
+    <!--    </footer>-->
     <!-- footer area end-->
 </div>
 <!-- page container area end -->

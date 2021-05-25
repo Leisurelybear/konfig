@@ -200,4 +200,19 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
 
         return true;
     }
+
+    @Override
+    public boolean remove(Integer cfgPermissionId, Integer accountId) {
+
+        CfgPermission cfgPermission = cfgPermissionMapper.selectByPrimaryKey(cfgPermissionId);
+
+        if (cfgPermission.getAccountId().equals(accountId)){
+            //不能删除自己的这个配置权限，否则会有问题
+            return false;
+        }
+
+        cfgPermission.setIsDel(1);
+        cfgPermissionMapper.updateByPrimaryKeySelective(cfgPermission);
+        return true;
+    }
 }
