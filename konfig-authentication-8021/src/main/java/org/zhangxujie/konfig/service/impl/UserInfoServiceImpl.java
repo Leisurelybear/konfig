@@ -10,9 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.zhangxujie.konfig.mapper.UserInfoMapper;
 import org.zhangxujie.konfig.model.UserInfo;
+import org.zhangxujie.konfig.model.UserInfoExample;
 import org.zhangxujie.konfig.service.UserInfoService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -25,7 +27,14 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserInfo getUserInfoByAccountId(Integer accountId) {
         UserInfo info = null;
 
-        info = userInfoDao.selectByAccountId(accountId);
+        UserInfoExample example = new UserInfoExample();
+        example.createCriteria().andIsDelEqualTo(0)
+                .andAccountIdEqualTo(accountId);
+
+        List<UserInfo> userInfoList = userInfoDao.selectByExample(example);
+        if (userInfoList != null && userInfoList.size() != 0){
+            info = userInfoList.get(0);
+        }
 
         return info;
     }

@@ -51,7 +51,7 @@ public class CfgCollectionController {
             return CommonResult.failed("token失效，请重新登录");
         }
 
-        List<CfgCollection> resp = cfgCollectionService.query(req.getNameLike(), req.getSort(), req.getPageNum(), req.getNums(), req.getIsDraft());
+        List<CfgCollection> resp = cfgCollectionService.query(req.getNameLike(), req.getSort(), req.getPageNum(), req.getNums(), req.getIsDraft(), req.getCreateUsername());
 
         return CommonResult.success(resp);
 

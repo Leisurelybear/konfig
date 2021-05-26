@@ -20,7 +20,7 @@ $(function () {
 
 
     //加载配置集合
-    loadCollections()
+    loadCollections(0)
 
     bind_btn_collection_add()
 
@@ -41,7 +41,7 @@ function btn_collection_del(collectionId) {
         statusCode: {
             200: function (data) {
                 if (data["code"] == 200) {
-                    loadCollections()
+                    loadCollections(0)
                 } else {
                     Notiflix.Notify.Failure("删除配置失败。原因：" + data["message"])
                 }
@@ -66,16 +66,59 @@ function bind_btn_collection_add() {
     })
 }
 
-function loadCollections() {
+/**
+ * 加载配置集合
+ * @param condition 条件：0=全部配置；1=草稿配置；2=我創建的；3=我創建的草稿配置
+ */
+function loadCollectionsFilter(condition) {
+
+    let tmp = $("#collection_filter").html()
+
+    switch (condition) {
+        case 0:
+            $("#collection_filter").html("全部配置");
+            break;
+        case 1:
+            $("#collection_filter").html("只看草稿");
+            break;
+        case 2:
+            $("#collection_filter").html("只看我创建");
+            break;
+        case 3:
+            $("#collection_filter").html("只看我创建的草稿");
+            break;
+    }
+
+    if (tmp === $("#collection_filter").html()) {
+        return
+    }
+
+    loadCollections(condition);
+
+}
+
+
+/**
+ * 加载配置集合
+ * @param condition 条件：0=全部配置；1=草稿配置；2=我創建的；3=我創建的草稿配置
+ */
+function loadCollections(condition) {
     $("#cfg_collections_container").empty();
-    username = "root";
     queryParam = {
         "nameLike": "",
         "sort": -1,
         "pageNum": 0,
         "nums": 10,
-        "isDraft": false
+        "isDraft": false,
+        "createUsername": "",
     };
+
+    if (condition === 1 || condition === 3) {
+        queryParam["isDraft"] = true
+    }
+    if (condition === 2 || condition === 3) {
+        queryParam["createUsername"] = $("#header-username").html();
+    }
 
     $.ajax({
 

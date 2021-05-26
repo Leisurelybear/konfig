@@ -22,4 +22,6 @@ public class GetCfgCollectionsReq {
 
     private Boolean isDraft;
 
+    private String createUsername;
+
 }

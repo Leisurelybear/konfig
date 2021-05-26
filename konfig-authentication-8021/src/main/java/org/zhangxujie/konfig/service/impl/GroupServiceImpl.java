@@ -48,4 +48,29 @@ public class GroupServiceImpl implements GroupService {
 
         return groupList;
     }
+
+    @Override
+    public Integer countList(String groupNameLike, Integer createAccountId) {
+        return null;
+    }
+
+    @Override
+    public List<Group> list(String groupNameLike, Integer pageNumber, Integer pageSize, Integer sort, Integer createAccountId) {
+        return null;
+    }
+
+    @Override
+    public Integer countByGroupName(String groupName) {
+        return null;
+    }
+
+    @Override
+    public Integer create(String groupName, Integer createAccountId) {
+        return null;
+    }
+
+    @Override
+    public Integer delete(Integer groupId, Integer createAccountId) {
+        return null;
+    }
 }

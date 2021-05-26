@@ -51,7 +51,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
      * @return: java.util.List<org.zhangxujie.konfig.model.CfgCollection>
      **/
     @Override
-    public List<CfgCollection> query(String collectionNameLike, Integer sort, Integer pageNum, Integer pageSize, Boolean isDraft) {
+    public List<CfgCollection> query(String collectionNameLike, Integer sort, Integer pageNum, Integer pageSize, Boolean isDraft, String createUsername) {
 
         List<CfgCollection> cfgCollectionList;
 
@@ -65,8 +65,12 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
             c.andCNameLike("%" + collectionNameLike + "%");
         }
 
-        if (isDraft){
+        if (isDraft) {
             c.andIsDraftEqualTo(1);
+        }
+
+        if (createUsername != null && !createUsername.equals("")) {
+            c.andCreateUsernameEqualTo(createUsername);
         }
 
 
@@ -284,7 +288,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
                 .andCreateUsernameEqualTo(username);
 
         List<CfgCollection> list = cfgCollectionMapper.selectByExample(example);
-        if (list == null){
+        if (list == null) {
             list = new ArrayList<>();
         }
         return list;

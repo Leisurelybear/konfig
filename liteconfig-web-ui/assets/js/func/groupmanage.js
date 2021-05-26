@@ -1,6 +1,6 @@
 $(function () {
 
-    var current_page = $("#menu > li > ul > li > a[href='usermanage.html']");
+    var current_page = $("#menu > li > ul > li > a[href='groupmanage.html']");
 
     //用户权限管理 激活
     current_page.parent().addClass("active");
@@ -12,9 +12,10 @@ $(function () {
     current_page.parent().parent().parent().addClass("active");
 
 
-    $("#title_name").append("<span>用户信息管理</span></li>")
+    $("#title_name").append("<span>用户组管理</span></li>")
 
-    list_users(1, 5, "", "");
+    //TODO
+    list_groups(1, 5, "", "");
 });
 
 

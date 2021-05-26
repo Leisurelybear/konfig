@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>用户权限管理</title>
+    <title>用户管理</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="assets/images/icon/favicon.ico">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -48,10 +48,21 @@
         <div id="head-area"></div>
         <!-- [header area] and [title] end -->
         <div class="main-content-inner">
+            <div class="card-header">
+                <div id="user_search_div" class="input-group">
+                    <input type="text" id="usersearch_text" class="form-control" placeholder="输入用户名模糊查询">
+                    <input type="button" value="查询" onclick="list_users(1, 999, $('#usersearch_text').val(), '');"
+                           id="userlist_search"
+                           class="btn btn-primary">
+                </div>
+
+
+            </div>
             <div class="row">
                 <!-- table secondary start -->
                 <div class="col-lg-6 mt-5">
                     <div class="card">
+
                         <div class="card-body">
                             <h4 class="header-title">用户信息管理</h4>
                             <div class="single-table">
@@ -61,16 +72,17 @@
                                             <!--                                            做分页-->
                                         </ul>
                                     </div>
-                                </div><br>
+                                </div>
+                                <br>
                                 <div class="table-responsive">
                                     <table class="table text-center">
                                         <thead class="text-uppercase bg-secondary">
                                         <tr class="text-white">
                                             <th scope="col">编号</th>
                                             <th scope="col">ACCOUNT_ID</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">E-mail</th>
-                                            <th scope="col">action</th>
+                                            <th scope="col">用户名</th>
+                                            <th scope="col">电子邮件</th>
+                                            <th scope="col">操作</th>
                                         </tr>
                                         </thead>
                                         <tbody id="tb_usermanager_list">
