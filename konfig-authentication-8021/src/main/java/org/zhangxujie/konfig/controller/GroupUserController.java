@@ -9,6 +9,7 @@ package org.zhangxujie.konfig.controller;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.dto.GroupUserAddUserReq;
+import org.zhangxujie.konfig.dto.GroupUserItem;
 import org.zhangxujie.konfig.dto.GroupUserRemoveUserReq;
 import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.Group;
@@ -20,7 +21,9 @@ import org.zhangxujie.konfig.util.TokenUtil;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/group_user")
@@ -43,6 +46,7 @@ public class GroupUserController {
         if (!TokenUtil.validateToken(token)) {
             return CommonResult.unauthorized("Token失效，请重新登录！");
         }
+        List<GroupUserItem> groupUserItemList = new ArrayList<>();
 
         List<GroupUser> groupUserList = groupUserService.list(groupId);
 
@@ -50,14 +54,23 @@ public class GroupUserController {
         if (groupUserList == null || groupUserList.size() == 0) {
             return CommonResult.success(new ArrayList<>());
         }
+        Map<Integer, Integer> userIdGroupUserIdMapping = new HashMap<>();//为了拼结果
         groupUserList.forEach(c -> {
             accountIds.add(c.getAccountId());
+            userIdGroupUserIdMapping.put(c.getAccountId(), c.getId());
         });
 
         List<Account> accounts = accountService.listByAids(accountIds);
-        accounts.forEach(c -> c.setPassword(""));
+        accounts.forEach(c -> {
+            GroupUserItem groupUserItem = new GroupUserItem();
+            groupUserItem.setAccountId(c.getId());
+            groupUserItem.setEmail(c.getEmail());
+            groupUserItem.setGroupUserId(userIdGroupUserIdMapping.get(c.getId()));
+            groupUserItem.setUsername(c.getUsername());
+            groupUserItemList.add(groupUserItem);
+        });
 
-        return CommonResult.success(accounts);
+        return CommonResult.success(groupUserItemList);
     }
 
 
@@ -76,7 +89,7 @@ public class GroupUserController {
             add(req.getGroupId());
         }}).get(0);
         Integer rootAccountId = group.getRootAccountId();
-        if (!rootAccountId.equals(currentUser.getId())){
+        if (!rootAccountId.equals(currentUser.getId())) {
             return CommonResult.failed("操作失败，您不是该用户组的创建者");
         }
 
@@ -104,15 +117,14 @@ public class GroupUserController {
             add(req.getGroupId());
         }}).get(0);
         Integer rootAccountId = group.getRootAccountId();
-        if (!rootAccountId.equals(currentUser.getId())){
+        if (!rootAccountId.equals(currentUser.getId())) {
             return CommonResult.failed("操作失败，您不是该用户组的创建者");
         }
 
 
         int ok = groupUserService.remove(req.getId(), currentUser.getId());
-
-        if (ok < 0){
-            return CommonResult.failed("操作失败，您不可以删除自己（所有者）");
+        if (ok < 0) {
+            return CommonResult.failed("操作失败，您不可以删除自己（所有者）,您可以尝试直接删除用户组。");
         }
 
         return CommonResult.success("成功");

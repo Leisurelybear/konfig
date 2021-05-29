@@ -11,8 +11,8 @@ import lombok.Data;
 @Data
 public class GroupUserRemoveUserReq {
 
-    private Integer id;
-    private Integer groupId;
-    private Integer accountId;
+    private Integer id; //groupUser id
+    private Integer groupId; //要删除的group id
+    private Integer accountId; //要删除的account id
 
 }

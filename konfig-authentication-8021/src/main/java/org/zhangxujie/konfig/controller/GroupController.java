@@ -103,7 +103,7 @@ public class GroupController {
     }
 
     @PostMapping(value = "/create")
-    public CommonResult create(@RequestBody String groupName, @RequestParam("token") String token) {
+    public CommonResult create(@RequestBody GroupCreateReq req, @RequestParam("token") String token) {
 
         if (!TokenUtil.validateToken(token)) {
             return CommonResult.unauthorized("Token失效，请重新登录！");
@@ -113,12 +113,12 @@ public class GroupController {
         String createUsername = TokenUtil.getUsernameFromToken(token);
         Account createUser = accountService.getAdminByUsername(createUsername);
 
-        Integer count = groupService.countByGroupName(groupName);
+        Integer count = groupService.countByGroupName(req.getGroupName());
 
         if (count != 0) {
             return CommonResult.failed("用户组名称重复！");
         }
-        Integer id = groupService.create(groupName, createUser.getId());
+        Integer id = groupService.create(req.getGroupName(), createUser.getId());
         if (id <= 0) {
             return CommonResult.failed("创建失败！");
         }

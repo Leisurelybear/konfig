@@ -19,13 +19,88 @@ $(function () {
     $("#grouplist_search").click(function () {
         list_groups(1, 5, $("#groupsearch_text").val());
     })
+
+    $("#btn_group_add").click(function () {
+        if ($("#group_name").val() == null || $("#group_name").val() == "") {
+            Notiflix.Notify.Failure("组名不能为空")
+            return
+        }
+        createGroup($("#group_name").val());
+    })
 });
 
+function createGroup(groupName) {
+    data = {
+        "groupName": groupName,
+    };
 
-function del(groupId) {
-    console.log("删除")
+    $.ajax({
+        url: 'http://' + document.domain + ':8021/group/create?token=' + $.cookie('token'),//接口地址
+        type: 'post',//请求方式
+        data: JSON.stringify(data), //传输的数据
+        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        dataType: 'text json', //相反
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误")
+        },
+        statusCode: {
+            200: function (data) {
+                if (data["code"] === 200) {
+                    Notiflix.Notify.Success("创建成功")
+                    list_groups(1, 5, "");
+                } else {
+                    Notiflix.Notify.Failure("创建失败：" + data["message"])
+                }
+            }
+        }
+    })
 }
 
+function removeTags(tagName, tagClass) {
+    var tagElements = document.getElementsByTagName(tagName);
+    for (var m = 0; m < tagElements.length; m++) {
+        if (tagElements[m].className == tagClass) {
+            tagElements[m].parentNode.removeChild(tagElements[m]);
+        }
+    }
+}
+
+function del(groupId) {
+    console.log("删除", groupId)
+
+    $.ajax({
+        url: 'http://' + document.domain + ':8021/group/delete/' + groupId + '?token=' + $.cookie('token'),//接口地址
+        type: 'post',//请求方式
+        data: null, //传输的数据
+        // contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+        // dataType: 'text json', //相反
+        async: true,
+        error: function (response) {
+            Notiflix.Notify.Failure("网络错误")
+        },
+        statusCode: {
+            200: function (data) {
+                // $("#tb_groupmanager_list").empty();
+                if (data["code"] === 200) {
+                    Notiflix.Notify.Success("操作成功");
+                    list_groups(1, 5, "");
+
+                    removeTags("div", "modal-backdrop fade show")
+                    // modal-backdrop fade show
+                } else {
+                    Notiflix.Notify.Failure(data["message"])
+
+                }
+            }
+        }
+    })
+
+}
+
+function groupuserdetail(groupId) {
+    currentGroupId = groupId;
+    $('#modal-body-' + groupId).load('assets/html/usergroup_detail.html', {'groupId': groupId});
+}
 
 //展示用户列表
 function list_groups(pageNum, pageSize, nameLike) {
@@ -62,7 +137,7 @@ function list_groups(pageNum, pageSize, nameLike) {
                             "     <td>" + val.id + "</td>" +
                             "     <td>" + val.rootAccountUsername + "</td>" +
                             "     <td>" +
-                            "           <input class='btn btn-info' type='button' value='编辑' data-toggle='modal' data-target='#config_add_form'>" +
+                            "           <input class='btn btn-info' type='button' value='编辑' onclick='groupuserdetail(" + val.id + ")' data-toggle='modal' data-target='#config_add_form'>" +
                             "                <div class='modal fade' id='config_add_form' style='display: none;' aria-hidden='true'>" +
                             "                    <div class='modal-dialog modal-dialog-centered' role='document'>" +
                             "                        <div class='modal-content'>" +
@@ -70,8 +145,7 @@ function list_groups(pageNum, pageSize, nameLike) {
                             "                                <h5 class='modal-title'>编辑</h5>" +
                             "                                <button type='button' class='close' data-dismiss='modal'><span>×</span></button>" +
                             "                            </div>" +
-                            "                            <div class='modal-body'>" +
-                            "                                    好" +
+                            "                            <div class='modal-body' id='modal-body-" + val.id + "'>" +
                             "" +
                             "                            </div>" +
                             "                            <div class='modal-footer'>" +
@@ -81,8 +155,8 @@ function list_groups(pageNum, pageSize, nameLike) {
                             "                    </div>" +
                             "                </div>" +
                             "" +
-                            "           <input class='btn btn-danger' type='button' value='删除' data-toggle='modal' data-target='#group_del'>" +
-                            "                <div class='modal fade' id='group_del' style='display: none;' aria-hidden='true'>" +
+                            "           <input class='btn btn-danger' type='button' value='删除' data-toggle='modal' data-target='#group_del_" + val.id + "'>" +
+                            "                <div class='modal fade' id='group_del_" + val.id + "' style='display: none;' aria-hidden='true'>" +
                             "                    <div class='modal-dialog modal-dialog-centered' role='document'>" +
                             "                        <div class='modal-content'>" +
                             "                            <div class='modal-header'>" +
@@ -93,7 +167,7 @@ function list_groups(pageNum, pageSize, nameLike) {
                             "                                    确认删除？" +
                             "                            </div>" +
                             "                            <div class='modal-footer'>" +
-                            "                                <button type='button' class='btn btn-danger' onclick='del(" + val.id + ")' data-dismiss='modal'>确认删除</button>" +
+                            "                                <button type='button' class='btn btn-danger' data-dismiss='modal'  onclick='del(" + val.id + ")' >确认删除</button>" +
                             "                                <button type='button' class='btn btn-secondary' data-dismiss='modal'>取消</button>" +
                             "                            </div>" +
                             "                        </div>" +
@@ -103,6 +177,7 @@ function list_groups(pageNum, pageSize, nameLike) {
                             "</tr>";
                         $("#tb_groupmanager_list").append(row)
                     });
+
 
                     //分页
                     pgs = "";

@@ -1,0 +1,234 @@
+<script>
+    $(function () {
+        console.log(currentGroupId)
+        userIdMap = {};
+        $("#userlist_search").click(function () {
+            fillPermissionUserSearch();
+
+        })
+
+        listGroupUsers(currentGroupId, 1, 5);
+
+    })
+
+
+    function fillPermissionUserSearch() {
+        console.log($("#usersearch_text").val())
+        queryName = $("#usersearch_text").val();
+        if (queryName === "") {
+            return
+        }
+        $("#user_list").empty()
+
+        data = {
+            "name": queryName
+        };
+
+
+        //查用户
+        $.ajax({
+            url: 'http://' + document.domain + ':8021/admin/list_by_name?token=' + $.cookie('token'),//接口地址
+            type: 'post',//请求方式
+            data: queryName, //传输的数据
+            contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+            dataType: 'text json', //相反
+            error: function (response) {
+                Notiflix.Notify.Failure("网络错误")
+            },
+            statusCode: {
+                200: function (data) {
+                    if (data['code'] !== 200) {
+                        Notiflix.Notify.Failure("操作失败：" + data['message']);
+                    } else {
+                        console.log(data['data'])
+
+                        $(data['data']).each(function (i, val) {
+                            if (userIdMap[val.id]) {
+                                return
+                            }
+                            str = "<tr>\n" +
+                                " <td>用户</td>\n" +
+                                " <td>[" + val.id + "]\t" + val.username + "</td>\n" +
+                                " <td><i class=\"ti-plus\" onclick='addGroup(" + val.id + ")'></i></td>\n" +
+                                " </tr>"
+                            $("#user_list").append(str)
+                        })
+                    }
+                }
+            }
+        })
+    }
+
+    function removeFromGroup(groupUserId, accountId) {
+        data = {
+            "id": groupUserId,
+            "groupId": currentGroupId,
+            "accountId": accountId
+        };
+
+        $.ajax({
+            url: 'http://' + document.domain + ':8021/group_user/remove?token=' + $.cookie('token'),//接口地址
+            type: 'post',//请求方式
+            data: JSON.stringify(data), //传输的数据
+            contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+            dataType: 'text json', //相反
+            error: function (response) {
+                Notiflix.Notify.Failure("网络错误")
+            },
+            statusCode: {
+                200: function (data) {
+                    if (data['code'] === 200) {
+                        userIdMap[accountId] = false;
+                        console.log(data['data'])
+                        listGroupUsers(currentGroupId, 1, 10)
+                        fillPermissionUserSearch()
+                        Notiflix.Notify.Success("操作成功")
+
+                    } else {
+                        Notiflix.Notify.Failure(data['message'])
+
+                    }
+                }
+            }
+        })
+    }
+
+
+    function addGroup(accountId) {
+        data = {
+            "groupId": currentGroupId,
+            "accountId": accountId
+        };
+
+        $.ajax({
+            url: 'http://' + document.domain + ':8021/group_user/add?token=' + $.cookie('token'),//接口地址
+            type: 'post',//请求方式
+            data: JSON.stringify(data), //传输的数据
+            contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+            dataType: 'text json', //相反
+            error: function (response) {
+                Notiflix.Notify.Failure("网络错误")
+            },
+            statusCode: {
+                200: function (data) {
+                    if (data['code'] === 200) {
+                        userIdMap[accountId] = true;
+
+                        Notiflix.Notify.Success("操作成功")
+                        console.log(data['data'])
+                        listGroupUsers(currentGroupId, 1, 10)
+
+                        fillPermissionUserSearch()
+                    } else {
+                        Notiflix.Notify.Failure(data['message'])
+                    }
+                }
+            }
+        })
+    }
+
+
+    function listGroupUsers(groupId, pageNumber, pageSize) {
+        data = {};
+
+        $.ajax({
+            url: 'http://' + document.domain + ':8021/group_user/list/' + groupId + '?token=' + $.cookie('token'),//接口地址
+            type: 'post',//请求方式
+            data: null, //传输的数据
+            // contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+            dataType: 'text json', //相反
+            error: function (response) {
+                Notiflix.Notify.Failure("网络错误")
+            },
+            statusCode: {
+                200: function (data) {
+                    console.log(data);
+
+                    if (data['code'] === 200) {
+                        console.log(data);
+                        $("#cfg_premission_list").empty()
+                        $(data['data']).each(function (i, val) {
+                            userIdMap[val.accountId] = true;
+                            str = "<tr>\n" +
+                                " <td>" + (i + 1) + "</td>\n" +
+                                " <td>" + val.username + "</td>\n" +
+                                " <td>" + val.accountId + "</td>\n" +
+                                " <td>" + val.email + "</td>\n" +
+                                " <td><i class=\"ti-trash\" onclick='removeFromGroup(" + val.groupUserId + "," + val.accountId + ")'></i></td>\n" +
+                                " </tr>"
+                            $("#cfg_premission_list").append(str)
+                        })
+
+                    } else {
+                        $('#cfg_premission_list').empty()
+                    }
+                }
+            }
+        })
+
+    }
+
+</script>
+
+<div class="modal-body">
+    <div id="user_search_div" class="input-group">
+        <input type="text" id="usersearch_text" class="form-control" placeholder="输入用户名，模糊查询并添加到组">
+        <input type="button" value="查询" id="userlist_search" class="btn btn-primary">
+        <input type="button" value="清空" onclick="$('#user_list').empty()"
+               class="btn btn-secondary">
+        <table class="table text-center">
+            <tbody id="user_list">
+            <!--            <tr>-->
+            <!--                <td>用户</td>-->
+            <!--                <td style="text-align: left">[9] newuser</td>-->
+            <!--                <td><i class="ti-plus"></i></td>-->
+            <!--            </tr>-->
+            <!--            <tr>-->
+            <!--                <td>用户组</td>-->
+            <!--                <td style="text-align: left">[1] wheel</td>-->
+            <!--                <td><i class="ti-plus"></i></td>-->
+            <!--            </tr>-->
+            </tbody>
+        </table>
+    </div>
+
+
+    <hr/>
+
+    <table class="table text-center" id="tb_cfg_permission_list">
+        <thead class="text-uppercase bg-secondary">
+        <tr class="text-white">
+            <th scope="col">编号</th>
+            <th scope="col">用户名</th>
+            <th scope="col">用户ID</th>
+            <th scope="col">电子邮件</th>
+            <th scope="col">编辑</th>
+        </tr>
+        </thead>
+        <tbody id="cfg_premission_list">
+        <tr>
+            <td colspan="5" style="color: #c82333">您没有查看权限</td>
+        </tr>
+
+        </tbody>
+    </table>
+    <div>
+        <ul class="pagination" id="cfg_permission_page">
+            <!--            <li class="paginate_button page-item previous disabled" id="dataTable3_previous">-->
+            <!--                <a href="#" aria-controls="tb_cfg_permission_list" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>-->
+            <!--            </li>-->
+            <!--            <li class="paginate_button page-item active">-->
+            <!--                <a href="#" aria-controls="tb_cfg_permission_list" data-dt-idx="1" tabindex="0"-->
+            <!--                   class="page-link">1</a>-->
+            <!--            </li>-->
+            <!--            <li class="paginate_button page-item ">-->
+            <!--                <a href="#" aria-controls="tb_cfg_permission_list" data-dt-idx="2" tabindex="0"-->
+            <!--                   class="page-link">2</a>-->
+            <!--            </li>-->
+            <!--            <li class="paginate_button page-item next" id="dataTable3_next">-->
+            <!--                <a href="#" aria-controls="tb_cfg_permission_list" data-dt-idx="3" tabindex="0"-->
+            <!--                   class="page-link">Next</a>-->
+            <!--            </li>-->
+        </ul>
+    </div>
+</div>

@@ -10,7 +10,7 @@ public interface GroupUserService {
 
     List<GroupUser> list(Integer groupId);
 
-    Integer add(Integer groupId, Integer accountId, Integer id);
+    Integer add(Integer groupId, Integer accountId, Integer createAccountId);
 
     int remove(Integer id, Integer currentAccountId);
 }

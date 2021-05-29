@@ -54,6 +54,7 @@ public class GroupUserServiceImpl implements GroupUserService {
     public List<GroupUser> list(Integer groupId) {
 
         GroupUserExample example = new GroupUserExample();
+        example.setOrderByClause("update_time desc");
         example.createCriteria().andIsDelEqualTo(0)
                 .andGroupIdEqualTo(groupId);
 
@@ -63,14 +64,14 @@ public class GroupUserServiceImpl implements GroupUserService {
     }
 
     @Override
-    public Integer add(Integer groupId, Integer accountId, Integer id) {
+    public Integer add(Integer groupId, Integer accountId, Integer createAccountId) {
 
         GroupUserExample example = new GroupUserExample();
         example.createCriteria().andIsDelEqualTo(0)
                 .andGroupIdEqualTo(groupId)
                 .andAccountIdEqualTo(accountId);
         long count = groupUserDao.countByExample(example);
-        if (count > 0){
+        if (count > 0) {
             return -1;
         }
 
@@ -78,7 +79,7 @@ public class GroupUserServiceImpl implements GroupUserService {
         groupUser.setIsDel(0);
         groupUser.setAccountId(accountId);
         groupUser.setGroupId(groupId);
-        groupUser.setUpdateAccountId(id);
+        groupUser.setUpdateAccountId(createAccountId);
         groupUser.setUpdateTime(TimeUtil.getNowTimestamp());
         groupUserDao.insert(groupUser);
         return groupUser.getId();
@@ -88,7 +89,7 @@ public class GroupUserServiceImpl implements GroupUserService {
     public int remove(Integer id, Integer currentAccountId) {
 
         GroupUser groupUser = groupUserDao.selectByPrimaryKey(id);
-        if (groupUser.getAccountId().equals(currentAccountId)){
+        if (groupUser.getAccountId().equals(currentAccountId)) {
             return -1;
         }
         groupUser.setIsDel(1);
