@@ -13,22 +13,27 @@ import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.Group;
 import org.zhangxujie.konfig.service.AccountService;
 import org.zhangxujie.konfig.service.GroupService;
+import org.zhangxujie.konfig.service.GroupUserService;
 import org.zhangxujie.konfig.util.TokenUtil;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/group")
 @CrossOrigin
 public class GroupController {
-    //TODO：增删查
-
     @Resource
     private GroupService groupService;
 
     @Resource
     private AccountService accountService;
+
+    @Resource
+    private GroupUserService groupUserService;
 
     @PostMapping("/list_by_name")
     public CommonResult listByName(@RequestBody String name, @RequestParam("token") String token) {
@@ -62,7 +67,37 @@ public class GroupController {
         Integer count = groupService.countList(reqParam.getGroupNameLike(), createUser.getId());
         List<Group> groupList = groupService.list(reqParam.getGroupNameLike(), reqParam.getPageNumber(), reqParam.getPageSize(), reqParam.getSort(), createUser.getId());
 
-        GroupListRespParam resp = new GroupListRespParam(reqParam.getPageNumber(), reqParam.getPageSize(), count, groupList);
+        List<Integer> accountIds = new ArrayList<>();
+        if (groupList != null && groupList.size() != 0) {
+            groupList.forEach(c -> {
+                accountIds.add(c.getRootAccountId());
+            });
+        }
+
+        List<Account> accountList = accountService.listByAids(accountIds);
+        Map<Integer, String> accountMapping = new HashMap<>();
+        accountList.forEach(c -> {
+            accountMapping.put(c.getId(), c.getUsername());
+        });
+
+        List<GroupItem> groupItemList = new ArrayList<>();
+
+        if (groupList != null && groupList.size() != 0) {
+
+            groupList.forEach(c -> {
+                GroupItem groupItem = new GroupItem();
+                groupItem.setId(c.getId());
+                groupItem.setGroupName(c.getGroupName());
+                groupItem.setGroupRole(c.getGroupRole());
+                groupItem.setRootAccountId(c.getRootAccountId());
+                groupItem.setRootAccountUsername(accountMapping.get(c.getRootAccountId()));
+                groupItem.setUpdateAccountId(c.getUpdateAccountId());
+                groupItem.setUpdateTime(c.getUpdateTime());
+                groupItemList.add(groupItem);
+            });
+        }
+
+        GroupListRespParam resp = new GroupListRespParam(reqParam.getPageNumber(), reqParam.getPageSize(), count, groupItemList);
 
         return CommonResult.success(resp);
     }
@@ -84,9 +119,13 @@ public class GroupController {
             return CommonResult.failed("用户组名称重复！");
         }
         Integer id = groupService.create(groupName, createUser.getId());
-        if (id <= 0){
+        if (id <= 0) {
             return CommonResult.failed("创建失败！");
         }
+
+        //把创建者添加到该用户组
+        groupUserService.add(id, createUser.getId(), createUser.getId());
+
         return CommonResult.success(id);
     }
 

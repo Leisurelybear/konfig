@@ -29,7 +29,7 @@ public class GroupListRespParam {
     private Integer count;
 
     //当前用户创建的用户组列表
-    private List<Group> groupList;
+    private List<GroupItem> groupList;
 
 }
 

@@ -11,6 +11,7 @@ import org.zhangxujie.konfig.mapper.GroupUserMapper;
 import org.zhangxujie.konfig.model.GroupUser;
 import org.zhangxujie.konfig.model.GroupUserExample;
 import org.zhangxujie.konfig.service.GroupUserService;
+import org.zhangxujie.konfig.util.TimeUtil;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -60,4 +61,40 @@ public class GroupUserServiceImpl implements GroupUserService {
 
         return groupUserList == null ? new ArrayList<>() : groupUserList;
     }
+
+    @Override
+    public Integer add(Integer groupId, Integer accountId, Integer id) {
+
+        GroupUserExample example = new GroupUserExample();
+        example.createCriteria().andIsDelEqualTo(0)
+                .andGroupIdEqualTo(groupId)
+                .andAccountIdEqualTo(accountId);
+        long count = groupUserDao.countByExample(example);
+        if (count > 0){
+            return -1;
+        }
+
+        GroupUser groupUser = new GroupUser();
+        groupUser.setIsDel(0);
+        groupUser.setAccountId(accountId);
+        groupUser.setGroupId(groupId);
+        groupUser.setUpdateAccountId(id);
+        groupUser.setUpdateTime(TimeUtil.getNowTimestamp());
+        groupUserDao.insert(groupUser);
+        return groupUser.getId();
+    }
+
+    @Override
+    public int remove(Integer id, Integer currentAccountId) {
+
+        GroupUser groupUser = groupUserDao.selectByPrimaryKey(id);
+        if (groupUser.getAccountId().equals(currentAccountId)){
+            return -1;
+        }
+        groupUser.setIsDel(1);
+        groupUserDao.updateByPrimaryKey(groupUser);
+        return 0;
+    }
+
+
 }

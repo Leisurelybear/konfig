@@ -68,9 +68,9 @@ public class GroupServiceImpl implements GroupService {
             criteria.andGroupNameLike("%" + groupNameLike + "%");
         }
 
-        if (createAccountId > 0) {
-            criteria.andUpdateAccountIdEqualTo(createAccountId);
-        }
+//        if (createAccountId > 0) {
+//            criteria.andUpdateAccountIdEqualTo(createAccountId);
+//        }
 
         long count = groupMapper.countByExample(example);
 
@@ -95,9 +95,9 @@ public class GroupServiceImpl implements GroupService {
             criteria.andGroupNameLike("%" + groupNameLike + "%");
         }
 
-        if (createAccountId > 0) {
-            criteria.andUpdateAccountIdEqualTo(createAccountId);
-        }
+//        if (createAccountId > 0) {
+//            criteria.andUpdateAccountIdEqualTo(createAccountId);
+//        }
 
         List<Group> groupList = groupMapper.selectByExample(example);
 

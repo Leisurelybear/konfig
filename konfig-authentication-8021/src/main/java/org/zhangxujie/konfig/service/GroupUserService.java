@@ -9,4 +9,8 @@ public interface GroupUserService {
     List<Integer> getGroupIdsByAccountId(Integer accountId);
 
     List<GroupUser> list(Integer groupId);
+
+    Integer add(Integer groupId, Integer accountId, Integer id);
+
+    int remove(Integer id, Integer currentAccountId);
 }

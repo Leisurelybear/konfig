@@ -1,17 +1,8 @@
 package org.zhangxujie.konfig.mapper;
 
 import java.util.List;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.zhangxujie.konfig.model.GroupUser;
 import org.zhangxujie.konfig.model.GroupUserExample;
@@ -37,6 +28,7 @@ public interface GroupUserMapper {
         "#{groupId,jdbcType=INTEGER}, #{updateTime,jdbcType=BIGINT}, ",
         "#{updateAccountId,jdbcType=INTEGER}, #{isDel,jdbcType=INTEGER})"
     })
+    @Options(useGeneratedKeys=true, keyProperty="id")
     int insert(GroupUser record);
 
     @InsertProvider(type=GroupUserSqlProvider.class, method="insertSelective")
