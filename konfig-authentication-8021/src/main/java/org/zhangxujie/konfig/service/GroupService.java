@@ -20,7 +20,7 @@ public interface GroupService {
      **/
     List<Group> listByName(String name);
 
-    /** TODO
+    /**
      * @Description: 通过用户组名和创建者查询 列表数量
      * @Param groupNameLike: 用户组名 模糊
      * @Param createAccountId: 用户组创建者ID
@@ -28,7 +28,7 @@ public interface GroupService {
      **/
     Integer countList(String groupNameLike, Integer createAccountId);
 
-    /** TODO
+    /**
      * @Description: 通过条件查询用户组列表
      * @Param groupNameLike: 用户组名 模糊
      * @Param pageNumber: 页码，从1开始
@@ -39,13 +39,10 @@ public interface GroupService {
      **/
     List<Group> list(String groupNameLike, Integer pageNumber, Integer pageSize, Integer sort, Integer createAccountId);
 
-    //TODO
     Integer countByGroupName(String groupName);
 
-    //TODO
     Integer create(String groupName, Integer createAccountId);
 
 
-    //TODO: 记得删除前查看是否有 配置依赖这个权限
     Integer delete(Integer groupId, Integer createAccountId);
 }

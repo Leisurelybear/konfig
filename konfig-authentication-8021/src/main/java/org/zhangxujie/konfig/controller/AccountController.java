@@ -8,6 +8,7 @@ package org.zhangxujie.konfig.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +32,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin")
 @Api(tags = "AccountController", description = "用户管理")
+@Slf4j
 public class AccountController {
     @Resource
     private AccountService accountService;
@@ -52,6 +54,16 @@ public class AccountController {
             return CommonResult.failed("用户名已存在！");
         }
         return CommonResult.success(umsAdmin);
+    }
+
+    @ApiOperation(value = "查重")
+    @PostMapping(value = "dup")
+    public CommonResult dup(@RequestBody AccountRegisterParam accountRegisterParam) {
+        Integer count = accountService.dup(accountRegisterParam);
+        if (count != 0) {
+            return CommonResult.failed("用户名已存在！");
+        }
+        return CommonResult.success(true);
     }
 
     @ApiOperation(value = "登录以后返回token")
@@ -112,8 +124,9 @@ public class AccountController {
             reqParam.setPageSize(10);
         }
 
-
+        log.info(reqParam.toString());
         Integer count = accountService.countAll();
+
         List<AccountItem> userList = accountService.queryall(reqParam.getUsernameLike(), reqParam.getEmailLike(), reqParam.getPageNumber(), reqParam.getPageSize(), reqParam.getSort());
 
         AccountQueryRespParam resp = new AccountQueryRespParam(reqParam.getPageNumber(), reqParam.getPageSize(), count, userList);

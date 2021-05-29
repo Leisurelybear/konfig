@@ -54,6 +54,42 @@
                     <input type="button" value="查询" onclick="list_users(1, 999, $('#usersearch_text').val(), '');"
                            id="userlist_search"
                            class="btn btn-primary">
+
+                    <button type="button" class="btn btn-info" id="btn_into_user_add"
+                            data-toggle="modal" data-target="#user_add_form">
+                        添加用户
+                    </button>
+                </div>
+
+                <div class="modal fade" id="user_add_form" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">添加用户</h5>
+                                <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="user_name">用户名</label>[<span id="info_username"></span>]
+                                <input type="text" class="form-control" id="user_name" placeholder="输入用户名">
+
+                                <label for="email">电子邮件</label>
+                                <input type="email" class="form-control" id="email" placeholder="输入密码">
+
+                                <label for="password">密码</label>
+                                <input type="password" class="form-control" id="password" placeholder="输入密码">
+
+                                <label for="re-password">确认密码</label>[<span id="info_password"></span>]
+                                <input type="password" class="form-control" id="re-password" placeholder="输入确认密码">
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btn_user_add">
+                                    添加用户
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
 

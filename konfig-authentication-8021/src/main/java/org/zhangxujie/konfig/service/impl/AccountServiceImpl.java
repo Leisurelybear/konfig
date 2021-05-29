@@ -84,7 +84,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = new Account();
 
         AccountExample exampleUsernameEqual = new AccountExample();
-        exampleUsernameEqual.createCriteria().andUsernameEqualTo(formAccount.getUsername());
+        exampleUsernameEqual.createCriteria().andIsDelEqualTo(0).andUsernameEqualTo(formAccount.getUsername());
 
         //防止用户名重复，
         long c = accountDao.countByExample(exampleUsernameEqual);
@@ -118,6 +118,8 @@ public class AccountServiceImpl implements AccountService {
         permission.setTime(System.currentTimeMillis());
         permissionDao.insert(permission);
 
+        //不能返回密码
+        account.setPassword("");
 
         return account;
     }
@@ -266,7 +268,7 @@ public class AccountServiceImpl implements AccountService {
                 .andUsernameLike("%" + name + "%");
 
         List<Account> accounts = accountDao.selectByExample(example);
-        if (accounts == null){
+        if (accounts == null) {
             return new ArrayList<>();
         }
         for (Account account : accounts) {
@@ -274,5 +276,17 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return accounts;
+    }
+
+    @Override
+    public Integer dup(AccountRegisterParam accountRegisterParam) {
+
+        AccountExample exampleUsernameEqual = new AccountExample();
+        exampleUsernameEqual.createCriteria().andIsDelEqualTo(0).andUsernameEqualTo(accountRegisterParam.getUsername());
+
+        //防止用户名重复，
+        long c = accountDao.countByExample(exampleUsernameEqual);
+
+        return (int) c;
     }
 }

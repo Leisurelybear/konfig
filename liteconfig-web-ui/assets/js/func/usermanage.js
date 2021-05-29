@@ -15,6 +15,108 @@ $(function () {
     $("#title_name").append("<span>用户信息管理</span></li>")
 
     list_users(1, 5, "", "");
+
+    $("#user_name").bind('input propertychange', function () {
+        username_status = false;
+        console.log($("#user_name").val())
+        if ($("#user_name").val() === "") {
+            $("#info_username").html("用户名不能为空！")
+            $("#info_username").css('color', 'red')
+            username_status = false;
+            return
+        }
+
+        data = {
+            "username": $("#user_name").val(),
+            "password": "",
+            "email": ""
+        };
+
+        $.ajax({
+            url: 'http://' + document.domain + ':8021/admin/dup?token=' + $.cookie('token'),//接口地址
+            type: 'post',//请求方式
+            data: JSON.stringify(data), //传输的数据
+            contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+            dataType: 'text json', //相反
+            error: function (response) {
+                Notiflix.Notify.Failure("网络错误")
+            },
+            statusCode: {
+                200: function (data) {
+                    if (data["code"] === 200) {
+                        $("#info_username").html("用户名可以使用！")
+                        $("#info_username").css('color', 'green')
+                        username_status = true;
+                    } else {
+                        $("#info_username").html("用户名重复！")
+                        $("#info_username").css('color', 'red')
+                        username_status = false;
+                    }
+                }
+            }
+        })
+    })
+
+
+    $("#re-password").bind('input propertychange', function () {
+        password_status = false;
+        console.log($("#user_name").val())
+        if ($("#re-password").val() === "") {
+            $("#info_password").html("密码不能为空！")
+            $("#info_password").css('color', 'red')
+            password_status = false;
+            return;
+        }
+        if ($("#re-password").val() !== $("#password").val()) {
+            $("#info_password").html("两次密码不相同！")
+            $("#info_password").css('color', 'red')
+            password_status = false;
+            return
+        } else {
+            $("#info_password").html("密码可以使用！")
+            $("#info_password").css('color', 'green')
+            password_status = true;
+        }
+
+    })
+
+    //添加用户
+    $("#btn_user_add").click(function () {
+
+        if (typeof (password_status) == "undefined" || typeof (username_status) == "undefined" || !password_status || !username_status) {
+            Notiflix.Notify.Failure("添加失败，用户名或密码检测未通过！")
+            return
+        }
+
+        data = {
+            "username": $("#user_name").val(),
+            "password": $("#password").val(),
+            "email": $("#email").val()
+        };
+
+        $.ajax({
+            url: 'http://' + document.domain + ':8021/admin/register?token=' + $.cookie('token'),//接口地址
+            type: 'post',//请求方式
+            data: JSON.stringify(data), //传输的数据
+            contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
+            dataType: 'text json', //相反
+            error: function (response) {
+                Notiflix.Notify.Failure("网络错误")
+            },
+            statusCode: {
+                200: function (data) {
+                    if (data["code"] === 200) {
+                        Notiflix.Notify.Success("添加成功！用户名为：" + $("#user_name").val())
+                        username_status = false;
+                        password_status = false;
+                    } else {
+                        Notiflix.Notify.Failure("用户名重复！")
+                    }
+                }
+            }
+        })
+    })
+
 });
 
 
@@ -25,7 +127,7 @@ function userDetail(user_id) {
 
 function updateUserInfo(formId) {
 
-    data = $("#"+formId)[0];
+    data = $("#" + formId)[0];
 
     console.log(data);
 
@@ -50,7 +152,7 @@ function updateUserInfo(formId) {
 //展示用户列表
 function list_users(pageNum, pageSize, nameLike, emailLike) {
     console.log("list_users: ", pageNum, pageSize, nameLike, emailLike)
-    if (nameLike === ""){
+    if (nameLike === "") {
         pageSize = 5
     }
     data = {
@@ -58,9 +160,8 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
         "emailLike": emailLike,
         "pageNumber": pageNum,
         "pageSize": pageSize,
-        "sort": 1
+        "sort": -1
     };
-
     $.ajax({
         url: 'http://' + document.domain + ':8021/admin/queryall?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
@@ -68,7 +169,7 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
-            Notiflix.Notify.Failure("获取用户信息错误")
+            Notiflix.Notify.Failure("网络错误")
         },
         statusCode: {
             200: function (data) {
@@ -109,7 +210,7 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
                             "                            </div>" +
                             "                            <div class='modal-footer'>" +
                             "                                <button type='button' class='btn btn-secondary' data-dismiss='modal'>取消</button>" +
-                            "                                <button type='button' class='btn btn-warning' onclick='userDetail("+user.id+")' >点击查询</button>" +
+                            "                                <button type='button' class='btn btn-warning' onclick='userDetail(" + user.id + ")' >点击查询</button>" +
                             "                                <button type='button' class='btn btn-primary'  data-dismiss='modal' onclick='updateUserInfo(\"user-info-" + user.id + "\")' id='btn_config_add'>保存</button>" +
                             "                            </div>" +
                             "                        </div>" +
@@ -155,7 +256,7 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
                         }
                     }
 
-                    if (pageNum >= ((data['data']["count"] / pageSize))){
+                    if (pageNum >= ((data['data']["count"] / pageSize))) {
                         pgs += "<li class='paginate_button page-item next disabled' id='dataTable_next'>" +
                             "    <button " +
                             "       aria-controls='dataTable'" +

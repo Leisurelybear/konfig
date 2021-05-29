@@ -84,7 +84,9 @@ public class GroupController {
             return CommonResult.failed("用户组名称重复！");
         }
         Integer id = groupService.create(groupName, createUser.getId());
-
+        if (id <= 0){
+            return CommonResult.failed("创建失败！");
+        }
         return CommonResult.success(id);
     }
 
@@ -99,9 +101,9 @@ public class GroupController {
         String createUsername = TokenUtil.getUsernameFromToken(token);
         Account createUser = accountService.getAdminByUsername(createUsername);
 
-        Integer id = groupService.delete(groupId, createUser.getId());
+        Integer ok = groupService.delete(groupId, createUser.getId());
 
-        return CommonResult.success(id);
+        return CommonResult.success(ok);
     }
 
 }

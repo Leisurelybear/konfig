@@ -238,4 +238,24 @@ public class CfgPermissionServiceImpl implements CfgPermissionService {
         }
         return null;
     }
+
+    @Override
+    public boolean removeByGroupId(Integer groupId, Integer accountId) {
+
+        CfgPermissionExample example = new CfgPermissionExample();
+
+        example.createCriteria().andIsDelEqualTo(0)
+                .andGroupIdEqualTo(groupId);
+
+        List<CfgPermission> cfgPermissionList = cfgPermissionMapper.selectByExample(example);
+        if (cfgPermissionList == null || cfgPermissionList.size() == 0){
+            return true;
+        }
+        cfgPermissionList.forEach(c -> {
+            c.setIsDel(1);
+            cfgPermissionMapper.updateByPrimaryKey(c);
+        });
+
+        return true;
+    }
 }

@@ -78,4 +78,6 @@ public interface CfgPermissionService {
     boolean remove(Integer cfgPermissionId, Integer accountId);
 
     CfgPermission getById(Integer cfgPermissionId);
+
+    boolean removeByGroupId(Integer groupId, Integer accountId);
 }

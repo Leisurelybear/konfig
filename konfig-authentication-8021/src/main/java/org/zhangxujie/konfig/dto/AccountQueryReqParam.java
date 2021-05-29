@@ -29,4 +29,5 @@ public class AccountQueryReqParam {
     @ApiModelProperty(value = "升序或降序",required = true, notes = ">=0:正序，<0：逆序")
     private Integer sort;
 
+
 }

@@ -49,13 +49,13 @@ function updateUserInfo(formId) {
 
 
 //展示用户列表
-function list_users(pageNum, pageSize, nameLike, emailLike) {
+function list_groups(pageNum, pageSize, nameLike, emailLike) {
     console.log("list_users: ", pageNum, pageSize, nameLike, emailLike)
     if (nameLike === ""){
         pageSize = 5
     }
     data = {
-        "usernameLike": nameLike,
+        "groupName": nameLike,
         "emailLike": emailLike,
         "pageNumber": pageNum,
         "pageSize": pageSize,

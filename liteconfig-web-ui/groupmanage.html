@@ -50,11 +50,38 @@
         <div class="main-content-inner">
             <div class="card-header">
                 <div id="user_search_div" class="input-group">
-                    <input type="button" value="查询" id="grouplist_search" class="btn btn-primary">
 
                     <input type="text" id="usersearch_text" class="form-control" placeholder="输入用户名模糊查询">
                     <input type="button" value="查询" id="grouplist_search" class="btn btn-primary">
+                    <button type="button" class="btn btn-info" id="btn_into_group_add"
+                            data-toggle="modal" data-target="#group_add_form">
+                        创建用户组
+                    </button>
                 </div>
+
+                <div class="modal fade" id="group_add_form" style="display: none;" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">创建用户组</h5>
+                                <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="group_name">用户组名</label>
+                                <input type="text" class="form-control" id="group_name" placeholder="输入用户组名">
+
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btn_user_add">
+                                    创建组
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
 
 
             </div>

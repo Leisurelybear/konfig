@@ -127,5 +127,19 @@ public class CfgPermissionController {
         return CommonResult.success(ok);
     }
 
+    @DeleteMapping("/remove_by_group/{groupId}")
+    public CommonResult removeByGroup(@PathVariable("groupId") Integer groupId, @RequestParam("token") String token) {
+        if (!accountRemoteService.validateToken(token)) {
+            return CommonResult.failed("token失效，请重新登录");
+        }
+        InfoRemote info = accountRemoteService.infoFromToken(token);
+
+        boolean ok = cfgPermissionService.removeByGroupId(groupId, info.getAccountId());
+        if (!ok) {
+            return CommonResult.failed("操作失败！不能删除自身权限");
+        }
+        return CommonResult.success(ok);
+    }
+
 
 }

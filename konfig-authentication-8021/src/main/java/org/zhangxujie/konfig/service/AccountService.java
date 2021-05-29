@@ -81,4 +81,7 @@ public interface AccountService {
 
 
     List<Account> listByName(String name);
+
+    //查重
+    Integer dup(AccountRegisterParam accountRegisterParam);
 }

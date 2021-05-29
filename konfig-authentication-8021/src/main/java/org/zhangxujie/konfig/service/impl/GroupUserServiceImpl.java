@@ -13,6 +13,7 @@ import org.zhangxujie.konfig.model.GroupUserExample;
 import org.zhangxujie.konfig.service.GroupUserService;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,5 +47,17 @@ public class GroupUserServiceImpl implements GroupUserService {
         }
 
         return groupIds;
+    }
+
+    @Override
+    public List<GroupUser> list(Integer groupId) {
+
+        GroupUserExample example = new GroupUserExample();
+        example.createCriteria().andIsDelEqualTo(0)
+                .andGroupIdEqualTo(groupId);
+
+        List<GroupUser> groupUserList = groupUserDao.selectByExample(example);
+
+        return groupUserList == null ? new ArrayList<>() : groupUserList;
     }
 }

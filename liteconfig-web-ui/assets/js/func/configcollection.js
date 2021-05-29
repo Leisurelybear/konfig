@@ -117,7 +117,7 @@ function loadCollections(condition) {
         queryParam["isDraft"] = true
     }
     if (condition === 2 || condition === 3) {
-        queryParam["createUsername"] = $("#header-username").html();
+        queryParam["createUsername"] = $.cookie("username");
     }
 
     $.ajax({
