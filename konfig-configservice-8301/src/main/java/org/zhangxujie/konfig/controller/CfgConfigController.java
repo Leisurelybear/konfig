@@ -10,7 +10,11 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
+import org.zhangxujie.konfig.common.Const;
+import org.zhangxujie.konfig.common.LogUtil;
+import org.zhangxujie.konfig.dao.AccountRemoteService;
 import org.zhangxujie.konfig.dto.*;
+import org.zhangxujie.konfig.dto.account.InfoRemote;
 import org.zhangxujie.konfig.model.CfgCollection;
 import org.zhangxujie.konfig.model.CfgConfig;
 import org.zhangxujie.konfig.service.CfgCollectionService;
@@ -36,6 +40,12 @@ public class CfgConfigController {
 
     @Resource
     private CfgPermissionService cfgPermissionService;
+
+    @Resource
+    private AccountRemoteService accountRemoteService;
+
+    @Resource
+    private LogUtil opLog;
 
     //查询对应collection中的配置信息
     @PostMapping("/list")
@@ -80,10 +90,13 @@ public class CfgConfigController {
         if (cfgCollectionService.isOnline(req.getCollectionId())){
             return CommonResult.failed("当前为线上版本，不能修改！");
         }
+        InfoRemote info = accountRemoteService.infoFromToken(token);
+
 
         //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
         int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
         boolean done = cfgConfigService.update(req.getCollectionId(), collectionId, req.getId(), req.getCfgName(), req.getCfgKey(), req.getCfgValue(), req.getUsername());
+        opLog.insert(Const.LOG_OPTYPE_CONFIG, "更新配置", "", req.toString(), info.getUsername(), info.getAccountId());
 
         return CommonResult.success(new UpdateConfigResp(collectionId));
     }
@@ -102,10 +115,13 @@ public class CfgConfigController {
         if (cfgCollectionService.isOnline(req.getCollectionId())){
             return CommonResult.failed("当前为线上版本，不能修改！");
         }
+        InfoRemote info = accountRemoteService.infoFromToken(token);
 
         //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
         int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
         CfgConfig cfgConfig = cfgConfigService.add(req.getCollectionId(), collectionId, req.getConfigName(), req.getConfigKey(), req.getConfigValue(), TokenUtil.getUsernameFromToken(token));
+
+        opLog.insert(Const.LOG_OPTYPE_CONFIG, "添加配置", "", req.toString(), info.getUsername(), info.getAccountId());
 
         return CommonResult.success(cfgConfig);
     }
@@ -121,6 +137,8 @@ public class CfgConfigController {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
+        InfoRemote info = accountRemoteService.infoFromToken(token);
+
         //查看是否为线上，如果线上，则不能删除
         boolean isOnline = cfgCollectionService.isOnline(req.getCollectionId());
         if (isOnline){
@@ -131,6 +149,9 @@ public class CfgConfigController {
         if (status <= 0){
             return CommonResult.failed("删除失败");
         }
+
+        opLog.insert(Const.LOG_OPTYPE_CONFIG, "删除配置", "", req.toString(), info.getUsername(), info.getAccountId());
+
         return CommonResult.success(null);
     }
 }

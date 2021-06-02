@@ -48,59 +48,14 @@
         <div id="head-area"></div>
         <!-- [header area] and [title] end -->
         <div class="main-content-inner">
-            <div class="card-header">
-                <div id="user_search_div" class="input-group">
-                    <input type="text" id="usersearch_text" class="form-control" placeholder="输入用户名模糊查询">
-                    <input type="button" value="查询" onclick="list_users(1, 999, $('#usersearch_text').val(), '');"
-                           id="userlist_search"
-                           class="btn btn-primary">
 
-                    <button type="button" class="btn btn-info" id="btn_into_user_add"
-                            data-toggle="modal" data-target="#user_add_form">
-                        添加用户
-                    </button>
-                </div>
-
-                <div class="modal fade" id="user_add_form" style="display: none;" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">添加用户</h5>
-                                <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
-                            </div>
-                            <div class="modal-body">
-                                <label for="user_name">用户名</label>[<span id="info_username"></span>]
-                                <input type="text" class="form-control" id="user_name" placeholder="输入用户名">
-
-                                <label for="email">电子邮件</label>
-                                <input type="email" class="form-control" id="email" placeholder="输入密码">
-
-                                <label for="password">密码</label>
-                                <input type="password" class="form-control" id="password" placeholder="输入密码">
-
-                                <label for="re-password">确认密码</label>[<span id="info_password"></span>]
-                                <input type="password" class="form-control" id="re-password" placeholder="输入确认密码">
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-primary" data-dismiss="modal" id="btn_user_add">
-                                    添加用户
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
             <div class="row">
                 <!-- table secondary start -->
                 <div class="col-lg-6 mt-5">
                     <div class="card">
 
                         <div class="card-body">
-                            <h4 class="header-title">用户信息管理</h4>
+                            <h4 class="header-title">操作日志</h4>
                             <div class="single-table">
                                 <div class="col-sm-12 col-md-7">
                                     <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
@@ -115,21 +70,23 @@
                                         <thead class="text-uppercase bg-secondary">
                                         <tr class="text-white">
                                             <th scope="col">编号</th>
-                                            <th scope="col">ACCOUNT_ID</th>
-                                            <th scope="col">用户名</th>
-                                            <th scope="col">电子邮件</th>
-                                            <th scope="col">操作</th>
+                                            <th scope="col">日志类别</th>
+                                            <th scope="col">日志内容</th>
+                                            <th scope="col">数据</th>
+                                            <th scope="col">操作人</th>
+                                            <th scope="col">操作时间</th>
                                         </tr>
                                         </thead>
-                                        <tbody id="tb_usermanager_list">
+                                        <tbody id="tb_log_list">
 
 
                                         <tr>
                                             <th scope="row">1</th>
-                                            <td>1</td>
-                                            <td>Mark</td>
-                                            <td>mark@example.com</td>
-                                            <td><i class="ti-settings"></i></td>
+                                            <td>CONFIG</td>
+                                            <td>增加配置</td>
+                                            <td>configId: 1</td>
+                                            <td>root</td>
+                                            <td>2021-01-01 00:00:00</td>
                                         </tr>
 
                                         </tbody>

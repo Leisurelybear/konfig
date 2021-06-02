@@ -8,6 +8,8 @@ package org.zhangxujie.konfig.controller;
 
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
+import org.zhangxujie.konfig.common.Const;
+import org.zhangxujie.konfig.common.LogUtil;
 import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.Group;
@@ -34,6 +36,9 @@ public class GroupController {
 
     @Resource
     private GroupUserService groupUserService;
+
+    @Resource
+    private LogUtil opLog;
 
     @PostMapping("/list_by_name")
     public CommonResult listByName(@RequestBody String name, @RequestParam("token") String token) {
@@ -126,6 +131,9 @@ public class GroupController {
         //把创建者添加到该用户组
         groupUserService.add(id, createUser.getId(), createUser.getId());
 
+        opLog.insert(Const.LOG_OPTYPE_GROUP, "用户组创建", "", req.toString(), createUsername, createUser.getId());
+
+
         return CommonResult.success(id);
     }
 
@@ -144,6 +152,7 @@ public class GroupController {
         if (ok == -1){
             return CommonResult.failed("您不可以删除最高权限用户组 wheel");
         }
+        opLog.insert(Const.LOG_OPTYPE_GROUP, "用户组删除", "groupId："+groupId, "", createUsername, createUser.getId());
         return CommonResult.success(ok);
     }
 

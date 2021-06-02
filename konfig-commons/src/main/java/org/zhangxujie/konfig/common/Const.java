@@ -24,11 +24,14 @@ public class Const {
     public final static int CFG_PERMISSION_ACCOUNT = 0;
     public final static int CFG_PERMISSION_GROUP = 1;
 
-    //配置权限
-    public final static String LOG_OPTYPE_CREATE = "create";
-    public final static String LOG_OPTYPE_UPDATE = "update";
-    public final static String LOG_OPTYPE_DELETE = "delete";
-    public final static String LOG_OPTYPE_OTHER = "other";
+    //操作记录
+    public final static String LOG_OPTYPE_USER = "USER";
+    public final static String LOG_OPTYPE_GROUP = "GROUP";
+    public final static String LOG_OPTYPE_CONFIG = "CONFIG";
+    public final static String LOG_OPTYPE_PERMISSION = "PERMISSION";
+    public final static String LOG_OPTYPE_OTHER = "OTHER";
+
+
 
 
 }

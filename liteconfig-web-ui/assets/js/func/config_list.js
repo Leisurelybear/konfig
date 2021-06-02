@@ -449,7 +449,7 @@ function list_configs(collectionId) {
                         "                            <h4 class='header-title'><span class='badge badge-pill badge-info'>" + (i + 1) + "</span>&nbsp;&nbsp;" + val['cfgName'] + "</h4>" +
                         "                            <p><b>KEY:</b> " + val['cfgKey'] + "</p>" +
                         "                            <p><b>VALUE:</b> " + ((val['cfgValue'] === null) ? val['cfgValue'] : val['cfgValue'].substr(0, 40)) + " ...</p>" +
-                        "                            <p><b>修改时间:</b> " + new Date(parseInt(val['updateTime']) * 1000).toLocaleString().replace(/:\d{1,2}$/, ' ') + "</p>" +
+                        "                            <p><b>修改时间:</b> " + timeStamp2String(val.updateTime) +
                         "                            <p><b>修改者:</b> " + val['updateUsername'] + "</p>" +
                         "                            <!-- Large modal -->" +
                         "                            <button type='button' class='btn btn-primary btn-flat btn-lg' data-toggle='modal'" +

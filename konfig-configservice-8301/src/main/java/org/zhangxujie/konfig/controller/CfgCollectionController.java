@@ -10,6 +10,8 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
+import org.zhangxujie.konfig.common.Const;
+import org.zhangxujie.konfig.common.LogUtil;
 import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
 import org.zhangxujie.konfig.model.CfgCollection;
@@ -42,6 +44,10 @@ public class CfgCollectionController {
 
     @Resource
     private CfgAuditService cfgAuditService;
+
+    @Resource
+    private LogUtil opLog;
+
 
     @PostMapping("/list")
     public CommonResult getCfgCollections(@RequestParam("token") String token, @RequestBody GetCfgCollectionsReq req) {
@@ -80,6 +86,7 @@ public class CfgCollectionController {
         if (resp.getId() == -1) {
             return CommonResult.failed("配置集名重复，请更改后提交");
         }
+        opLog.insert(Const.LOG_OPTYPE_CONFIG, "创建配置集", "", "collectionName: " + collectionName, info.getUsername(), info.getAccountId());
 
         return CommonResult.success(resp);
 
@@ -98,6 +105,7 @@ public class CfgCollectionController {
         }
 
         DeleteCollectionReq req = new DeleteCollectionReq(collectionId);
+        InfoRemote info = accountRemoteService.infoFromToken(token);
 
         String username = TokenUtil.getUsernameFromToken(token);
 
@@ -106,6 +114,7 @@ public class CfgCollectionController {
         if (resp.getStatus() == false) {
             return CommonResult.failed("该配置为线上配置，不可删除，只能够上线替换！");
         }
+        opLog.insert(Const.LOG_OPTYPE_CONFIG, "删除配置集", "", "collectionId: " + collectionId, info.getUsername(), info.getAccountId());
 
         return CommonResult.success(resp);
 
@@ -125,18 +134,20 @@ public class CfgCollectionController {
         InfoRemote info = accountRemoteService.infoFromToken(token);
 
 
-        if (!cfgCollectionService.isOnwer(info.getUsername(), collectionId)){
+        if (!cfgCollectionService.isOnwer(info.getUsername(), collectionId)) {
             log.info("当前用户无权限主动上线/下线，提交审核");
             int auditId = cfgAuditService.submit(collectionId, info.getAccountId());
             if (auditId < 0) {
                 return CommonResult.failed("有未处理申请[ID:" + (-auditId) + "]在流程中，不能继续提交！");
             }
+            opLog.insert(Const.LOG_OPTYPE_CONFIG, "申请配置集上线/下线", "", "collectionId: " + collectionId, info.getUsername(), info.getAccountId());
             return CommonResult.success(null, "已经提交（上线/下线）申请[ID:" + auditId + "]");
         }
 
         //有权限，直接改状态
         log.info("该用户为配置所有者，可以直接上线");
         cfgCollectionService.switchDraftStatus(collectionId, info.getUsername());
+        opLog.insert(Const.LOG_OPTYPE_CONFIG, "配置集上线/下线", "", "collectionId: " + collectionId, info.getUsername(), info.getAccountId());
 
         return CommonResult.success("操作成功!");
 

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.common.Const;
+import org.zhangxujie.konfig.common.LogUtil;
 import org.zhangxujie.konfig.dao.AccountRemoteService;
 import org.zhangxujie.konfig.dto.HandleAuditReq;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
@@ -30,7 +31,6 @@ import java.util.List;
 @Api(tags = "CfgAuditController", description = "配置上线审核")
 @CrossOrigin
 public class CfgAuditController {
-    //TODO:需要在审批列表添加新的页面
     @Resource
     private CfgAuditService cfgAuditService;
 
@@ -42,6 +42,9 @@ public class CfgAuditController {
 
     @Resource
     private CfgCollectionService cfgCollectionService;
+
+    @Resource
+    private LogUtil opLog;
 
     @PostMapping("/undo_list") //等待自己处理的申请
     public CommonResult getUndoAuditList(@RequestParam("token") String token) {
@@ -144,8 +147,12 @@ public class CfgAuditController {
             boolean isOnline = cfgCollectionService.isOnline(audit.getCfgCollectionId());
 
             if (!isOnline && audit.getContent().contains("上线")){
+                opLog.insert(Const.LOG_OPTYPE_CONFIG, "同意配置集上线", "", req.toString(), info.getUsername(), info.getAccountId());
+
                 cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
             }else if (isOnline && audit.getContent().contains("下线")){
+                opLog.insert(Const.LOG_OPTYPE_CONFIG, "同意配置集下线", "", req.toString(), info.getUsername(), info.getAccountId());
+
                 cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
             }else {
                 //说明申请之后，配置状态已经被切换了，已经晚了，什么都不做
@@ -153,6 +160,8 @@ public class CfgAuditController {
             }
         } else {
             //驳回
+            opLog.insert(Const.LOG_OPTYPE_CONFIG, "驳回配置集上线/下线申请", "", req.toString(), info.getUsername(), info.getAccountId());
+
             cfgAuditService.reject(req.getAuditId(), info.getAccountId());
         }
 

@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Delete;
 import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.common.Const;
+import org.zhangxujie.konfig.common.LogUtil;
 import org.zhangxujie.konfig.dao.AccountRemoteService;
 import org.zhangxujie.konfig.dto.CreatePermissionReq;
 import org.zhangxujie.konfig.dto.ListPermissionReq;
@@ -35,8 +36,6 @@ import java.util.List;
 @CrossOrigin
 public class CfgPermissionController {
 
-    //TODO：申请配置权限、通过、拒绝（前端需要添加页面展示权限管理）
-
     @Resource
     private CfgPermissionService cfgPermissionService;
 
@@ -46,6 +45,8 @@ public class CfgPermissionController {
     @Resource
     private CfgCollectionService cfgCollectionService;
 
+    @Resource
+    private LogUtil opLog;
 
     @PostMapping("/list")
     public CommonResult list(@RequestBody ListPermissionReq req, @RequestParam("token") String token) {
@@ -54,7 +55,7 @@ public class CfgPermissionController {
         }
         InfoRemote info = accountRemoteService.infoFromToken(token);
 
-        if (!cfgCollectionService.isOnwer(info.getUsername(), req.getCollectionIds().get(0))){
+        if (!cfgCollectionService.isOnwer(info.getUsername(), req.getCollectionIds().get(0))) {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
@@ -66,14 +67,14 @@ public class CfgPermissionController {
         List<Integer> accountIds = new ArrayList<>();
 
         permissionList.forEach(c -> {
-            if (c.getType() == Const.CFG_PERMISSION_ACCOUNT){
+            if (c.getType() == Const.CFG_PERMISSION_ACCOUNT) {
                 accountIds.add(c.getAccountId());
-            }else if (c.getType() == Const.CFG_PERMISSION_GROUP){
+            } else if (c.getType() == Const.CFG_PERMISSION_GROUP) {
                 groupIds.add(c.getGroupId());
             }
         });
 
-        List<Group> groupList= accountRemoteService.getGroupsByAid(groupIds);
+        List<Group> groupList = accountRemoteService.getGroupsByAid(groupIds);
         List<Account> accountList = accountRemoteService.getUsersByAid(accountIds);
 
         resp.setGroupList(groupList);
@@ -89,7 +90,7 @@ public class CfgPermissionController {
         }
         InfoRemote info = accountRemoteService.infoFromToken(token);
 
-        if (!cfgCollectionService.isOnwer(info.getUsername(), req.getCollectionId())){
+        if (!cfgCollectionService.isOnwer(info.getUsername(), req.getCollectionId())) {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
@@ -97,11 +98,12 @@ public class CfgPermissionController {
         if (req.getAccountIds() != null && req.getAccountIds().size() != 0) {
             //说明添加用户配置权限
             ok = cfgPermissionService.createUserPermission(info.getUsername(), info.getAccountId(), req.getCollectionId(), req.getAccountIds());
-
+            opLog.insert(Const.LOG_OPTYPE_PERMISSION, "添加权限", "", req.toString(), info.getUsername(), info.getAccountId());
 
         } else if (req.getGroupIds() != null && req.getGroupIds().size() != 0) {
             //说明添加用户组配置权限
             ok = cfgPermissionService.createGroupPermission(info.getUsername(), info.getAccountId(), req.getCollectionId(), req.getGroupIds());
+            opLog.insert(Const.LOG_OPTYPE_PERMISSION, "添加权限", "", req.toString(), info.getUsername(), info.getAccountId());
         }
 
         return CommonResult.success(ok);
@@ -115,7 +117,7 @@ public class CfgPermissionController {
         InfoRemote info = accountRemoteService.infoFromToken(token);
 
         CfgPermission cfgPermission = cfgPermissionService.getById(cfgPermissionId);
-        if (!cfgCollectionService.isOnwer(info.getUsername(), cfgPermission.getCollectionId())){
+        if (!cfgCollectionService.isOnwer(info.getUsername(), cfgPermission.getCollectionId())) {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
@@ -124,6 +126,7 @@ public class CfgPermissionController {
         if (!ok) {
             return CommonResult.failed("操作失败！不能删除自身权限");
         }
+        opLog.insert(Const.LOG_OPTYPE_PERMISSION, "移除权限", "", "cfgPermissionId: " + cfgPermissionId, info.getUsername(), info.getAccountId());
         return CommonResult.success(ok);
     }
 
@@ -138,6 +141,8 @@ public class CfgPermissionController {
         if (!ok) {
             return CommonResult.failed("操作失败！不能删除自身权限");
         }
+        opLog.insert(Const.LOG_OPTYPE_PERMISSION, "移除权限", "", "groupId: " + groupId, info.getUsername(), info.getAccountId());
+
         return CommonResult.success(ok);
     }
 
