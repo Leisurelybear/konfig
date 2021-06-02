@@ -140,6 +140,12 @@ public class GroupServiceImpl implements GroupService {
         example.createCriteria().andIsDelEqualTo(0)
                 .andGroupIdEqualTo(groupId);
 
+        Group group = groupMapper.selectByPrimaryKey(groupId);
+        if (group.getGroupName().equals("wheel")){//wheel不能删除
+            return -1;
+        }
+
+        //删除组和用户关系
         List<GroupUser> groupUserList = groupUserMapper.selectByExample(example);
         if (groupUserList != null && groupUserList.size() != 0){
             groupUserList.forEach(c -> {
@@ -148,9 +154,11 @@ public class GroupServiceImpl implements GroupService {
             });
         }
 
-        Group group = groupMapper.selectByPrimaryKey(groupId);
+        //删除组
         group.setIsDel(1);
         groupMapper.updateByPrimaryKey(group);
+
+
 
         return 1;
     }

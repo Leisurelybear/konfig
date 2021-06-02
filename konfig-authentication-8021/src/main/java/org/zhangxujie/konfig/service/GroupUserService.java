@@ -13,4 +13,7 @@ public interface GroupUserService {
     Integer add(Integer groupId, Integer accountId, Integer createAccountId);
 
     int remove(Integer id, Integer currentAccountId);
+
+    boolean inGroup(Integer accountId, Integer groupId);
+
 }

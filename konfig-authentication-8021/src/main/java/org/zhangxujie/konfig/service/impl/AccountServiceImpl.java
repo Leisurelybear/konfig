@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.zhangxujie.konfig.common.Const;
+import org.zhangxujie.konfig.common.LogUtil;
 import org.zhangxujie.konfig.db.RedisClient;
 import org.zhangxujie.konfig.dto.AccountItem;
 import org.zhangxujie.konfig.dto.AccountQueryRespParam;
@@ -54,6 +56,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Resource
     private JwtTokenUtil jwtTokenUtil;
+
+    @Resource
+    private LogUtil opLog;
 
 
     public Account getAdminByUsername(String username) {
@@ -121,6 +126,8 @@ public class AccountServiceImpl implements AccountService {
         //不能返回密码
         account.setPassword("");
 
+        opLog.insert(Const.LOG_OPTYPE_OTHER, "用户注册", "", "", "root", 1);
+
         return account;
     }
 
@@ -146,6 +153,8 @@ public class AccountServiceImpl implements AccountService {
         } catch (AuthenticationException e) {
             log.warn("登录异常:{}", e.getMessage());
         }
+
+        opLog.insert(Const.LOG_OPTYPE_OTHER, "用户登录", "", "", username, 0);
 
 
         return token;
@@ -288,5 +297,24 @@ public class AccountServiceImpl implements AccountService {
         long c = accountDao.countByExample(exampleUsernameEqual);
 
         return (int) c;
+    }
+
+    @Override
+    public boolean changePassword(Integer accountId, String password) {
+
+        Account account = accountDao.selectByPrimaryKey(accountId);
+
+        if (account == null) {
+            return false;
+        }
+
+        String encodePassword = passwordEncoder.encode(password);
+        account.setPassword(encodePassword);
+        accountDao.updateByPrimaryKey(account);
+
+        opLog.insert(Const.LOG_OPTYPE_OTHER, "修改用户密码：accountid："+accountId, "", "", "root", 1);
+
+
+        return true;
     }
 }

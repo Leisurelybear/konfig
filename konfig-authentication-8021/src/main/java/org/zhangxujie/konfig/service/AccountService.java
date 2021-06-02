@@ -84,4 +84,6 @@ public interface AccountService {
 
     //查重
     Integer dup(AccountRegisterParam accountRegisterParam);
+
+    boolean changePassword(Integer accountId, String password);
 }

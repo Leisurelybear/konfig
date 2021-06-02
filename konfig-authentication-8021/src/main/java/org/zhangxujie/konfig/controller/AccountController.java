@@ -19,6 +19,7 @@ import org.zhangxujie.konfig.model.Account;
 import org.zhangxujie.konfig.model.Group;
 import org.zhangxujie.konfig.model.UserInfo;
 import org.zhangxujie.konfig.service.AccountService;
+import org.zhangxujie.konfig.service.GroupUserService;
 import org.zhangxujie.konfig.service.UserInfoService;
 import org.zhangxujie.konfig.util.TokenUtil;
 
@@ -40,6 +41,9 @@ public class AccountController {
     @Resource
     private UserInfoService userInfoService;
 
+    @Resource
+    GroupUserService groupUserService;
+
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
@@ -48,12 +52,42 @@ public class AccountController {
 
     @ApiOperation(value = "用户注册")
     @PostMapping(value = "register")
-    public CommonResult<Account> register(@RequestBody AccountRegisterParam accountRegisterParam) {
+    public CommonResult register(@RequestBody AccountRegisterParam accountRegisterParam, @RequestParam("token") String token) {
+        if (!TokenUtil.validateToken(token)){
+            return CommonResult.unauthorized("Token失效，请重新登录！");
+        }
+        String username = TokenUtil.getUsernameFromToken(token);
+        Account account = accountService.getAdminByUsername(username);
+        if (!account.getUsername().equals("root") && !groupUserService.inGroup(account.getId(), 1)){
+            return CommonResult.failed("您没有权限！请加入wheel用户组");
+        }
+
         Account umsAdmin = accountService.register(accountRegisterParam);
         if (umsAdmin == null) {
             return CommonResult.failed("用户名已存在！");
         }
         return CommonResult.success(umsAdmin);
+    }
+
+    @PostMapping("/change_passwd")
+    public CommonResult changePasswd(@RequestBody ChangePasswdReq req, @RequestParam("token") String token){
+
+        if (!TokenUtil.validateToken(token)){
+            return CommonResult.unauthorized("Token失效，请重新登录！");
+        }
+        String username = TokenUtil.getUsernameFromToken(token);
+        Account account = accountService.getAdminByUsername(username);
+        if (!account.getUsername().equals("root") && !groupUserService.inGroup(account.getId(), 1)){
+            return CommonResult.failed("您没有权限！请加入wheel用户组");
+        }
+
+
+        boolean ok = accountService.changePassword(req.getAccountId(), req.getPassword());
+        if (ok){
+            return CommonResult.success("成功");
+        }else {
+            return CommonResult.failed("查询用户失败！");
+        }
     }
 
     @ApiOperation(value = "查重")
@@ -117,6 +151,13 @@ public class AccountController {
         if (!TokenUtil.validateToken(token)){
             return CommonResult.unauthorized("Token失效，请重新登录！");
         }
+
+        String username = TokenUtil.getUsernameFromToken(token);
+        Account account = accountService.getAdminByUsername(username);
+        if (!account.getUsername().equals("root") && !groupUserService.inGroup(account.getId(), 1)){
+            return CommonResult.failed("您没有权限！请加入wheel用户组");
+        }
+
         if (reqParam.getPageNumber() <= 0){
             reqParam.setPageNumber(1);
         }

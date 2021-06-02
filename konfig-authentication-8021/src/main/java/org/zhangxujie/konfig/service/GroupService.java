@@ -43,6 +43,5 @@ public interface GroupService {
 
     Integer create(String groupName, Integer createAccountId);
 
-
     Integer delete(Integer groupId, Integer createAccountId);
 }

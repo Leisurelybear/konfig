@@ -97,5 +97,20 @@ public class GroupUserServiceImpl implements GroupUserService {
         return 0;
     }
 
+    @Override
+    public boolean inGroup(Integer accountId, Integer groupId) {
+
+        GroupUserExample example = new GroupUserExample();
+        example.createCriteria().andIsDelEqualTo(0)
+                .andGroupIdEqualTo(groupId)
+                .andAccountIdEqualTo(accountId);
+        long count = groupUserDao.countByExample(example);
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
 
 }

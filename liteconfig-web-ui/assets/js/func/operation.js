@@ -125,45 +125,23 @@ function userDetail(user_id) {
     alert(user_id)
 }
 
-function updateUserInfo(userid) {
+function updateUserInfo(formId) {
 
-    data = {
-        "accountId": userid,
-        "password": $("#password-" + userid).val()
-    };
-
-    if (data.accountId <= 0){
-        return
-    }
-    if (data.password === ""){
-        Notiflix.Notify.Failure("新密码不能为空！")
-        return
-
-    }
-    if (data.password.length < 6){
-        Notiflix.Notify.Failure("新密码长度必须大于6")
-        return;
-    }
+    data = $("#" + formId)[0];
 
     console.log(data);
 
     $.ajax({
-        url: 'http://' + document.domain + ':8021/admin/change_passwd?token=' + $.cookie('token'),//接口地址
+        url: 'http://' + document.domain + ':8021/admin/queryall?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
-        data: JSON.stringify(data), //传输的数据
+        data: new FormData(data), //传输的数据
         dataType: 'text json', //相反
-        contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         error: function (response) {
-            Notiflix.Notify.Failure("网络错误")
+            Notiflix.Notify.Failure("获取用户信息错误")
         },
         statusCode: {
             200: function (data) {
-                if (data["code"] === 200){
-                    Notiflix.Notify.Success("操作成功")
-                }else {
-                    Notiflix.Notify.Failure("操作失败：" + data["message"])
 
-                }
             }
         }
     })
@@ -217,21 +195,23 @@ function list_users(pageNum, pageSize, nameLike, emailLike) {
                             "                            <div class='modal-body'>" +
                             "                               <form id='user-info-" + user.id + "'>" +
                             "                                <label for='nickname'>用户名</label>" +
-                            "                                <input disabled type='text' value='" + user.username + "' class='form-control' name='nickname' placeholder='用户名'>" +
+                            "                                <input type='text' class='form-control' name='nickname' placeholder='用户名'>" +
                             "" +
-                            "                                <label for='email'>邮箱</label>" +
-                            "                                <input disabled type='text' class='form-control' value='" + user.email + "' name='email' placeholder='邮箱'>" +
+                            "                                <label for='phone'>手机号</label>" +
+                            "                                <input type='text' class='form-control' name='phone' placeholder='手机号'>" +
                             "" +
-                            "                                <label for='password-" + user.id + "'>密码</label>" +
-                            "                                <input type='text' class='form-control' id='password-" + user.id + "' name='password' placeholder='修改密码'>" +
-                            // "                                <textarea class='form-control' cols='20' name='extra' name='password' placeholder='修改密码' required=''></textarea>" +
+                            "                                <label for=''>头像</label>" +
+                            "                                <input type='file' class='form-control' name='phone' placeholder='手机号'>" +
+                            "" +
+                            "                                <label for='extra'>备注</label>" +
+                            "                                <textarea class='form-control' cols='20' name='extra' name='extra' placeholder='备注' required=''></textarea>" +
                             "                               </form>" +
                             "" +
                             "                            </div>" +
                             "                            <div class='modal-footer'>" +
                             "                                <button type='button' class='btn btn-secondary' data-dismiss='modal'>取消</button>" +
-                            // "                                <button type='button' class='btn btn-warning' onclick='userDetail(" + user.id + ")' >点击查询</button>" +
-                            "                                <button type='button' class='btn btn-primary'  data-dismiss='modal' onclick='updateUserInfo(" + user.id + ")' id='btn_config_add'>保存</button>" +
+                            "                                <button type='button' class='btn btn-warning' onclick='userDetail(" + user.id + ")' >点击查询</button>" +
+                            "                                <button type='button' class='btn btn-primary'  data-dismiss='modal' onclick='updateUserInfo(\"user-info-" + user.id + "\")' id='btn_config_add'>保存</button>" +
                             "                            </div>" +
                             "                        </div>" +
                             "                    </div>" +

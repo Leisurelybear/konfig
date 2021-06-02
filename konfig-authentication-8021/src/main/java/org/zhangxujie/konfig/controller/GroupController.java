@@ -141,7 +141,9 @@ public class GroupController {
         Account createUser = accountService.getAdminByUsername(createUsername);
 
         Integer ok = groupService.delete(groupId, createUser.getId());
-
+        if (ok == -1){
+            return CommonResult.failed("您不可以删除最高权限用户组 wheel");
+        }
         return CommonResult.success(ok);
     }
 
