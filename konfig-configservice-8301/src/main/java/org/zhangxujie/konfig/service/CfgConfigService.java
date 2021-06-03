@@ -14,4 +14,6 @@ public interface CfgConfigService {
     CfgConfig add(Integer collectionIdOld, Integer collectionIdNew, String cfgName, String cfgKey, String cfgValue, String username);
 
     int delete(Integer configId, String usernameFromToken);
+
+    List<CfgConfig> getByCollectionId(Integer collectionId);
 }

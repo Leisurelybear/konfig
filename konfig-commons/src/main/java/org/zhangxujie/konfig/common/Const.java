@@ -31,7 +31,10 @@ public class Const {
     public final static String LOG_OPTYPE_PERMISSION = "PERMISSION";
     public final static String LOG_OPTYPE_OTHER = "OTHER";
 
-
+    //Kafka推送相关
+    public final static String MQ_TOPIC_CONFIG = "CONFIG_COLLECTION_";
+    public final static Integer MQ_CONFIG_STATUS_ONLINE = 0;
+    public final static Integer MQ_CONFIG_STATUS_DRAFT = 1;
 
 
 }

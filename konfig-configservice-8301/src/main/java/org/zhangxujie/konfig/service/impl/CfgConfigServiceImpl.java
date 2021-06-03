@@ -14,6 +14,7 @@ import org.zhangxujie.konfig.service.CfgConfigService;
 import org.zhangxujie.konfig.util.TimeUtil;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -173,5 +174,19 @@ public class CfgConfigServiceImpl implements CfgConfigService {
         int status = cfgConfigMapper.updateByPrimaryKeyWithBLOBs(cfgConfig);
 
         return status;
+    }
+
+    @Override
+    public List<CfgConfig> getByCollectionId(Integer collectionId) {
+
+        CfgConfigExample example = new CfgConfigExample();
+        example.createCriteria().andIsDelEqualTo(0)
+                .andCollectionIdEqualTo(collectionId);
+
+        List<CfgConfig> cfgConfigList = cfgConfigMapper.selectByExampleWithBLOBs(example);
+        if (cfgConfigList == null){
+            return new ArrayList<>();
+        }
+        return cfgConfigList;
     }
 }

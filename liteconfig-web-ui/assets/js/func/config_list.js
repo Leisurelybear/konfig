@@ -432,7 +432,7 @@ function list_configs(collectionId) {
                     window.history.go(-1);
                     return
                 }
-
+                $("#btn_config_collection_id").html(data["data"]["collectionId"]);
                 $("#btn_config_collection_name").html(data["data"]["collectionName"]);
                 $("#btn_config_collection_status").html((data["data"]["isDraft"] === 1) ? "草稿版本" : "线上版本")
 

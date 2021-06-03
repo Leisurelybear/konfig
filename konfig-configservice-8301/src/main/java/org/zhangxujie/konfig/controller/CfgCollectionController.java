@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.common.Const;
 import org.zhangxujie.konfig.common.LogUtil;
+import org.zhangxujie.konfig.dao.MqProducer;
 import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
 import org.zhangxujie.konfig.model.CfgCollection;

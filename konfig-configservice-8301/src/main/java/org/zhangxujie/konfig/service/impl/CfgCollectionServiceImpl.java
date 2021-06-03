@@ -6,11 +6,11 @@
  */
 package org.zhangxujie.konfig.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.zhangxujie.konfig.dto.AddCollectionReq;
-import org.zhangxujie.konfig.dto.AddCollectionResp;
-import org.zhangxujie.konfig.dto.DeleteCollectionReq;
-import org.zhangxujie.konfig.dto.DeleteCollectionResp;
+import org.zhangxujie.konfig.common.Const;
+import org.zhangxujie.konfig.dao.MqProducer;
+import org.zhangxujie.konfig.dto.*;
 import org.zhangxujie.konfig.mapper.CfgCollectionMapper;
 import org.zhangxujie.konfig.mapper.CfgPermissionMapper;
 import org.zhangxujie.konfig.model.CfgCollection;
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class CfgCollectionServiceImpl implements CfgCollectionService {
 
     @Resource
@@ -38,6 +39,9 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
 
     @Resource
     private CfgPermissionService cfgPermissionService;
+
+    @Resource
+    private MqProducer kafkaProducer;
 
     /**
      * @param collectionNameLike 模糊查询条件：集合名
@@ -213,7 +217,12 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
             return null;
         }
 
-        return cfgCollectionMapper.selectByPrimaryKey(id);
+        CfgCollection cfgCollection = cfgCollectionMapper.selectByPrimaryKey(id);
+        if (cfgCollection == null || cfgCollection.getIsDel() == 1) {
+            //过滤掉被删除的配置集合
+            return new CfgCollection();
+        }
+        return cfgCollection;
     }
 
     @Override
@@ -267,6 +276,23 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
         // |1 - 1| = 0
         // |0 - 1| = 1
         cfgCollection.setIsDraft(Math.abs(cfgCollection.getIsDraft() - 1));
+
+        //向消息队列发送通知
+        ConfigPushData data = new ConfigPushData();
+        data.setTimestamp(TimeUtil.getNowTimestamp());
+        data.setId(collectionId);
+        if (cfgCollection.getIsDraft() == 0) {
+            data.setStatus(Const.MQ_CONFIG_STATUS_ONLINE);
+        } else {//线下版本则发送不同状态的
+            data.setStatus(Const.MQ_CONFIG_STATUS_ONLINE);
+        }
+
+        try { //如果有错误则捕获，不影响正常业务流程
+            kafkaProducer.send(Const.MQ_TOPIC_CONFIG + collectionId, data);
+        } catch (Exception e) {
+            log.error("推送配置更新失败！配置ID：" + collectionId);
+        }
+
         cfgCollectionMapper.updateByPrimaryKey(cfgCollection);
 
     }

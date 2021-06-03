@@ -13,6 +13,7 @@ import org.zhangxujie.konfig.common.CommonResult;
 import org.zhangxujie.konfig.common.Const;
 import org.zhangxujie.konfig.common.LogUtil;
 import org.zhangxujie.konfig.dao.AccountRemoteService;
+import org.zhangxujie.konfig.dao.MqProducer;
 import org.zhangxujie.konfig.dto.HandleAuditReq;
 import org.zhangxujie.konfig.dto.account.InfoRemote;
 import org.zhangxujie.konfig.model.CfgAudit;
@@ -45,6 +46,9 @@ public class CfgAuditController {
 
     @Resource
     private LogUtil opLog;
+
+    @Resource
+    private MqProducer kafkaProducer;
 
     @PostMapping("/undo_list") //等待自己处理的申请
     public CommonResult getUndoAuditList(@RequestParam("token") String token) {
@@ -148,7 +152,6 @@ public class CfgAuditController {
 
             if (!isOnline && audit.getContent().contains("上线")){
                 opLog.insert(Const.LOG_OPTYPE_CONFIG, "同意配置集上线", "", req.toString(), info.getUsername(), info.getAccountId());
-
                 cfgCollectionService.switchDraftStatus(req.getCollectionId(), info.getUsername());
             }else if (isOnline && audit.getContent().contains("下线")){
                 opLog.insert(Const.LOG_OPTYPE_CONFIG, "同意配置集下线", "", req.toString(), info.getUsername(), info.getAccountId());
