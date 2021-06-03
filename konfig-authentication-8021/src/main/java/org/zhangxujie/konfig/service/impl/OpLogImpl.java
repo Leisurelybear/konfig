@@ -1,11 +1,10 @@
 /**
  * FileName: OpLogImpl
  * Author:   jason
- * Date:     2021/6/2 14:41
+ * Date:     2021/6/2 14:31
  * Description:
  */
 package org.zhangxujie.konfig.service.impl;
-
 
 import org.springframework.stereotype.Service;
 import org.zhangxujie.konfig.common.LogUtil;
@@ -16,6 +15,7 @@ import org.zhangxujie.konfig.util.TimeUtil;
 
 import javax.annotation.Resource;
 import java.util.List;
+
 
 @Service
 public class OpLogImpl implements LogUtil {
@@ -44,7 +44,14 @@ public class OpLogImpl implements LogUtil {
     public List<OpLog> list(String opType, Integer pageNumber, Integer pageSize) {
 
         OpLogExample example = new OpLogExample();
-        example.setOrderByClause("update_time desc");
+
+        pageNumber = pageNumber <= 0 ? 1 : pageNumber;
+        String limitParam = "limit " + (pageNumber - 1) * pageSize + " , " + pageSize;
+        if (pageSize <= 0) { //如果pageSize小于0，则查询全部
+            limitParam = "";
+        }
+
+        example.setOrderByClause("update_time desc " + limitParam);
         OpLogExample.Criteria criteria = example.createCriteria();
 
         if (opType != null && !opType.equals("")) {

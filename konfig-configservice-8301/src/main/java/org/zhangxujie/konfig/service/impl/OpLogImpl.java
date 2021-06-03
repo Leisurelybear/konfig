@@ -44,7 +44,14 @@ public class OpLogImpl implements LogUtil {
     public List<OpLog> list(String opType, Integer pageNumber, Integer pageSize) {
 
         OpLogExample example = new OpLogExample();
-        example.setOrderByClause("update_time desc");
+
+        pageNumber = pageNumber <= 0 ? 1 : pageNumber;
+        String limitParam = "limit " + (pageNumber - 1) * pageSize + " , " + pageSize;
+        if (pageSize <= 0) { //如果pageSize小于0，则查询全部
+            limitParam = "";
+        }
+
+        example.setOrderByClause("update_time desc " + limitParam);
         OpLogExample.Criteria criteria = example.createCriteria();
 
         if (opType != null && !opType.equals("")) {

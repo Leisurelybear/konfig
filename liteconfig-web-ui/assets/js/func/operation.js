@@ -51,6 +51,7 @@ function list(pageNum, pageSize, nameLike, emailLike) {
                             "   <th scope=\"row\">" + (i + ((data['data']['pageNumber'] - 1) * data['data']['pageSize']) + 1) + "</th>" +
                             "   <td>" + log['opType'] + "</td>" +
                             "   <td>" + log['log'] + "</td>" +
+                            "   <td>" + log['dataBefore'] + "</td>" +
                             "   <td>" + log['dataAfter'] + "</td>" +
                             "   <td>" + log['updateUsername'] + "</td>" +
                             "   <td>" + timeStamp2String(log.updateTime) + "</td>" +

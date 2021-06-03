@@ -152,6 +152,9 @@ public class GroupController {
         if (ok == -1){
             return CommonResult.failed("您不可以删除最高权限用户组 wheel");
         }
+        if (ok == -2){
+            return CommonResult.failed("操作失败，您不是该用户组的创建者");
+        }
         opLog.insert(Const.LOG_OPTYPE_GROUP, "用户组删除", "groupId："+groupId, "", createUsername, createUser.getId());
         return CommonResult.success(ok);
     }

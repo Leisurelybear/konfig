@@ -139,7 +139,7 @@ function loadCollections(condition) {
                     str = "<div class='col-lg-4 col-md-6 mt-5'>" +
                         "      <div class='card card-bordered'>" +
                         "          <div class='card-body'>" +
-                        "            <h4 class='title'>" + val.cName + "</h4>\n" +
+                        "            <h4 class='title'>" + "<span class='badge badge-secondary'>ID:" + val.id + "</span>&nbsp;" + val.cName + "</h4>\n" +
                         "            <p class='card-text'>" + (val.isDraft === 1 ? "<b class='badge badge-pill badge-secondary'>草稿版本</b>" : "<b class='badge badge-pill badge-success'>线上版本</b>") +
                         " | <b>修改时间：</b>" + timeStamp2String(val.updateTime) +
                         " | <b>创建者：</b>" + val.createUsername + "</p>" +
@@ -175,14 +175,17 @@ function add_collection(collectionName) {
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
         dataType: 'text json', //相反
         error: function (response) {
-            Notiflix.Notify.Failure("获取配置信息错误。")
+            Notiflix.Notify.Failure("网络错误")
         },
         statusCode: {
             200: function (data) {
-                Notiflix.Notify.Success("正在跳转创建好的配置集")
 
                 if (data["code"] == 200) {
+                    Notiflix.Notify.Success("正在跳转创建好的配置集")
                     window.parent.location = "http://" + document.domain + "/konfig/liteconfig-web-ui/config_list.html?cid=" + data["data"]["id"]
+                } else {
+                    Notiflix.Notify.Failure("操作失败：" + data['message'])
+
                 }
             }
         }

@@ -126,7 +126,7 @@ public class AccountServiceImpl implements AccountService {
         //不能返回密码
         account.setPassword("");
 
-        opLog.insert(Const.LOG_OPTYPE_USER, "用户注册", "", "", "", 0);
+        opLog.insert(Const.LOG_OPTYPE_USER, "用户注册", "", account.toString(), "", 0);
 
         return account;
     }
@@ -154,7 +154,7 @@ public class AccountServiceImpl implements AccountService {
             log.warn("登录异常:{}", e.getMessage());
         }
 
-        opLog.insert(Const.LOG_OPTYPE_USER, "用户登录: username=" + username, "", "", username, 0);
+        opLog.insert(Const.LOG_OPTYPE_USER, "用户登录", "", "username: " + username, username, 0);
 
 
         return token;
@@ -312,7 +312,7 @@ public class AccountServiceImpl implements AccountService {
         account.setPassword(encodePassword);
         accountDao.updateByPrimaryKey(account);
 
-        opLog.insert(Const.LOG_OPTYPE_USER, "修改用户密码：accountid：" + accountId, "", "", "root", 1);
+        opLog.insert(Const.LOG_OPTYPE_USER, "修改用户密码", "", "accountid：" + accountId, "root", 1);
 
 
         return true;

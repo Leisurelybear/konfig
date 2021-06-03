@@ -144,6 +144,9 @@ public class GroupServiceImpl implements GroupService {
         if (group.getGroupName().equals("wheel")){//wheel不能删除
             return -1;
         }
+        if(!group.getRootAccountId().equals(createAccountId)){
+            return -2;
+        }
 
         //删除组和用户关系
         List<GroupUser> groupUserList = groupUserMapper.selectByExample(example);
