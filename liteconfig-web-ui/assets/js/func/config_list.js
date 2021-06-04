@@ -389,21 +389,24 @@ function save_config(collectionId, configId) {
                     Notiflix.Notify.Failure("查询配置列表失败： " + data["message"]);
 
                     return
+                }else {
+                    list_configs(collectionId);
+                    Notiflix.Notify.Success("修改成功！");
+                    removeTags("div", "modal-backdrop fade show")
+                    // document.getElementsByClassName("modal-backdrop")[0].remove("modal-backdrop")
                 }
-
-                if (data["data"]['collectionId'] !== data.collectionId) {
-                    //说明新建草稿，则跳转到新页面
-                    Notiflix.Notify.Info("正在跳转到新创建的草稿版本...");
-                    window.location.href = "config_list.html?cid=" + data["data"]['collectionId']
-                } else {
-                    //否则直接刷新配置列表即可
-                    list_configs(collectionId)
-                    document.getElementsByClassName("modal-backdrop")[0].remove("modal-backdrop")
-                }
-
             }
         }
     })
+}
+
+function removeTags(tagName, tagClass) {
+    var tagElements = document.getElementsByTagName(tagName);
+    for (var m = 0; m < tagElements.length; m++) {
+        if (tagElements[m].className == tagClass) {
+            tagElements[m].parentNode.removeChild(tagElements[m]);
+        }
+    }
 }
 
 function list_configs(collectionId) {
@@ -499,7 +502,7 @@ function list_configs(collectionId) {
                         "                                        </form>" +
                         "                                        <div class='modal-footer'>" +
                         "                                            <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>" +
-                        "                                            <button type='button'  class='btn btn-primary' data-dismiss='modal' onmouseup='save_config(" + collectionId + ", " + val['id'] + ")'>Save changes</button>" +
+                        "                                            <button type='button'  class='btn btn-primary' data-dismiss='modal' onclick='save_config(" + collectionId + ", " + val['id'] + ")'>Save changes</button>" +
                         "                                        </div>" +
                         "" +
                         "                                        </div>" +

@@ -284,7 +284,7 @@ public class CfgCollectionServiceImpl implements CfgCollectionService {
         if (cfgCollection.getIsDraft() == 0) {
             data.setStatus(Const.MQ_CONFIG_STATUS_ONLINE);
         } else {//线下版本则发送不同状态的
-            data.setStatus(Const.MQ_CONFIG_STATUS_ONLINE);
+            data.setStatus(Const.MQ_CONFIG_STATUS_DRAFT);
         }
 
         try { //如果有错误则捕获，不影响正常业务流程
