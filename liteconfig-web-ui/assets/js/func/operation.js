@@ -31,7 +31,7 @@ function list(pageNum, pageSize, nameLike, emailLike) {
         "pageSize": pageSize,
     };
     $.ajax({
-        url: 'http://' + document.domain + ':8301/log/list?token=' + $.cookie('token'),//接口地址
+        url: SERVICE_HOST + '/log/list?token=' + $.cookie('token'),//接口地址
         type: 'post',//请求方式
         data: JSON.stringify(data), //传输的数据
         contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型

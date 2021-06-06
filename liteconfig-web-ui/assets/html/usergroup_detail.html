@@ -27,7 +27,7 @@
 
         //查用户
         $.ajax({
-            url: 'http://' + document.domain + ':8021/admin/list_by_name?token=' + $.cookie('token'),//接口地址
+            url: AUTH_HOST + '/admin/list_by_name?token=' + $.cookie('token'),//接口地址
             type: 'post',//请求方式
             data: queryName, //传输的数据
             contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -67,7 +67,7 @@
         };
 
         $.ajax({
-            url: 'http://' + document.domain + ':8021/group_user/remove?token=' + $.cookie('token'),//接口地址
+            url: AUTH_HOST + '/group_user/remove?token=' + $.cookie('token'),//接口地址
             type: 'post',//请求方式
             data: JSON.stringify(data), //传输的数据
             contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -101,7 +101,7 @@
         };
 
         $.ajax({
-            url: 'http://' + document.domain + ':8021/group_user/add?token=' + $.cookie('token'),//接口地址
+            url: AUTH_HOST + '/group_user/add?token=' + $.cookie('token'),//接口地址
             type: 'post',//请求方式
             data: JSON.stringify(data), //传输的数据
             contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型
@@ -132,7 +132,7 @@
         data = {};
 
         $.ajax({
-            url: 'http://' + document.domain + ':8021/group_user/list/' + groupId + '?token=' + $.cookie('token'),//接口地址
+            url: AUTH_HOST + '/group_user/list/' + groupId + '?token=' + $.cookie('token'),//接口地址
             type: 'post',//请求方式
             data: null, //传输的数据
             // contentType: 'application/json', //前端（html）传给后端（java Web程序）的数据类型

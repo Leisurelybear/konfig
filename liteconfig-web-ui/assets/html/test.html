@@ -23,7 +23,7 @@
 <script src="../js/vendor/jquery-3.6.0.min.js"></script>
 <script>
     $.ajax({
-        url: 'http://' + document.domain + ':8021/default/upload',//接口地址
+        url: AUTH_HOST + '/default/upload',//接口地址
         type: 'post',//请求方式
         data: $("#file").val(), //传输的数据
         processData: false,

@@ -25,7 +25,7 @@ function timeStamp2String(time){
 //根据token得到用户信息
 function getInfo() {
     $.ajax({
-        url: 'http://' + document.domain + ':8021/admin/info',
+        url: AUTH_HOST + '/admin/info',
         // url: 'http://KONFIG-AUTHENTICATION/admin/info',
         type: 'get',
         dataType: 'text json',
