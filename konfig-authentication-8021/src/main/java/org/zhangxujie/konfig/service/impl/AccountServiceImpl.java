@@ -312,6 +312,9 @@ public class AccountServiceImpl implements AccountService {
         account.setPassword(encodePassword);
         accountDao.updateByPrimaryKey(account);
 
+        redisClient.delete("account:id:" + account.getId());
+        redisClient.delete("account:name:" + account.getUsername());
+
         opLog.insert(Const.LOG_OPTYPE_USER, "修改用户密码", "", "accountid：" + accountId, "root", 1);
 
 
