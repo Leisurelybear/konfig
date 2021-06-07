@@ -14,7 +14,7 @@ $(function () {
 
     $("#title_name").append("<span>操作日志</span></li>")
 
-    list(1, 5, "", "");
+    list(1, 10, "", "");
 
 })
 
@@ -23,7 +23,7 @@ $(function () {
 function list(pageNum, pageSize, nameLike, emailLike) {
     console.log("list_users: ", pageNum, pageSize, nameLike, emailLike)
     if (nameLike === "") {
-        pageSize = 5
+        pageSize = 10
     }
     data = {
         "type": nameLike,
