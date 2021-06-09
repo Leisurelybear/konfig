@@ -9,17 +9,26 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>org.zhangxujie</groupId>
     <artifactId>konfig-authentication</artifactId>
+    <version>1.0.0</version>
+    <packaging>war</packaging>
 
     <dependencies>
 
         <dependency>
-            <artifactId>konfig</artifactId>
-            <groupId>org.zhangxujie</groupId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
 
-<!--       redis依赖 -->
+        <!--        <dependency>-->
+        <!--            <artifactId>konfig</artifactId>-->
+        <!--            <groupId>org.zhangxujie</groupId>-->
+        <!--            <version>1.0-SNAPSHOT</version>-->
+        <!--        </dependency>-->
+
+        <!--       redis依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -103,8 +112,8 @@
 
     </dependencies>
 
-<build>
-	        <plugins>
+    <build>
+        <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -120,6 +129,6 @@
                 </executions>
             </plugin>
         </plugins>
-</build>
+    </build>
 
 </project>
