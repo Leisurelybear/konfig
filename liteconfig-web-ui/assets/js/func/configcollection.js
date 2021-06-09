@@ -182,7 +182,7 @@ function add_collection(collectionName) {
 
                 if (data["code"] == 200) {
                     Notiflix.Notify.Success("正在跳转创建好的配置集")
-                    window.parent.location = "http://" + document.domain + "/konfig/liteconfig-web-ui/config_list.html?cid=" + data["data"]["id"]
+                    window.parent.location = "http://" + document.domain + "/config_list.html?cid=" + data["data"]["id"]
                 } else {
                     Notiflix.Notify.Failure("操作失败：" + data['message'])
 

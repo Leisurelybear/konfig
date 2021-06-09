@@ -99,7 +99,16 @@ function del(groupId) {
 
 function groupuserdetail(groupId) {
     currentGroupId = groupId;
-    $('#modal-body-' + groupId).load('assets/html/usergroup_detail.html', {'groupId': groupId});
+    $.ajax({
+        url: "assets/html/usergroup_detail.html?groupId=" + groupId,
+        cache: true,
+        async: false,
+        success: function (html) {
+            $('#modal-body-' + groupId).html(html);
+        }
+    });
+
+    // $('#modal-body-' + groupId).load('assets/html/usergroup_detail.html', {'groupId': groupId});
 }
 
 //展示用户列表
