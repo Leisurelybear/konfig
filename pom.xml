@@ -17,6 +17,7 @@
 
     <!--统一管理jar包版本-->
     <properties>
+	<spring.boot.version>2.2.2.RELEASE</spring.boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>12</maven.compiler.source>
         <maven.compiler.target>12</maven.compiler.target>
@@ -96,5 +97,86 @@
         </dependencies>
 
     </dependencyManagement>
+
+
+<profiles>
+        <profile>
+            <id>checkstyle</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <!--Apache RAT (Release Audit Tool) 是一个用来检查软件许可证发行的准确性和高效性的工具。它的本质是：对可能出现的问题作出预测（非必须）-->
+                    <plugin>
+                        <groupId>org.apache.rat</groupId>
+                        <artifactId>apache-rat-plugin</artifactId>
+                        <version>0.12</version>
+                        <executions>
+                            <execution>
+                                <id>verify.rat</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>**/*.versionsBackup</exclude>
+                                        <exclude>**/.idea/</exclude>
+                                        <exclude>**/*.iml</exclude>
+                                        <exclude>**/*.txt</exclude>
+                                        <exclude>**/*.sh</exclude>
+                                        <exclude>**/*.bat</exclude>
+                                        <exclude>**/*.md</exclude>
+                                        <exclude>.git/</exclude>
+                                        <exclude>**/*.git*</exclude>
+                                        <exclude>.gitignore</exclude>
+                                        <exclude>**/.settings/*</exclude>
+                                        <exclude>**/.classpath</exclude>
+                                        <exclude>**/*.properties</exclude>
+                                        <exclude>**/.project</exclude>
+                                        <exclude>**/target/**</exclude>
+                                        <exclude>**/*.log</exclude>
+                                        <exclude>CODE_OF_CONDUCT.md</exclude>
+                                        <exclude>.codecov.yml</exclude>
+                                        <exclude>.travis.yml</exclude>
+                                        <exclude>PULL_REQUEST_TEMPLATE.md</exclude>
+                                        <exclude>CONTRIBUTING.md</exclude>
+                                        <exclude>**/codestyle/*</exclude>
+                                        <exclude>**/node_modules/**</exclude>
+                                        <exclude>**/.babelrc</exclude>
+                                        <exclude>**/.editorconfig</exclude>
+                                        <exclude>**/package-lock.json</exclude>
+                                        <exclude>**/package.json</exclude>
+                                        <exclude>**/OpenSans.css</exclude>
+                                        <exclude>**/.eslintignore</exclude>
+                                        <exclude>**/resources/META-INF/**</exclude>
+                                        <exclude>**/src/main/resources/public/**</exclude>
+                                        <exclude>**/src/licenses/**</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <!--编译插件-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
