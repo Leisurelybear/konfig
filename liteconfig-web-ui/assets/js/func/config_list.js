@@ -1,6 +1,6 @@
 $(function () {
 
-    var current_page = $("#menu > li > ul > li > a[href='usermanage.html']");
+    var current_page = $("#menu > li > ul > li > a[href='configcollection.html']");
 
     //用户权限管理 激活
     current_page.parent().addClass("active");
