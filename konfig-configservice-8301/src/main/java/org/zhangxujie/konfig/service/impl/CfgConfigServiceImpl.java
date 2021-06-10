@@ -189,4 +189,23 @@ public class CfgConfigServiceImpl implements CfgConfigService {
         }
         return cfgConfigList;
     }
+
+    @Override
+    public boolean updateV2(CfgConfig cfgConfig, Integer id, String cfgName, String cfgKey, String cfgValue, String username) {
+
+        if (cfgConfig == null || cfgConfig.getIsDel() == 1){
+            return false;
+        }
+        cfgConfig.setCfgName(cfgName);
+        cfgConfig.setCfgValue(cfgValue);
+        cfgConfig.setCfgKey(cfgKey);
+        cfgConfigMapper.updateByPrimaryKeyWithBLOBs(cfgConfig);
+
+        return true;
+    }
+
+    @Override
+    public CfgConfig getById(Integer id) {
+        return cfgConfigMapper.selectByPrimaryKey(id);
+    }
 }

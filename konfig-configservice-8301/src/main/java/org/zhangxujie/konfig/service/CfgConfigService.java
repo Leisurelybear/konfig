@@ -16,4 +16,10 @@ public interface CfgConfigService {
     int delete(Integer configId, String usernameFromToken);
 
     List<CfgConfig> getByCollectionId(Integer collectionId);
+
+    //直接修改配置，必定是先下版本
+    boolean updateV2(CfgConfig oldCfgConfig, Integer id, String cfgName, String cfgKey, String cfgValue, String username);
+
+    //通过id获取配置
+    CfgConfig getById(Integer id);
 }

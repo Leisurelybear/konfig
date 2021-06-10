@@ -52,11 +52,11 @@ public class CfgConfigController {
     public CommonResult<GetCfgConfigResp> getConfigs(@RequestBody GetCfgConfigReq req, @RequestParam("token") String token) {
 
         log.info("Token: " + token);
-        if (!TokenUtil.validateToken(token)){
+        if (!TokenUtil.validateToken(token)) {
             return CommonResult.failed("Token失效，请重新登录！");
         }
 
-        if (!cfgPermissionService.hasPermission(token, req.getCollectionIds().get(0))){
+        if (!cfgPermissionService.hasPermission(token, req.getCollectionIds().get(0))) {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
@@ -79,40 +79,43 @@ public class CfgConfigController {
     @PostMapping("/update")
     public CommonResult<UpdateConfigResp> update(@RequestBody UpdateConfigReq req, @RequestParam("token") String token) {
         log.info("Token: " + token);
-        if (!TokenUtil.validateToken(token)){
+        if (!TokenUtil.validateToken(token)) {
             return CommonResult.failed("Token失效，请重新登录！");
         }
 
-        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())){
+        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())) {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
-        if (cfgCollectionService.isOnline(req.getCollectionId())){
+        if (cfgCollectionService.isOnline(req.getCollectionId())) {
             return CommonResult.failed("当前为线上版本，不能修改！");
         }
         InfoRemote info = accountRemoteService.infoFromToken(token);
 
 
         //每次更新都会置为草稿版本，如果是线上版本，则生成新的草稿版本，；如果是草稿版本，则不变
-        int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
-        boolean done = cfgConfigService.update(req.getCollectionId(), collectionId, req.getId(), req.getCfgName(), req.getCfgKey(), req.getCfgValue(), req.getUsername());
+//        int collectionId = cfgCollectionService.setToDraft(req.getCollectionId(), TokenUtil.getUsernameFromToken(token));
+//        boolean done = cfgConfigService.update(req.getCollectionId(), collectionId, req.getId(), req.getCfgName(), req.getCfgKey(), req.getCfgValue(), req.getUsername());
+
+        CfgConfig oldCfgConfig = cfgConfigService.getById(req.getId());
+        boolean done = cfgConfigService.updateV2(oldCfgConfig, req.getId(), req.getCfgName(), req.getCfgKey(), req.getCfgValue(), req.getUsername());
         opLog.insert(Const.LOG_OPTYPE_CONFIG, "更新配置", "", req.toString(), info.getUsername(), info.getAccountId());
 
-        return CommonResult.success(new UpdateConfigResp(collectionId));
+        return CommonResult.success(new UpdateConfigResp(req.getCollectionId()));
     }
 
     @PostMapping("/create")
     public CommonResult<CfgConfig> add(@RequestBody AddConfigReq req, @RequestParam("token") String token) {
         log.info("Token: " + token);
-        if (!TokenUtil.validateToken(token)){
+        if (!TokenUtil.validateToken(token)) {
             return CommonResult.failed("Token失效，请重新登录！");
         }
 
-        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())){
+        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())) {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
-        if (cfgCollectionService.isOnline(req.getCollectionId())){
+        if (cfgCollectionService.isOnline(req.getCollectionId())) {
             return CommonResult.failed("当前为线上版本，不能修改！");
         }
         InfoRemote info = accountRemoteService.infoFromToken(token);
@@ -129,11 +132,11 @@ public class CfgConfigController {
     @DeleteMapping("/delete")
     public CommonResult<CfgConfig> delete(@RequestBody DeleteConfigReq req, @RequestParam("token") String token) {
         log.info("Token: " + token);
-        if (!TokenUtil.validateToken(token)){
+        if (!TokenUtil.validateToken(token)) {
             return CommonResult.failed("Token失效，请重新登录！");
         }
 
-        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())){
+        if (!cfgPermissionService.hasPermission(token, req.getCollectionId())) {
             return CommonResult.failed("您没有该记录的操作权限");
         }
 
@@ -141,12 +144,12 @@ public class CfgConfigController {
 
         //查看是否为线上，如果线上，则不能删除
         boolean isOnline = cfgCollectionService.isOnline(req.getCollectionId());
-        if (isOnline){
+        if (isOnline) {
             return CommonResult.failed("当前为线上版本，不能删除！");
         }
 
         int status = cfgConfigService.delete(req.getConfigId(), TokenUtil.getUsernameFromToken(token));
-        if (status <= 0){
+        if (status <= 0) {
             return CommonResult.failed("删除失败");
         }
 
