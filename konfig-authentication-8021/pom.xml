@@ -12,7 +12,7 @@
     <groupId>org.zhangxujie</groupId>
     <artifactId>konfig-authentication</artifactId>
     <version>1.0.0</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
 
