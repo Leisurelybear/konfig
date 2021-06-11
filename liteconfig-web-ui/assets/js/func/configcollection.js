@@ -108,7 +108,7 @@ function loadCollections(condition) {
         "nameLike": "",
         "sort": -1,
         "pageNum": 0,
-        "nums": 10,
+        "nums": 999999,
         "isDraft": false,
         "createUsername": "",
     };
