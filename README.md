@@ -1,7 +1,35 @@
 
-![icon](https://github.com/Leisurelybear/konfig/blob/master/liteconfig-web-ui/assets/images/icon/logo.png)
+![icon](doc/img/logo.png)
 
 # 配置管理中心 konfig
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [配置管理中心 konfig](#%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E4%B8%AD%E5%BF%83-konfig)
+  - [一、Introduce - 介绍](#%E4%B8%80introduce---%E4%BB%8B%E7%BB%8D)
+    - [概要](#%E6%A6%82%E8%A6%81)
+    - [特性](#%E7%89%B9%E6%80%A7)
+    - [截图](#%E6%88%AA%E5%9B%BE)
+  - [二、Runtime Environment - 运行环境](#%E4%BA%8Cruntime-environment---%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83)
+    - [Zookeeper单机部署](#zookeeper%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2)
+    - [Redis 部署](#redis-%E9%83%A8%E7%BD%B2)
+    - [Java环境](#java%E7%8E%AF%E5%A2%83)
+    - [安装Maven](#%E5%AE%89%E8%A3%85maven)
+    - [Kafka单机部署](#kafka%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2)
+    - [Git](#git)
+    - [MySQL](#mysql)
+  - [三、Usage - 用法](#%E4%B8%89usage---%E7%94%A8%E6%B3%95)
+    - [MySQL](#mysql-1)
+    - [后端程序部署](#%E5%90%8E%E7%AB%AF%E7%A8%8B%E5%BA%8F%E9%83%A8%E7%BD%B2)
+    - [前端项目部署](#%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2)
+  - [四、Development - 开发](#%E5%9B%9Bdevelopment---%E5%BC%80%E5%8F%91)
+  - [五、Changelog - 更新日志](#%E4%BA%94changelog---%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
+  - [六、FAQ - 常见问题](#%E5%85%ADfaq---%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+  - [七、License - 版权信息](#%E4%B8%83license---%E7%89%88%E6%9D%83%E4%BF%A1%E6%81%AF)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
 ## 一、Introduce - 介绍
