@@ -54,6 +54,18 @@
  
 ### 截图
 
+**配置集合**![配置集合](doc/img/screenshot_1.png)
+
+**配置详情**![配置详情](doc/img/screenshot_2.png)
+
+**配置权限管理**![配置权限管理](doc/img/screenshot_3.png)
+
+**用户组管理**![用户组管理](doc/img/screenshot_4.png)
+
+**操作日志**![操作日志](doc/img/screenshot_5.png)
+
+**上线/下线审核**![上线/下线审核](doc/img/screenshot_6.png)
+
 
 ## 二、Runtime Environment - 运行环境
 
