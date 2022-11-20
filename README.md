@@ -74,10 +74,10 @@
 	1. `docker pull mariadb`
 	2. `docker run --detach --name mariadb --env MARIADB_USER=test_user --env MARIADB_PASSWORD=123456 --env MARIADB_ROOT_PASSWORD=123456 mariadb:latest`
 2. Run [konfig](https://hub.docker.com/r/leisurelybear/konfig) service using docker
-	1. `docker pull leisurelybear/konfig`
+	1. `docker pull leisurelybear/konfig:1.0`
 	2. `docker run -itd -p 80:80 --link mariadb konfig:1.0 /bin/bash /app/setup.sh`
 
-## 二、Runtime Environment - 运行环境
+## 三、Runtime Environment - 运行环境
 
 ###  Zookeeper单机部署
 (1) 从官方镜像分流下载zookeeper
@@ -287,7 +287,7 @@ $ mysql_secure_installation
 
 
 
-## 三、Usage - 用法
+## 四、Usage - 用法
 
 ### MySQL
 
@@ -344,7 +344,6 @@ $ java -jar konfig-configservice-8301/target/konfig-configservice-1.0.0.jar
 
 (4) 通过前端的地址访问index页面。
 
-## 四、Development - 开发
 
 ## 五、Changelog - 更新日志
 
