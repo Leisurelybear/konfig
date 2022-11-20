@@ -74,8 +74,8 @@
 	1. `docker pull mariadb`
 	2. `docker run --detach --name mariadb --env MARIADB_USER=test_user --env MARIADB_PASSWORD=123456 --env MARIADB_ROOT_PASSWORD=123456 mariadb:latest`
 2. Run [konfig](https://hub.docker.com/r/leisurelybear/konfig) service using docker
-	1. `docker pull leisurelybear/konfig:1.0`
-	2. `docker run -itd -p 80:80 --link mariadb konfig:1.0 /bin/bash /app/setup.sh`
+	1. `docker pull leisurelybear/konfig:1.2`
+	2. `docker run -itd -p 80:80 --link mariadb konfig:1.2 /bin/bash /app/setup.sh`
 
 ## 三、Runtime Environment - 运行环境
 
