@@ -14,7 +14,7 @@
     - [截图](#%E6%88%AA%E5%9B%BE) 
   - [二、Docker deployment](#二docker-deployment)
 
-  - [三、Runtime Environment - 运行环境](#%E4%BA%8Cruntime-environment---%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83)
+  - [三、Runtime Environment - 运行环境](#三runtime-environment---%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83)
     - [Zookeeper单机部署](#zookeeper%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2)
     - [Redis 部署](#redis-%E9%83%A8%E7%BD%B2)
     - [Java环境](#java%E7%8E%AF%E5%A2%83)
@@ -22,7 +22,7 @@
     - [Kafka单机部署](#kafka%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2)
     - [Git](#git)
     - [MySQL](#mysql)
-  - [四、Usage - 用法](#%E4%B8%89usage---%E7%94%A8%E6%B3%95)
+  - [四、Usage - 用法](#四usage---用法)
     - [MySQL](#mysql-1)
     - [后端程序部署](#%E5%90%8E%E7%AB%AF%E7%A8%8B%E5%BA%8F%E9%83%A8%E7%BD%B2)
     - [前端项目部署](#%E5%89%8D%E7%AB%AF%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2)
