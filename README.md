@@ -12,7 +12,7 @@
     - [概要](#%E6%A6%82%E8%A6%81)
     - [特性](#%E7%89%B9%E6%80%A7)
     - [截图](#%E6%88%AA%E5%9B%BE) 
-  - [二、Docker deployment](#%E4%BA%8Cruntime-environment---%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83)
+  - [二、Docker deployment](#二docker-deployment)
 
   - [三、Runtime Environment - 运行环境](#%E4%BA%8Cruntime-environment---%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83)
     - [Zookeeper单机部署](#zookeeper%E5%8D%95%E6%9C%BA%E9%83%A8%E7%BD%B2)
