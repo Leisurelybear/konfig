@@ -70,7 +70,7 @@
 ## 二、Docker Deployment
 **Try it by using docker!**
 
-1. Pull mariadb image, then deploy it.
+1. Pull mariadb image, then deploy it, which used to store configurations and accounts.
 	1. `docker pull mariadb`
 	2. `docker run --detach --name mariadb --env MARIADB_USER=test_user --env MARIADB_PASSWORD=123456 --env MARIADB_ROOT_PASSWORD=123456 mariadb:latest`
 2. Run [konfig](https://hub.docker.com/r/leisurelybear/konfig) service using docker
